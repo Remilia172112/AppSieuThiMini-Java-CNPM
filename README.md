@@ -1,4 +1,4 @@
-## Đồ án Java - Quản lý cửa hàng bán điện thoại - NHÓM 04
+## Đồ án Java - Quản lý siêu thị mini - NHÓM 08
 
 ## Thành viên nhóm:
 
