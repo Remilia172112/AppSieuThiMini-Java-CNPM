@@ -27,7 +27,7 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
         for (int i = 0; i < t.size(); i++) {
             try {
                 Connection con = (Connection) JDBCUtil.getConnection();
-                String sql = "INSERT INTO `CTPHIEUXUAT` (`MPX`, `MSP`, `SL`,  `TIENXUAT`) VALUES (?,?,?,?)";
+                String sql = "INSERT INTO `CTHOADON` (`MHD`, `MSP`, `SL`,  `TIENXUAT`) VALUES (?,?,?,?)";
                 PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
                 pst.setInt(1, t.get(i).getMP());
                 pst.setInt(2, t.get(i).getMSP());
@@ -49,7 +49,7 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
         for (int i = 0; i < t.size(); i++) {
             try {
                 Connection con = (Connection) JDBCUtil.getConnection();
-                String sql = "INSERT INTO `CTPHIEUXUAT` (`MPX`, `MSP`, `SL`, `TIENXUAT`) VALUES (?,?,?,?)";
+                String sql = "INSERT INTO `CTHOADON` (`MHD`, `MSP`, `SL`, `TIENXUAT`) VALUES (?,?,?,?)";
                 PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
                 pst.setInt(1, t.get(i).getMP());
                 pst.setInt(2, t.get(i).getMSP());
@@ -69,7 +69,7 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
         for (int i = 0; i < t.size(); i++) {
             try {
                 Connection con = (Connection) JDBCUtil.getConnection();
-                String sql = "INSERT INTO `CTPHIEUXUAT` (`MPX`, `MSP`, `MKM`, SL`,  `TIENXUAT`) VALUES (?,?,?,?.?)";
+                String sql = "INSERT INTO `CTHOADON` (`MHD`, `MSP`, `MKM`, SL`,  `TIENXUAT`) VALUES (?,?,?,?.?)";
                 PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
                 pst.setInt(1, t.get(i).getMP());
                 pst.setInt(2, t.get(i).getMSP());
@@ -103,7 +103,7 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "DELETE FROM CTPHIEUXUAT WHERE MPX = ?";
+            String sql = "DELETE FROM CTHOADON WHERE MHD = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, t);
             result = pst.executeUpdate();
@@ -128,12 +128,12 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
         ArrayList<ChiTietPhieuDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM CTPHIEUXUAT WHERE MPX = ?";
+            String sql = "SELECT * FROM CTHOADON WHERE MHD = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
-                int maphieu = rs.getInt("MPX");
+                int maphieu = rs.getInt("MHD");
                 int MSP = rs.getInt("MSP");
                 int SL = rs.getInt("SL");
                 int tienxuat = rs.getInt("TIENXUAT");
@@ -150,12 +150,12 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
     public void updateSL(String t) {
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM CTPHIEUXUAT WHERE MPX = ?";
+            String sql = "SELECT * FROM CTHOADON WHERE MHD = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
-                int maphieu = rs.getInt("MPX");
+                int maphieu = rs.getInt("MHD");
                 int MSP = rs.getInt("MSP");
                 int SL = rs.getInt("SL");
                 int tienxuat = rs.getInt("TIENXUAT");

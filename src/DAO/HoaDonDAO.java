@@ -28,7 +28,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `PHIEUXUAT` (`MNV`, `MKH`, `TIEN`, `TG`, `TT`) VALUES (?,?,?,?,?)";
+            String sql = "INSERT INTO `HOADON` (`MNV`, `MKH`, `TIEN`, `TG`, `TT`) VALUES (?,?,?,?,?)";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, t.getMNV());
             pst.setInt(2, t.getMKH());
@@ -48,7 +48,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = 0 ;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `PHIEUXUAT` SET `MNV`=?, `MKH`=?, `TIEN`=?, `TG`=?, `TT`=? WHERE `MPX`=?";
+            String sql = "UPDATE `HOADON` SET `MNV`=?, `MKH`=?, `TIEN`=?, `TG`=?, `TT`=? WHERE `MHD`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t.getMNV());
             pst.setInt(2, t.getMKH());
@@ -68,7 +68,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = 0 ;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE PHIEUXUAT SET TT = 0 WHERE MPX = ?";
+            String sql = "UPDATE HOADON SET TT = 0 WHERE MHD = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             result = pst.executeUpdate();
@@ -86,18 +86,18 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         ArrayList<HoaDonDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM PHIEUXUAT ORDER BY MPX DESC";
+            String sql = "SELECT * FROM HOADON ORDER BY MHD DESC";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while(rs.next()){
-                int MP = rs.getInt("MPX");
+                int MP = rs.getInt("MHD");
                 Timestamp TG = rs.getTimestamp("TG");
                 int MKH = rs.getInt("MKH");
                 int MNV = rs.getInt("MNV");
                 long TIEN = rs.getLong("TIEN");
                 int TT = rs.getInt("TT");
-                HoaDonDTO PHIEUXUAT = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT);
-                result.add(PHIEUXUAT);
+                HoaDonDTO HOADON = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT);
+                result.add(HOADON);
             }
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
@@ -111,12 +111,12 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         HoaDonDTO result = null;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM PHIEUXUAT WHERE MPX=?";
+            String sql = "SELECT * FROM HOADON WHERE MHD=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while(rs.next()){
-                int MP = rs.getInt("MPX");
+                int MP = rs.getInt("MHD");
                 Timestamp TG = rs.getTimestamp("TG");
                 int MKH = rs.getInt("MKH");
                 int MNV = rs.getInt("MNV");
@@ -134,12 +134,12 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         ArrayList<HoaDonDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM PHIEUXUAT WHERE MKH=?";
+            String sql = "SELECT * FROM HOADON WHERE MKH=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while(rs.next()){
-                int MP = rs.getInt("MPX");
+                int MP = rs.getInt("MHD");
                 Timestamp TG = rs.getTimestamp("TG");
                 int MKH = rs.getInt("MKH");
                 int MNV = rs.getInt("MNV");
@@ -172,7 +172,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = 0 ;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE PHIEUXUAT SET TT = 1 WHERE MPX = ?";
+            String sql = "UPDATE HOADON SET TT = 1 WHERE MHD = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             result = pst.executeUpdate();
@@ -187,7 +187,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = 0 ;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "DELETE FROM `PHIEUXUAT` WHERE MPX = ?";
+            String sql = "DELETE FROM `HOADON` WHERE MHD = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t);
             result = pst.executeUpdate();
@@ -202,19 +202,19 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         ArrayList<HoaDonDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM PHIEUXUAT WHERE MKH=? ORDER BY MPX DESC";
+            String sql = "SELECT * FROM HOADON WHERE MKH=? ORDER BY MHD DESC";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, MKH);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while(rs.next()){
-                int MP = rs.getInt("MPX");
+                int MP = rs.getInt("MHD");
                 Timestamp TG = rs.getTimestamp("TG");
                 int kh = rs.getInt("MKH");
                 int MNV = rs.getInt("MNV");
                 long TIEN = rs.getLong("TIEN");
                 int TT = rs.getInt("TT");
-                HoaDonDTO PHIEUXUAT = new HoaDonDTO(kh, MP, MNV, TG, TIEN, TT);
-                result.add(PHIEUXUAT);
+                HoaDonDTO HOADON = new HoaDonDTO(kh, MP, MNV, TG, TIEN, TT);
+                result.add(HOADON);
             }
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
@@ -222,7 +222,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         }
         return result;
     }
-    public int cancelPhieuXuat(int maphieu){
+    public int cancelHOADON(int maphieu){
         int result = 0;
         ArrayList<ChiTietPhieuDTO> arrCt = ChiTietHoaDonDAO.getInstance().selectAll(Integer.toString(maphieu));
         for (ChiTietPhieuDTO chiTietPhieuNhapDTO : arrCt) {
@@ -231,7 +231,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         ChiTietPhieuNhapDAO.getInstance().delete(Integer.toString(maphieu));
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "DELETE FROM PHIEUXUAT WHERE MPX = ?";
+            String sql = "DELETE FROM HOADON WHERE MHD = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, maphieu);
             result = pst.executeUpdate();
@@ -248,7 +248,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         ArrayList<ChiTietPhieuDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM CTPHIEUXUAT WHERE MPX=?";
+            String sql = "SELECT * FROM CTHOADON WHERE MHD=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, maphieu);
             ResultSet rs = (ResultSet) pst.executeQuery();
@@ -276,7 +276,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = -1;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlysieuthimini' AND TABLE_NAME   = 'PHIEUXUAT'";
+            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlysieuthimini' AND TABLE_NAME   = 'HOADON'";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs2 = pst.executeQuery(sql);
             if (!rs2.isBeforeFirst() ) {

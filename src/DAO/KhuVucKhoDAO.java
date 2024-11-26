@@ -21,7 +21,7 @@ public class KhuVucKhoDAO implements DAOinterface<KhuVucKhoDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `KHUVUCSACH`(`MKVS`, `TEN`,`GHICHU`,`TT`) VALUES (?,?,?,1)";
+            String sql = "INSERT INTO `KHUVUCKHO`(`MKVS`, `TEN`,`GHICHU`,`TT`) VALUES (?,?,?,1)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t.getMakhuvuc());
             pst.setString(2, t.getTenkhuvuc());
@@ -39,7 +39,7 @@ public class KhuVucKhoDAO implements DAOinterface<KhuVucKhoDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `KHUVUCSACH` SET `TEN`=?,`GHICHU`=? WHERE `MKVS`=?";
+            String sql = "UPDATE `KHUVUCKHO` SET `TEN`=?,`GHICHU`=? WHERE `MKVS`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t.getTenkhuvuc());
             pst.setString(2, t.getGhichu());
@@ -57,7 +57,7 @@ public class KhuVucKhoDAO implements DAOinterface<KhuVucKhoDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE KHUVUCSACH SET TT = 0 WHERE  MKVS = ?";
+            String sql = "UPDATE KHUVUCKHO SET TT = 0 WHERE  MKVS = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             result = pst.executeUpdate();
@@ -73,7 +73,7 @@ public class KhuVucKhoDAO implements DAOinterface<KhuVucKhoDTO> {
         ArrayList<KhuVucKhoDTO> result = new ArrayList<KhuVucKhoDTO>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM KHUVUCSACH WHERE TT = 1";
+            String sql = "SELECT * FROM KHUVUCKHO WHERE TT = 1";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
@@ -94,7 +94,7 @@ public class KhuVucKhoDAO implements DAOinterface<KhuVucKhoDTO> {
         KhuVucKhoDTO result = null;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM KHUVUCSACH WHERE MKVS=?";
+            String sql = "SELECT * FROM KHUVUCKHO WHERE MKVS=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
@@ -115,7 +115,7 @@ public class KhuVucKhoDAO implements DAOinterface<KhuVucKhoDTO> {
         int result = -1;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlycuahang' AND   TABLE_NAME   = 'KHUVUCSACH'";
+            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlycuahang' AND   TABLE_NAME   = 'KHUVUCKHO'";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs2 = pst.executeQuery(sql);
             if (!rs2.isBeforeFirst()) {
