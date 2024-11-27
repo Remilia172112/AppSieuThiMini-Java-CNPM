@@ -9,7 +9,6 @@ import GUI.Component.HeaderTitle;
 import GUI.Component.InputForm;
 import GUI.Component.InputImage;
 import GUI.Component.NumericDocumentFilter;
-import GUI.Component.SelectForm;
 import GUI.Panel.SanPham;
 import helper.Validation;
 import java.awt.BorderLayout;
@@ -42,10 +41,8 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
     private HeaderTitle titlePage;
     private JPanel pninfosanpham, pnbottom, pnCenter, pninfosanphamright, pnmain;
     private ButtonCustom btnHuyBo, btnAddSanPham;
-    InputForm tenSP, tenTG, namXB, danhmuc, isbn;
-    InputForm txtgianhap, txtgiaxuat;
-    SelectForm  cbNXB;
-    SelectForm khuvuc;
+    InputForm tenSP, donvi, loai, mv;
+    InputForm txtgiaxuat;
     InputImage hinhanh;
     JTable tblcauhinh;
     JScrollPane scrolltblcauhinh;
@@ -94,33 +91,21 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
         pnCenter.add(pninfosanphamright, BorderLayout.WEST);
 
         tenSP = new InputForm("Tên sản phẩm");
-        danhmuc = new InputForm("Danh mục");
-        namXB = new InputForm("Năm xuất bản");
-        tenTG = new InputForm("Tên tác giả");
-        cbNXB = new SelectForm("Nhà xuất bản", arrnxb);
-        khuvuc = new SelectForm("Khu vực sách", arrkhuvuc);
-        PlainDocument NamXB = (PlainDocument)namXB.getTxtForm().getDocument();
-        NamXB.setDocumentFilter((new NumericDocumentFilter()));
-        txtgianhap = new InputForm("Giá nhập");
-        PlainDocument nhap = (PlainDocument)txtgianhap.getTxtForm().getDocument();
-        nhap.setDocumentFilter((new NumericDocumentFilter()));
+        loai = new InputForm("Loại");
+        donvi = new InputForm("Đơn vị");
         txtgiaxuat = new InputForm("Giá xuất");
         PlainDocument xuat = (PlainDocument)txtgiaxuat.getTxtForm().getDocument();
         xuat.setDocumentFilter((new NumericDocumentFilter()));
-        isbn = new InputForm("Mã ISBN");
-        PlainDocument ma = (PlainDocument)isbn.getTxtForm().getDocument();
+        mv = new InputForm("Mã vạch");
+        PlainDocument ma = (PlainDocument)mv.getTxtForm().getDocument();
         ma.setDocumentFilter((new NumericDocumentFilter()));
         hinhanh = new InputImage("Hình minh họa");
 
         pninfosanpham.add(tenSP);
-        pninfosanpham.add(danhmuc);
-        pninfosanpham.add(namXB);
-        pninfosanpham.add(tenTG);
-        pninfosanpham.add(cbNXB);
-        pninfosanpham.add(khuvuc);
-        pninfosanpham.add(txtgianhap);
+        pninfosanpham.add(loai);
+        pninfosanpham.add(donvi);
         pninfosanpham.add(txtgiaxuat);
-        pninfosanpham.add(isbn);
+        pninfosanpham.add(mv);
         pninfosanphamright.add(hinhanh);
 
         pnbottom = new JPanel(new FlowLayout());
@@ -200,7 +185,7 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
         }  
         else if(source == btnSaveCH){
             SanPhamDTO snNew = getInfo();
-            snNew.setSL(spBus.getSPbyISBN(snNew.getISBN()).getSL());
+            snNew.setSL(spBus.getSPbyMV(snNew.getMV()).getSL());
             if(!snNew.getHINHANH().equals(this.sp.getHINHANH())){
                 snNew.setHINHANH(addImage(snNew.getHINHANH()));
             }
@@ -226,39 +211,32 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
     public SanPhamDTO getInfo() {
         String vtensp = tenSP.getText();
         String hinhanh = this.hinhanh.getUrl_img();
-        String danhMuc = danhmuc.getText();
-        int naMXB  = Integer.parseInt(namXB.getText());
-        String TenTG = tenTG.getText();
-        int MKVK = kvkhoBus.getAll().get(this.khuvuc.getSelectedIndex()).getMakhuvuc();
+        String danhMuc = loai.getText();
+        String naMXB  = donvi.getText();
         int tIENX = Integer.parseInt(txtgiaxuat.getText());
-        int tIENN = Integer.parseInt(txtgianhap.getText());
-        String ISBN = isbn.getText();
-        SanPhamDTO result = new SanPhamDTO(masp, vtensp, hinhanh, danhMuc, naMXB, MNXB, TenTG, MKVK, tIENX, tIENN, 0, ISBN);
+        String ISBN = mv.getText();
+        SanPhamDTO result = new SanPhamDTO(masp, vtensp, hinhanh, danhMuc, tIENX, 0, naMXB, ISBN);
         return result;
     }
 
     public void setInfo(SanPhamDTO sp) {
         hinhanh.setUrl_img(sp.getHINHANH());
         tenSP.setText(sp.getTEN());
-        danhmuc.setText(sp.getDANHMUC());
-        namXB.setText(Integer.toString(sp.getNAMXB()));
-        tenTG.setText(sp.getTENTG());
-        khuvuc.setSelectedIndex(kvkhoBus.getIndexByMaKVK(sp.getMKVS()));
+        loai.setText(sp.getLOAI());
+        donvi.setText(sp.getDONVI());
         txtgiaxuat.setText(Integer.toString(sp.getTIENX()));
-        txtgianhap.setText(Integer.toString(sp.getTIENN()));
-        isbn.setText(sp.getISBN());
+        mv.setText(sp.getMV());
     }
 
 
     public boolean checkCreate() {
         boolean check = true;
-        if (Validation.isEmpty(tenSP.getText()) || Validation.isEmpty((String) cbNXB.getSelectedItem())
-                || Validation.isEmpty(danhmuc.getText()) || Validation.isEmpty(namXB.getText())
-                || Validation.isEmpty(tenTG.getText()) || Validation.isEmpty(txtgianhap.getText())
-                || Validation.isEmpty(txtgiaxuat.getText()) || Validation.isEmpty(isbn.getText())) {
+        if (Validation.isEmpty(tenSP.getText())
+                || Validation.isEmpty(loai.getText()) || Validation.isEmpty(donvi.getText())
+                || Validation.isEmpty(txtgiaxuat.getText()) || Validation.isEmpty(mv.getText())) {
             check = false;
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !");
-        } else if(!spBus.checkISBN(isbn.getText())) {
+        } else if(!spBus.checkMV(mv.getText())) {
                 JOptionPane.showMessageDialog(this, "Mã ISBN đã tồn tại!"); 
                 check = false;
             }
@@ -273,10 +251,9 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
 
     public boolean checkUpdate() {
         boolean check = true;
-        if (Validation.isEmpty(tenSP.getText()) || Validation.isEmpty((String) cbNXB.getSelectedItem())
-                || Validation.isEmpty(danhmuc.getText()) || Validation.isEmpty(namXB.getText())
-                || Validation.isEmpty(tenTG.getText()) || Validation.isEmpty(txtgianhap.getText())
-                || Validation.isEmpty(txtgiaxuat.getText()) || Validation.isEmpty(isbn.getText())) {
+        if (Validation.isEmpty(tenSP.getText())
+                || Validation.isEmpty(loai.getText()) || Validation.isEmpty(donvi.getText())
+                || Validation.isEmpty(txtgiaxuat.getText()) || Validation.isEmpty(mv.getText())) {
             check = false;
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !");
         }
@@ -289,10 +266,10 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
         return check;
     }
     public void initView() {
-        isbn.setEditable(false);
+        mv.setEditable(false);
     }
     public void initCreate() {
-        isbn.setEditable(true);
+        mv.setEditable(true);
     }
 }
 

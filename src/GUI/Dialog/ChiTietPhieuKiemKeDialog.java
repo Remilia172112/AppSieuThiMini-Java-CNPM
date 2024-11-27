@@ -71,7 +71,7 @@ public final class ChiTietPhieuKiemKeDialog extends JDialog implements ActionLis
             SanPhamDTO sp = spBus.getByMaSP(ctPhieu.get(i).getMSP());
             tblModel.addRow(new Object[]{
                 i + 1, sp.getMSP(), SanPhamDAO.getInstance().selectById(sp.getMSP()+"").getTEN(), 
-                Formater.FormatVND(SanPhamDAO.getInstance().selectById(sp.getMSP()+"").getTIENN()), ctPhieu.get(i).getTRANGTHAISP()
+                Formater.FormatVND(SanPhamDAO.getInstance().selectById(sp.getMSP()+"").getTIENX()), ctPhieu.get(i).getTRANGTHAISP()
             });
         }
     }

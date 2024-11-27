@@ -2,7 +2,6 @@ package GUI.Dialog;
 
 import BUS.SanPhamBUS;
 import BUS.MaKhuyenMaiBUS;
-import DAO.NhanVienDAO;
 import DAO.SanPhamDAO;
 import DTO.ChiTietMaKhuyenMaiDTO;
 import DTO.SanPhamDTO;
@@ -33,7 +32,7 @@ public final class MaKhuyenMaiDialog extends JDialog implements ActionListener {
 
     HeaderTitle titlePage;
     JPanel pnmain, pnmain_top, pnmain_bottom, pnmain_btn; //bỏ pnmain_bottom_right, pnmain_bottom_left 
-    InputForm txtMaPhieu, txtNhanVien, txtThoiGianBD, txtThoiGianKT;
+    InputForm txtMaPhieu, txtThoiGianBD, txtThoiGianKT;
     DefaultTableModel tblModel;
     JTable table, tblImei;
     JScrollPane scrollTable;
@@ -60,7 +59,6 @@ public final class MaKhuyenMaiDialog extends JDialog implements ActionListener {
 
     public void initPhieuNhap() {
         txtMaPhieu.setText(this.makhuyenmai.getMKM());
-        txtNhanVien.setText(NhanVienDAO.getInstance().selectById(makhuyenmai.getMNV() + "").getHOTEN());
         txtThoiGianBD.setText(Formater.FormatTime(makhuyenmai.getTGBD()));
         txtThoiGianKT.setText(Formater.FormatTime(makhuyenmai.getTGKT()));
     }
@@ -87,17 +85,14 @@ public final class MaKhuyenMaiDialog extends JDialog implements ActionListener {
 
         pnmain_top = new JPanel(new GridLayout(1, 4));
         txtMaPhieu = new InputForm("Mã phiếu");
-        txtNhanVien = new InputForm("Nhân viên nhập");
         txtThoiGianBD = new InputForm("Thời gian bắt đầu");
         txtThoiGianKT = new InputForm("Thời gian kết thúc");
 
         txtMaPhieu.setEditable(false);
-        txtNhanVien.setEditable(false);
         txtThoiGianBD.setEditable(false);
         txtThoiGianKT.setEditable(false);
 
         pnmain_top.add(txtMaPhieu);
-        pnmain_top.add(txtNhanVien);
         pnmain_top.add(txtThoiGianBD);
         pnmain_top.add(txtThoiGianKT);
 

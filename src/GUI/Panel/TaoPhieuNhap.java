@@ -349,8 +349,8 @@ public final class TaoPhieuNhap extends JPanel implements ItemListener, ActionLi
         this.txtTenSp.setText(sp.getTEN());
         // ArrayList<SanPhamDTO> spdto = spBUS.getAll();;
         // cbxDanhMuc.setArr(getThongTinSach(sp.getMSP()));
-        this.txtMaISBN.setText(sp.getISBN());
-        this.txtDongia.setText(Integer.toString(sp.getTIENN()));
+        this.txtMaISBN.setText(sp.getMV());
+        this.txtDongia.setText(Integer.toString(sp.getTIENX()*(90/100)));
     }
 
     // public ArrayList<SanPhamDTO> getChiTietSanPham() {

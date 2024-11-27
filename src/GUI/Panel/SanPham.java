@@ -1,7 +1,6 @@
 package GUI.Panel;
 
 import BUS.SanPhamBUS;
-import DAO.KhuVucKhoDAO;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Main;
@@ -48,7 +47,7 @@ public final class SanPham extends JPanel implements ActionListener {
         tableSanPham.setBackground(new Color(0xA1D6E2));
         scrollTableSanPham = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"Mã SP", "Tên sản phẩm", "Số lượng tồn", "Tên tác giả", "Danh mục", "Năm xuất bản", "Nhà xuất bản", "Khu vực sách"};
+        String[] header = new String[]{"Mã SP", "Tên sản phẩm", "Số lượng tồn", "Đơn vị", "Loại", "Tiền xuất"};
         tblModel.setColumnIdentifiers(header);
         tableSanPham.setModel(tblModel);
         scrollTableSanPham.setViewportView(tableSanPham);
@@ -123,11 +122,8 @@ public final class SanPham extends JPanel implements ActionListener {
 
     public void loadDataTalbe(ArrayList<DTO.SanPhamDTO> result) {
         tblModel.setRowCount(0);
-
         for (DTO.SanPhamDTO sp : result) {
-            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), sp.getTENTG(), sp.getDANHMUC(), sp.getNAMXB()
-                , NhaXuatBanDAO.getInstance().selectById(sp.getMNXB() + "").getTennxb()
-                , KhuVucKhoDAO.getInstance().selectById(sp.getMKVS() + " ").getTenkhuvuc()
+            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), sp.getDONVI(), sp.getLOAI(), sp.getTIENX()
             });
         }
     }

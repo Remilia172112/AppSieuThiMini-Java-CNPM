@@ -52,7 +52,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
     JPanel contentCenter, left_top, content_btn, left_bottom;
     DefaultTableModel tblModel, tblModelSP; //table co san 
     ButtonCustom btnAddSp, btnEditSP, btnDelete, btnNhapMKM; //, btnImport
-    InputForm txtMaKM, txtNhanVien, txtMaSp, txtTenSp, txtMaISBN, txtPTG;
+    InputForm txtMaKM, txtMaSp, txtTenSp, txtMaISBN, txtPTG;
     InputDate dateStart, dateEnd;
     JTextField txtTimKiem;
 
@@ -278,13 +278,9 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         right_top.setPreferredSize(new Dimension(300, 360));
         right_top.setOpaque(false);
         txtMaKM = new InputForm("Mã khuyến mãi");
-        txtNhanVien = new InputForm("Nhân viên tạo");
-        txtNhanVien.setText(nvDto.getHOTEN());
-        txtNhanVien.setEditable(false);
         dateStart = new InputDate("Từ ngày");
         dateEnd = new InputDate("Đến ngày");
         right_top.add(txtMaKM);
-        right_top.add(txtNhanVien);
         right_top.add(dateStart);
         right_top.add(dateEnd);
 
@@ -323,7 +319,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
     public void setInfoSanPham(SanPhamDTO sp) { //set info vào inputform khi nhan ben tablesanpham
         this.txtMaSp.setText(Integer.toString(sp.getMSP()));
         this.txtTenSp.setText(sp.getTEN());
-        this.txtMaISBN.setText(sp.getISBN());
+        this.txtMaISBN.setText(sp.getMV());
     }
 
     public void setFormChiTietPhieu(ChiTietMaKhuyenMaiDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
@@ -477,7 +473,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
                 Date time_end_tmp = dateEnd.getDate() != null ? dateEnd.getDate() : calendar.getTime();
                 Timestamp time_start = new Timestamp(time_start_tmp.getTime());
                 Timestamp time_end = new Timestamp(time_end_tmp.getTime());
-                MaKhuyenMaiDTO MKM = new MaKhuyenMaiDTO(txtMaKM.getText(), nvDto.getMNV(), time_start, time_end);
+                MaKhuyenMaiDTO MKM = new MaKhuyenMaiDTO(txtMaKM.getText(), time_start, time_end);
                 boolean result = MaKhuyenMaiBus.add(MKM, chitietMKM);
                 if (result) {
                     JOptionPane.showMessageDialog(this, "Tạo mã thành công !");

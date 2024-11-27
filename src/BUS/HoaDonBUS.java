@@ -186,7 +186,7 @@ public class HoaDonBUS {
     }
 
     public int cancelPhieuNhap(int maphieu) {
-        return phieuXuatDAO.cancelPhieuXuat(maphieu);
+        return phieuXuatDAO.cancelHOADON(maphieu);
     }
 
 }

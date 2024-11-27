@@ -221,7 +221,7 @@ public final class TaoHoaDon extends JPanel {
         txtTenSp.setPreferredSize(new Dimension(100, 90));
         txtMaSp = new InputForm("Mã sản phẩm");
         txtMaSp.setEditable(false);
-        txtMaISBN = new InputForm("Mã ISBN");
+        txtMaISBN = new InputForm("Mã vạch");
         txtMaISBN.setEditable(false);
         txtGiaXuat = new InputForm("Giá xuất");
         PlainDocument dongia = (PlainDocument) txtGiaXuat.getTxtForm().getDocument();
@@ -493,7 +493,7 @@ public final class TaoHoaDon extends JPanel {
         masp = sp.getMSP();
         this.txtMaSp.setText(Integer.toString(sp.getMSP()));
         this.txtTenSp.setText(sp.getTEN());
-        this.txtMaISBN.setText(sp.getISBN());
+        this.txtMaISBN.setText(sp.getMV());
         this.txtGiaXuat.setText(Integer.toString(sp.getTIENX()));
         cbxMaKM.setArr(getMaGiamGiaTable(sp.getMSP()));
         

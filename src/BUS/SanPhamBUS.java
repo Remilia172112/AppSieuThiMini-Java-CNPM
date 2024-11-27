@@ -72,16 +72,6 @@ public class SanPhamBUS {
         return check;
     }
 
-    public ArrayList<SanPhamDTO> getByMakhuvuc(int makv) {
-        ArrayList<SanPhamDTO> result = new ArrayList<>();
-        for (SanPhamDTO i : this.listSP) {
-            if (i.getMKVS() == makv) {
-                result.add(i);
-            }
-        }
-        return result;
-    }
-
     public ArrayList<SanPhamDTO> search(String text, String type) {
         text = text.toLowerCase();
         ArrayList<SanPhamDTO> result = new ArrayList<>();
@@ -107,13 +97,13 @@ public class SanPhamBUS {
                     }
                 }
             }
-            case "ISBN" -> {
+            case "Mã vạch" -> {
                 if("".compareTo(text) == 0) {
                     result = listSP;
                 }
                 for (SanPhamDTO i : this.listSP) {
                     // if("".compareTo(text) == 0) {}
-                    if (i.getISBN().toLowerCase().compareTo(text) == 0) {
+                    if (i.getMV().toLowerCase().compareTo(text) == 0) {
                         result.add(i);
                     }
                 }
@@ -148,13 +138,13 @@ public class SanPhamBUS {
                     }
                 }
             }
-            case "ISBN" -> {
+            case "Mã vạch" -> {
                 if("".compareTo(text) == 0) {
                     result = listSP;
                 }
                 for (SanPhamDTO i : this.listSP) {
                     // if("".compareTo(text) == 0) {}
-                    if (i.getISBN().toLowerCase().compareTo(text) == 0) {
+                    if (i.getMV().toLowerCase().compareTo(text) == 0) {
                         result.add(i);
                     }
                 }
@@ -178,17 +168,17 @@ public class SanPhamBUS {
         return n;
     }
 
-    public boolean checkISBN(String ISBN) {
+    public boolean checkMV(String ISBN) {
         for(SanPhamDTO i : this.listSP) {
-            if(i.getISBN().equals(ISBN)) return false;
+            if(i.getMV().equals(ISBN)) return false;
         }
         System.out.println(ISBN);
         return true;
     }
 
-    public SanPhamDTO getSPbyISBN(String ISBN) {
+    public SanPhamDTO getSPbyMV(String ISBN) {
         for(SanPhamDTO i : this.listSP) {
-            if(i.getISBN().equals(ISBN)) return i;
+            if(i.getMV().equals(ISBN)) return i;
         }
         return null;
     }

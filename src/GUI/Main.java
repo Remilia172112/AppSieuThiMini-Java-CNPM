@@ -25,11 +25,7 @@ public class Main extends JFrame {
         this.setLayout(new BorderLayout(0, 0));
         this.setTitle("Hệ thống quản lý cửa hàng sách");
 
-        if (user != null) {
-            menuTaskbar = new MenuTaskbar(this, user);
-        } else {
-            menuTaskbar = new MenuTaskbar(this);
-        }
+        menuTaskbar = new MenuTaskbar(this, user);
 
         menuTaskbar.setPreferredSize(new Dimension(250, 1400));
 

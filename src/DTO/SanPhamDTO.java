@@ -1,43 +1,31 @@
 package DTO;
 
-import java.util.Objects;
-
 public class SanPhamDTO {
 
     private int MSP;
     private String TEN;
     private String HINHANH;
-    private String DANHMUC;
-    private int NAMXB;
-    private int MNXB;
-    private String TENTG;
-    private int MKVS;
+    private String LOAI;
     private int TIENX;
-    private int TIENN;
     private int SL;
-    private String ISBN;
+    private String DONVI;
+    private String MV;
 
     public SanPhamDTO() {
 
     }
-    
-    public SanPhamDTO(int mSP, String tEN, String hINHANH, String dANHMUC, int nAMXB, int mNXB, String tENTG, int mKVS,
-            int tIENX, int tIENN, int sL, String iSBN) {
+
+    public SanPhamDTO(int mSP, String tEN, String hINHANH, String lOAI, int tIENX, int sL, String dONVI, String mV) {
         MSP = mSP;
         TEN = tEN;
         HINHANH = hINHANH;
-        DANHMUC = dANHMUC;
-        NAMXB = nAMXB;
-        MNXB = mNXB;
-        TENTG = tENTG;
-        MKVS = mKVS;
+        LOAI = lOAI;
         TIENX = tIENX;
-        TIENN = tIENN;
         SL = sL;
-        ISBN = iSBN;
+        DONVI = dONVI;
+        MV = mV;
     }
 
-    
     public int getMSP() {
         return MSP;
     }
@@ -62,44 +50,12 @@ public class SanPhamDTO {
         HINHANH = hINHANH;
     }
 
-    public String getDANHMUC() {
-        return DANHMUC;
+    public String getLOAI() {
+        return LOAI;
     }
 
-    public void setDANHMUC(String dANHMUC) {
-        DANHMUC = dANHMUC;
-    }
-
-    public int getNAMXB() {
-        return NAMXB;
-    }
-
-    public void setNAMXB(int nAMXB) {
-        NAMXB = nAMXB;
-    }
-
-    public int getMNXB() {
-        return MNXB;
-    }
-
-    public void setMNXB(int mNXB) {
-        MNXB = mNXB;
-    }
-
-    public String getTENTG() {
-        return TENTG;
-    }
-
-    public void setTENTG(String tENTG) {
-        TENTG = tENTG;
-    }
-
-    public int getMKVS() {
-        return MKVS;
-    }
-
-    public void setMKVS(int MKVS) {
-        this.MKVS = MKVS;
+    public void setLOAI(String lOAI) {
+        LOAI = lOAI;
     }
 
     public int getTIENX() {
@@ -110,14 +66,6 @@ public class SanPhamDTO {
         TIENX = tIENX;
     }
 
-    public int getTIENN() {
-        return TIENN;
-    }
-
-    public void setTIENN(int tienn) {
-        TIENN = tienn;
-    }
-
     public int getSL() {
         return SL;
     }
@@ -126,82 +74,84 @@ public class SanPhamDTO {
         SL = sL;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public String getDONVI() {
+        return DONVI;
     }
 
-    public void setISBN(String iSBN) {
-        ISBN = iSBN;
+    public void setDONVI(String dONVI) {
+        DONVI = dONVI;
+    }
+
+    public String getMV() {
+        return MV;
+    }
+
+    public void setMV(String mV) {
+        MV = mV;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + this.MSP;
-        hash = 53 * hash + Objects.hashCode(this.TEN);
-        hash = 53 * hash + Objects.hashCode(this.HINHANH);
-        hash = 53 * hash + Objects.hashCode(this.DANHMUC);
-        hash = 53 * hash + this.NAMXB;
-        hash = 53 * hash + this.MNXB;
-        hash = 53 * hash + Objects.hashCode(this.TENTG);
-        hash = 53 * hash + this.MKVS;
-        hash = 53 * hash + this.TIENX;
-        hash = 53 * hash + this.SL;
-        hash = 53 * hash + Objects.hashCode(this.ISBN);
-        return hash;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + MSP;
+        result = prime * result + ((TEN == null) ? 0 : TEN.hashCode());
+        result = prime * result + ((HINHANH == null) ? 0 : HINHANH.hashCode());
+        result = prime * result + ((LOAI == null) ? 0 : LOAI.hashCode());
+        result = prime * result + TIENX;
+        result = prime * result + SL;
+        result = prime * result + ((DONVI == null) ? 0 : DONVI.hashCode());
+        result = prime * result + ((MV == null) ? 0 : MV.hashCode());
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-        final SanPhamDTO other = (SanPhamDTO) obj;
-        if (this.MSP != other.MSP) {
+        SanPhamDTO other = (SanPhamDTO) obj;
+        if (MSP != other.MSP)
             return false;
-        }
-        if (this.NAMXB != other.NAMXB) {
+        if (TEN == null) {
+            if (other.TEN != null)
+                return false;
+        } else if (!TEN.equals(other.TEN))
             return false;
-        }
-        if (this.MNXB != other.MNXB) {
+        if (HINHANH == null) {
+            if (other.HINHANH != null)
+                return false;
+        } else if (!HINHANH.equals(other.HINHANH))
             return false;
-        }
-        if (this.MKVS != other.MKVS) {
+        if (LOAI == null) {
+            if (other.LOAI != null)
+                return false;
+        } else if (!LOAI.equals(other.LOAI))
             return false;
-        }
-        if (this.SL != other.SL) {
+        if (TIENX != other.TIENX)
             return false;
-        }
-        if (this.TIENX != other.TIENX) {
+        if (SL != other.SL)
             return false;
-        }
-        if (this.TIENN != other.TIENN) {
+        if (DONVI == null) {
+            if (other.DONVI != null)
+                return false;
+        } else if (!DONVI.equals(other.DONVI))
             return false;
-        }
-        if (this.ISBN != other.ISBN) {
+        if (MV == null) {
+            if (other.MV != null)
+                return false;
+        } else if (!MV.equals(other.MV))
             return false;
-        }
-        if (!Objects.equals(this.TEN, other.TEN)) {
-            return false;
-        }
-        if (!Objects.equals(this.HINHANH, other.HINHANH)) {
-            return false;
-        }
-        if (!Objects.equals(this.DANHMUC, other.DANHMUC)) {
-            return false;
-        }
-        return Objects.equals(this.TENTG, other.TENTG);
+        return true;
     }
 
     @Override
-    
     public String toString() {
-        return "SanPhamDTO{" + "Ma san pham = " + MSP + ", Ten san pham = " + TEN + ", Hinh anh = " + HINHANH + ", Danh muc = " + DANHMUC + ", Nam xuat ban = " + NAMXB + ", Ma nha xuat ban = " + MNXB  + ", Ten tac gia = " + TENTG + ", Ma khu vuc sach = " + MKVS + ", Tien xuat = " + TIENX + ", Tien nhap = " + TIENN + ", So luong = " + SL + ", ISBN=" + ISBN + ", MKVS=" + MKVS + ", TIENX=" + TIENX + ", ISBN=" + ISBN + '}';
+        return "SanPhamDTO [MSP=" + MSP + ", TEN=" + TEN + ", HINHANH=" + HINHANH + ", LOAI=" + LOAI + ", TIENX="
+                + TIENX + ", SL=" + SL + ", DONVI=" + DONVI + ", MV=" + MV + "]";
     }
+
 }
