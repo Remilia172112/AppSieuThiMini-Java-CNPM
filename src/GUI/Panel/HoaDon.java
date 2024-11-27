@@ -18,6 +18,7 @@ import javax.swing.border.EmptyBorder;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.SelectForm;
 import GUI.Component.TableSorter;
+import GUI.Dialog.BanHang;
 import GUI.Dialog.ChiTietPhieuDialog;
 import helper.Formater;
 import helper.JTableExporter;
@@ -55,7 +56,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
     InputForm moneyMin, moneyMax;
 
     Main m;
-    TaoHoaDon taoPhieuXuat;
+    BanHang banhang;
     TaiKhoanDTO tk;
 
     Color BackgroundColor = new Color(193 ,237 ,220);
@@ -208,8 +209,8 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == mainFunction.btn.get("create")) {
-            taoPhieuXuat = new TaoHoaDon(m, tk, "create");
-            m.setPanel(taoPhieuXuat);
+            banhang = new BanHang(m, tk, "create");
+            m.setPanel(banhang);
         } else if (source == mainFunction.btn.get("detail")) {
             if (getRow() < 0) {
                 JOptionPane.showMessageDialog(null, "Vui lòng chọn phiếu cần xem!");

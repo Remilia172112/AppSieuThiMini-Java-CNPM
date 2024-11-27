@@ -3,7 +3,6 @@ package GUI.Dialog;
 import DAO.KhachHangDAO;
 import DTO.KhachHangDTO;
 import GUI.Component.ButtonCustom;
-import GUI.Panel.TaoHoaDon;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -30,16 +29,16 @@ import javax.swing.table.DefaultTableModel;
 
 public class ListKhachHang extends JDialog implements MouseListener {
 
-    private TaoHoaDon taoPhieuXuat;
+    private BanHang banhang;
     private JTable tableKhachHang;
     private JScrollPane scrollTableSanPham;
     private DefaultTableModel tblModel;
     private ArrayList<KhachHangDTO> listKh = KhachHangDAO.getInstance().selectAll();
     DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-    
-    public ListKhachHang(TaoHoaDon taoPhieuXuat, JFrame owner, String title, boolean modal){
+
+    public ListKhachHang(BanHang banhang, JFrame owner, String title, boolean modal){
         super(owner, title, modal);
-        this.taoPhieuXuat=taoPhieuXuat;
+        this.banhang = banhang;
         init();
         loadDataTalbe(search(""));
         this.setLocationRelativeTo(null);
@@ -73,7 +72,7 @@ public class ListKhachHang extends JDialog implements MouseListener {
                     JOptionPane.showConfirmDialog(null, 
                 "Vui lòng chọn khách hàng!:)", "Thông báo", JOptionPane.DEFAULT_OPTION);
                 } else{
-                    taoPhieuXuat.setKhachHang(listKh.get(getRow()).getMKH());
+                    banhang.setKhachHang(listKh.get(getRow()).getMKH());
                     dispose();
                 }
             }

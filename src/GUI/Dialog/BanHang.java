@@ -1,21 +1,22 @@
 package GUI.Dialog;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.stream.Stream;
 import java.awt.*;
-import javax.swing.*;
-
+import java.awt.event.MouseListener;
+import java.sql.Timestamp;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.sql.Timestamp;
 
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -25,133 +26,144 @@ import javax.swing.text.PlainDocument;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 
-
-import BUS.NhaCungCapBUS;
-import BUS.PhieuNhapBUS;
+import BUS.KhachHangBUS;
+import BUS.MaKhuyenMaiBUS;
+import BUS.HoaDonBUS;
 import BUS.SanPhamBUS;
-import DTO.ChiTietPhieuNhapDTO;
+import DAO.NhanVienDAO;
+import DAO.HoaDonDAO;
+import DTO.ChiTietPhieuDTO;
+import DTO.KhachHangDTO;
+import DTO.MaKhuyenMaiDTO;
 import DTO.NhanVienDTO;
-import DTO.PhieuNhapDTO;
+import DTO.HoaDonDTO;
 import DTO.SanPhamDTO;
+import DTO.TaiKhoanDTO;
 import GUI.Main;
-import GUI.Panel.PhieuNhap;
+import GUI.Panel.HoaDon;
 import GUI.Component.ButtonCustom;
 import GUI.Component.InputForm;
+import GUI.Component.Notification;
 import GUI.Component.NumericDocumentFilter;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.SelectForm;
+import GUI.Dialog.ListKhachHang;
 import helper.Formater;
-import helper.Validation;
 
-
-public final class BanHang extends JPanel implements ItemListener, ActionListener {
-    
-    PanelBorderRadius left, right;
-    JTable tablePhieuNhap, tableSanPham; //tablePhieuNhap ở left_bottom chứa sp của phiếu, tableSanPham chứa sp đang bán
+public final class BanHang extends JPanel {
+    JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this); //gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
+    // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của listkhachhang
+    PanelBorderRadius right, left;
+    JPanel  contentCenter, left_top, content_btn, left_bottom; //là cái main cữ
+    JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
-    JPanel contentCenter, left_top, content_btn, left_bottom;
     DefaultTableModel tblModel, tblModelSP; //table co san 
-    ButtonCustom btnAddSp, btnEditSP, btnDelete, btnNhapHang; //, btnImport
-    InputForm txtMaphieu, txtNhanVien, txtMaSp, txtTenSp, txtDongia, txtMaISBN, txtSoLuongSPnhap ;
-    SelectForm cbxNhaCungCap; //, cbxDanhMuc
+    ButtonCustom btnAddSp, btnEditSP, btnDelete, btnNhapHang;
+    InputForm txtMaphieu, txtNhanVien, txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtMaGiamGia, txtGiaGiam;
+    SelectForm cbxMaKM; 
     JTextField txtTimKiem;
-    JLabel  lbltongtien;
-
-    Main m;
     Color BackgroundColor = new Color(193 ,237 ,220);
+    
+    int sum; //do ctpxuất ko có sẵn tính tiền 
+    int maphieu;
+    int masp;
+    int manv;
+    int makh = -1;
+    String type;
 
+    // ArrayList<SanPhamDTO> ctpb;
     SanPhamBUS spBUS = new SanPhamBUS();
-    NhaCungCapBUS nccBus = new NhaCungCapBUS();
-    PhieuNhapBUS phieunhapBus = new PhieuNhapBUS();
-    NhanVienDTO nvDto;
+    MaKhuyenMaiBUS mkmBUS = new MaKhuyenMaiBUS();
+    HoaDonBUS phieuXuatBUS = new HoaDonBUS();
+    // SanPhamBUS chiTietSanPhamBUS = new SanPhamBUS();
+    KhachHangBUS khachHangBUS = new KhachHangBUS();
+    ArrayList<ChiTietPhieuDTO> chitietphieu = new ArrayList<>();
+    ArrayList<DTO.SanPhamDTO> listSP = spBUS.getAll();
+    ArrayList<DTO.ChiTietMaKhuyenMaiDTO> listctMKM = new ArrayList<>();
 
-    ArrayList<SanPhamDTO> listSP = spBUS.getAll(); // list ben kho 
-    // ArrayList<SanPhamDTO> listSP_tmp = new ArrayList<>(); 
-    ArrayList<ChiTietPhieuNhapDTO> chitietphieu;
-    HashMap<Integer, ArrayList<SanPhamDTO>> chitietsanpham = new HashMap<>();
-    int maphieunhap;
-    int rowPhieuSelect = -1;
+    TaiKhoanDTO tk;
+    private JLabel lbltongtien;
+    private JTextField txtKh;
+    private Main mainChinh;
+    // private ButtonCustom btnQuayLai; //chua use
+    private InputForm txtGiaXuat;
 
-    public BanHang(NhanVienDTO nv, String type, Main m ){
-        this.nvDto = nv;
-        this.m = m;
-        maphieunhap = phieunhapBus.getMPMAX() + 1;
-        System.out.println(maphieunhap);
-        chitietphieu = new ArrayList<>();
+    public BanHang(Main mainChinh, TaiKhoanDTO tk, String type) {
+        this.mainChinh = mainChinh;
+        this.tk = tk;
+        this.type = type;
+        maphieu = phieuXuatBUS.getMPMAX() + 1;
         initComponent(type);
         loadDataTalbeSanPham(listSP);
     }
 
-    // public void initPadding(){
-    // }
-
-    public void initComponent(String type){
+    private void initComponent(String type) {
         this.setBackground(BackgroundColor);
         this.setLayout(new BorderLayout(0, 0));
         this.setOpaque(true);
-        
-        //Phieu Nhap
-        tablePhieuNhap = new JTable();
-        tablePhieuNhap.setBackground(new Color(0xA1D6E2));
+
+        // Phiếu xuất
+        tablePhieuXuat = new JTable();
         scrollTablePhieuNhap = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"STT", "Mã SP", "Tên sản phẩm", "Đơn giá", "Số lượng"};
-        tblModel.setColumnIdentifiers(header); //thiết lập tiêu đề cột, nhận một tham số là một mảng các chuỗi
-        tablePhieuNhap.setModel(tblModel);
-        scrollTablePhieuNhap.setViewportView(tablePhieuNhap);//thiết lập thành phần hiển thị cho viewport. Thành phần hiển thị là một component có thể cuộn (scrollable)
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer(); //phương thức để định dạng văn bản, màu sắc, căn chỉnh và các thuộc tính hiển thị khác cho các ô trong bản
+        tblModel.setColumnIdentifiers(header);
+        tablePhieuXuat.setModel(tblModel);
+        scrollTablePhieuNhap.setViewportView(tablePhieuXuat);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        TableColumnModel columnModel = tablePhieuNhap.getColumnModel();
+        TableColumnModel columnModel = tablePhieuXuat.getColumnModel();
         for (int i = 0; i < 5; i++) {
             if (i != 2) {
                 columnModel.getColumn(i).setCellRenderer(centerRenderer);
             }
         }
-        tablePhieuNhap.getColumnModel().getColumn(2).setPreferredWidth(300);
-        tablePhieuNhap.setDefaultEditor(Object.class, null);
-        tablePhieuNhap.setFocusable(false);
-        scrollTablePhieuNhap.setViewportView(tablePhieuNhap);
+        tablePhieuXuat.getColumnModel().getColumn(2).setPreferredWidth(300);
+        tablePhieuXuat.setFocusable(false);
+        tablePhieuXuat.setDefaultEditor(Object.class, null);
+        scrollTablePhieuNhap.setViewportView(tablePhieuXuat);
 
-        tablePhieuNhap.addMouseListener((MouseListener) new MouseAdapter() {
+        tablePhieuXuat.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) {
-                int index = tablePhieuNhap.getSelectedRow();
+            public void mouseClicked(MouseEvent e) {
+                int index = tablePhieuXuat.getSelectedRow();
                 if (index != -1) {
                     tableSanPham.setSelectionMode(index);
                     setFormChiTietPhieu(chitietphieu.get(index));
-                    rowPhieuSelect = index;
+                    // ChiTietPhieuDTO ctphieu = chitietphieu.get(index);
+                    // SanPhamDTO ctspSell = spBUS.getByMaSP(ctphieu.getMSP());
+                    // setInfoSanPham(ctspSell);
                     actionbtn("update");
                 }
             }
         });
 
-        //Table san pham
+        // Table sản phẩm
         tableSanPham = new JTable();
+        tableSanPham.setBackground(new Color(0xA1D6E2));
         scrollTableSanPham = new JScrollPane();
         tblModelSP = new DefaultTableModel();
-        String[] headerSP = new String[]{"Mã SP", "Tên sản phẩm", "SL tồn"};
+        String[] headerSP = new String[]{"Mã SP", "Tên sản phẩm", "Số lượng tồn"};
         tblModelSP.setColumnIdentifiers(headerSP);
         tableSanPham.setModel(tblModelSP);
         scrollTableSanPham.setViewportView(tableSanPham);
         tableSanPham.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         tableSanPham.getColumnModel().getColumn(1).setPreferredWidth(300);
-        tableSanPham.setDefaultEditor(Object.class, null);
+        tableSanPham.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tableSanPham.setFocusable(false);
         scrollTableSanPham.setViewportView(tableSanPham);
 
-        tableSanPham.addMouseListener(new MouseAdapter() {
+        tableSanPham.addMouseListener((MouseListener) new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 int index = tableSanPham.getSelectedRow();
                 if (index != -1) {
                     resetForm();
                     setInfoSanPham(listSP.get(index));
-                    ChiTietPhieuNhapDTO ctp = checkTonTai();
-                    if (ctp == null) {
+                    if (!checkTonTai()) {
                         actionbtn("add");
                     } else {
                         actionbtn("update");
-                        setFormChiTietPhieu(ctp);
                     }
                 }
             }
@@ -159,7 +171,7 @@ public final class BanHang extends JPanel implements ItemListener, ActionListene
 
         //content_CENTER (chứa hết tất cả left+right) 
         contentCenter = new JPanel();
-        contentCenter.setPreferredSize(new Dimension(1200, 600));
+        contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(BackgroundColor);
         contentCenter.setLayout(new BorderLayout(5, 5));
         this.add(contentCenter, BorderLayout.CENTER);
@@ -169,13 +181,12 @@ public final class BanHang extends JPanel implements ItemListener, ActionListene
         left.setLayout(new BorderLayout(0, 5));
         left.setBackground(Color.white);
 
-        
         left_top = new JPanel(); // Chứa tất cả phần ở phía trái trên cùng, chứa {content_top, content_btn}
         left_top.setLayout(new BorderLayout());
         left_top.setBorder(new EmptyBorder(5, 5, 10, 10));
         left_top.setOpaque(false);
 
-        JPanel content_top, content_left, content_right, content_right_top; //content_top {content_left + content_right}
+        JPanel content_top, content_left, content_right, content_right_top; //content_top {content_left + content_right} -> trong left_top
         content_top = new JPanel(new GridLayout(1, 2, 5, 5));
         content_top.setOpaque(false);
 
@@ -202,42 +213,64 @@ public final class BanHang extends JPanel implements ItemListener, ActionListene
 
         content_right = new JPanel(new BorderLayout(5, 5));
         content_right.setOpaque(false);
+        // content_right.setBackground(Color.WHITE);
 
         content_right_top = new JPanel(new BorderLayout());
-        content_right_top.setPreferredSize(new Dimension(100, 250));
+        content_right_top.setPreferredSize(new Dimension(100, 335));
         txtTenSp = new InputForm("Tên sản phẩm");
         txtTenSp.setEditable(false);
         txtTenSp.setPreferredSize(new Dimension(100, 90));
         txtMaSp = new InputForm("Mã sản phẩm");
         txtMaSp.setEditable(false);
-        txtMaISBN = new InputForm("Mã ISBN");
+        txtMaISBN = new InputForm("Mã vạch");
         txtMaISBN.setEditable(false);
-        // cái này dùng để nhập isbn dô khung txtMaISBN có thể search đc sp, nhưng disable ko dùng ròi
-        txtMaISBN.getTxtForm().addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                ArrayList<SanPhamDTO> rs = spBUS.search(txtMaISBN.getText(), "ISBN");
-                loadDataTalbeSanPham(rs);
-            //thêm load lại inputform
-            }
-        });
-
-        txtDongia = new InputForm("Giá nhập");
-        PlainDocument dongia = (PlainDocument) txtDongia.getTxtForm().getDocument();
+        txtGiaXuat = new InputForm("Giá xuất");
+        PlainDocument dongia = (PlainDocument) txtGiaXuat.getTxtForm().getDocument();
         dongia.setDocumentFilter((new NumericDocumentFilter()));   //chỉ cho nhập số
-        txtSoLuongSPnhap = new InputForm("Số lượng");
-        PlainDocument soluong = (PlainDocument) txtSoLuongSPnhap.getTxtForm().getDocument();
+        txtSoLuongSPxuat = new InputForm("Số lượng");
+        PlainDocument soluong = (PlainDocument) txtSoLuongSPxuat.getTxtForm().getDocument();
         soluong.setDocumentFilter((new NumericDocumentFilter())); //chỉ cho nhập số
+        // txtMaGiamGia = new InputForm("Mã giảm giá");
+        String[] maGiamGia = {"Chọn"};
+        cbxMaKM = new SelectForm("Mã giảm giá", maGiamGia);
+        txtGiaGiam = new InputForm("Giá giảm");
+        txtGiaGiam.setText(" ");
+        txtGiaGiam.setEditable(false);
+        cbxMaKM.cbb.addItemListener((ItemListener) new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                int index = cbxMaKM.cbb.getSelectedIndex();
+                if(index != 0)
+                {
+                    double giaxuat = Integer.parseInt(txtGiaXuat.getText());
+                    double phantramgiam = (double) listctMKM.get(index - 1).getPTG();
+                    int giagiam = (int) (giaxuat * (1 - phantramgiam/100));
+                    txtGiaGiam.setText(Integer.toString(giagiam));
+                }
+            }
+            
+        });
+        // txtMaGiamGia.getTxtForm().addKeyListener(new KeyAdapter() {
+        //         @Override
+        //         public void keyReleased(java.awt.event.KeyEvent evt) {
+        //             ArrayList<MaKhuyenMaiDTO> rs = mkmBUS.search(txtMaGiamGia.getText());
+        //     // hhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+        //         }
+        //     });
 
+            
         JPanel merge1 = new JPanel(new BorderLayout());
         merge1.setPreferredSize(new Dimension(100, 50));
         merge1.add(txtMaSp, BorderLayout.WEST);
         merge1.add(txtMaISBN, BorderLayout.CENTER);
 
-        JPanel merge2 = new JPanel(new GridLayout());
-        merge2.setPreferredSize(new Dimension(100, 80));
-        merge2.add(txtDongia);
-        merge2.add(txtSoLuongSPnhap);
+        JPanel merge2 = new JPanel(new GridLayout(2,2));
+        merge2.setPreferredSize(new Dimension(100, 160));
+        merge2.add(txtGiaXuat);
+        merge2.add(txtSoLuongSPxuat);
+        // merge2.add(txtMaGiamGia);
+        merge2.add(cbxMaKM);
+        merge2.add(txtGiaGiam);
 
         content_right_top.add(txtTenSp, BorderLayout.NORTH);
         content_right_top.add(merge1, BorderLayout.CENTER);
@@ -257,20 +290,63 @@ public final class BanHang extends JPanel implements ItemListener, ActionListene
         btnAddSp = new ButtonCustom("Thêm sản phẩm", "success", 14);
         btnEditSP = new ButtonCustom("Sửa sản phẩm", "warning", 14);
         btnDelete = new ButtonCustom("Xoá sản phẩm", "danger", 14);
-            // btnImport = new ButtonCustom("Nhập Excel", "excel", 14);
-        btnAddSp.addActionListener(this);
-        btnEditSP.addActionListener(this);
-        btnDelete.addActionListener(this);
-            // btnImport.addActionListener(this);
+
+        btnAddSp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (checkInfo()) {
+                    addCtPhieu();
+                    //thông báo dạng popup dùng của Notification trong Compoment của Gui
+                    Notification thongbaoNoi = new Notification(mainChinh,  Notification.Type.SUCCESS, Notification.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
+                    thongbaoNoi.showNotification();
+                    loadDataTableChiTietPhieu(chitietphieu);
+                    actionbtn("update");
+                }
+
+            }
+            
+        });
+
+        btnEditSP.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = tablePhieuXuat.getSelectedRow();
+                if (index < 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần chỉnh");
+                } else {
+                    chitietphieu.get(index).setSL(Integer.parseInt(txtSoLuongSPxuat.getText()));
+                    if(!txtGiaGiam.getText().equals(" ")) 
+                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaGiam.getText()));
+                    else
+                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaXuat.getText()));                    
+                    loadDataTableChiTietPhieu(chitietphieu);
+                }
+            }
+        });
+
+        btnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = tablePhieuXuat.getSelectedRow();
+                if (index < 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần xóa");
+                } else {
+                    chitietphieu.remove(index);
+                    actionbtn("add");
+                    loadDataTableChiTietPhieu(chitietphieu);
+                    resetForm();
+                }
+            }
+        });
+
         btnEditSP.setEnabled(false);
         btnDelete.setEnabled(false);
         content_btn.add(btnAddSp);
-            // content_btn.add(btnImport);
         content_btn.add(btnEditSP);
         content_btn.add(btnDelete);
         left_top.add(content_btn, BorderLayout.SOUTH);
 
-        //left_bottom này là danh sách nhập ở left phía nam
+        //left_bottom này là danh sách xuất ở left phía nam, chứa tablelistnhap
         left_bottom = new JPanel();
         left_bottom.setOpaque(false);
         left_bottom.setPreferredSize(new Dimension(0, 250));
@@ -288,23 +364,48 @@ public final class BanHang extends JPanel implements ItemListener, ActionListene
         right.setLayout(new BorderLayout());
 
         JPanel right_top, right_center, right_bottom, pn_tongtien;
-        right_top = new JPanel(new GridLayout(4, 1, 0, 0));
-        right_top.setPreferredSize(new Dimension(300, 360));
-        right_top.setOpaque(false);
-        txtMaphieu = new InputForm("Mã phiếu nhập");
-        txtMaphieu.setText("PN" + maphieunhap);
+        right_top = new JPanel(new GridLayout(2, 1, 0, 0));
+        right_top.setPreferredSize(new Dimension(300, 180));
+        txtMaphieu = new InputForm("Mã phiếu xuất");
         txtMaphieu.setEditable(false);
-        txtNhanVien = new InputForm("Nhân viên nhập");
-        txtNhanVien.setText(nvDto.getHOTEN());
+        txtNhanVien = new InputForm("Nhân viên xuất");
         txtNhanVien.setEditable(false);
-        cbxNhaCungCap = new SelectForm("Nhà cung cấp", nccBus.getArrTenNhaCungCap());
+        maphieu = HoaDonDAO.getInstance().getAutoIncrement();
+        manv = tk.getMNV();
+        txtMaphieu.setText("PX" + maphieu);
+        NhanVienDTO nhanvien = NhanVienDAO.getInstance().selectById(tk.getMNV() + "");
+        txtNhanVien.setText(nhanvien.getHOTEN());
         right_top.add(txtMaphieu);
         right_top.add(txtNhanVien);
-        right_top.add(cbxNhaCungCap);
 
-        right_center = new JPanel();
-        right_center.setPreferredSize(new Dimension(100, 100));
+        right_center = new JPanel(new BorderLayout());
         right_center.setOpaque(false);
+
+        JPanel khachJPanel = new JPanel(new BorderLayout());
+        khachJPanel.setPreferredSize(new Dimension(0, 40));
+        khachJPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+        khachJPanel.setOpaque(false);
+        JPanel kJPanelLeft = new JPanel(new GridLayout(1, 1));
+        kJPanelLeft.setOpaque(false);
+        kJPanelLeft.setPreferredSize(new Dimension(40, 0));
+        ButtonCustom btnKh = new ButtonCustom("Chọn khách hàng", "success", 14);
+        kJPanelLeft.add(btnKh);
+        btnKh.addActionListener((ActionEvent e) -> {
+            new ListKhachHang(BanHang.this, owner, "Chọn khách hàng", true);
+        });
+
+        txtKh = new JTextField("");
+        txtKh.setEditable(false);
+        khachJPanel.add(kJPanelLeft, BorderLayout.EAST);
+        khachJPanel.add(txtKh, BorderLayout.CENTER);
+        JPanel khPanel = new JPanel(new GridLayout(2, 1, 5, 0));
+        khPanel.setBackground(Color.WHITE);
+        khPanel.setPreferredSize(new Dimension(0, 80));
+        JLabel khachKhangJLabel = new JLabel("Khách hàng");
+        khachKhangJLabel.setBorder(new EmptyBorder(0, 10, 0, 10));
+        khPanel.add(khachKhangJLabel);
+        khPanel.add(khachJPanel);
+        right_center.add(khPanel, BorderLayout.NORTH);
 
         right_bottom = new JPanel(new GridLayout(2, 1));
         right_bottom.setPreferredSize(new Dimension(300, 100));
@@ -322,136 +423,152 @@ public final class BanHang extends JPanel implements ItemListener, ActionListene
         pn_tongtien.add(lbltongtien);
         right_bottom.add(pn_tongtien);
 
-        btnNhapHang = new ButtonCustom("Nhập hàng", "excel", 14);
-        btnNhapHang.addActionListener(this);
+        btnNhapHang = new ButtonCustom("Xuất hàng", "excel", 14);
+        btnNhapHang.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                eventBtnNhapHang();
+            }
+        });;
         right_bottom.add(btnNhapHang);
 
         right.add(right_top, BorderLayout.NORTH);
-        right.add(right_center, BorderLayout.CENTER);// để trống
+        right.add(right_center, BorderLayout.CENTER);
         right.add(right_bottom, BorderLayout.SOUTH);
 
         contentCenter.add(left, BorderLayout.CENTER);
         contentCenter.add(right, BorderLayout.EAST);
+        // actionbtn("add");
     }
-    /********************************************************************************************************************************************************/
-    public void actionbtn(String type) { //ẩn hiện button
+
+    public void actionbtn(String type) {
         boolean val_1 = type.equals("add");
         boolean val_2 = type.equals("update");
         btnAddSp.setEnabled(val_1);
-        // btnImport.setEnabled(val_1);
         btnEditSP.setEnabled(val_2);
         btnDelete.setEnabled(val_2);
         content_btn.revalidate();
         content_btn.repaint();
     }
+    public void resetForm() {
+        this.txtTenSp.setText("");
+        this.txtMaSp.setText("");
+        this.txtMaISBN.setText("");
+        this.txtGiaXuat.setText("");
+        this.txtSoLuongSPxuat.setText("");
+        // this.txtMaGiamGia.setText("");
+        this.txtGiaGiam.setText(" ");
+    }
 
-    public void setInfoSanPham(SanPhamDTO sp) { //set info vào inputform khi nhan ben tablesanpham
+    public String[] getMaGiamGiaTable(int masp) {
+        listctMKM = mkmBUS.Getctmkm(masp);
+        int size = listctMKM.size();
+        ArrayList<String> arr = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            if(!validateSelectDate(listctMKM.get(i))) arr.add(listctMKM.get(i).getMKM());
+        }
+        String[] tmp = new String[arr.size()];
+        for (int i = 0; i < tmp.length; i++) tmp[i] = arr.get(i);
+        tmp = Stream.concat(Stream.of("Chọn"), Arrays.stream(tmp)).toArray(String[]::new);
+        return tmp;
+    }
+
+    public boolean validateSelectDate(DTO.ChiTietMaKhuyenMaiDTO tmp) {
+        MaKhuyenMaiDTO a = mkmBUS.selectMkm(tmp.getMKM());
+        Date time_start = a.getTGBD();
+        Date time_end = a.getTGKT();
+        Date current_date = new Date();
+        if (time_start != null && time_start.after(current_date)) {
+            return false;
+        }
+        if (time_end != null && time_end.after(current_date)) {
+            return false;
+        }
+        if (time_start != null && time_end != null && time_start.after(time_end)) {
+            return false;
+        }
+        return true;
+    }
+
+    public void setInfoSanPham(SanPhamDTO sp) {
+        masp = sp.getMSP();
         this.txtMaSp.setText(Integer.toString(sp.getMSP()));
         this.txtTenSp.setText(sp.getTEN());
-        // ArrayList<SanPhamDTO> spdto = spBUS.getAll();;
-        // cbxDanhMuc.setArr(getThongTinSach(sp.getMSP()));
         this.txtMaISBN.setText(sp.getMV());
-        this.txtDongia.setText(Integer.toString(sp.getTIENX()*(90/100)));
+        this.txtGiaXuat.setText(Integer.toString(sp.getTIENX()));
+        cbxMaKM.setArr(getMaGiamGiaTable(sp.getMSP()));
+        
     }
 
-    // public ArrayList<SanPhamDTO> getChiTietSanPham() {
-    //     // int ctsp = listSP_tmp.get(.getSelectedIndex()).getMSP();
-    //     ArrayList<SanPhamDTO> result = new ArrayList<>();
+    
 
-    //     long isbn = Long.parseLong(txtMaISBN.getText());
-    //     int soluong = Integer.parseInt(txtSoLuongSPnhap.getText());
-    //     for (long i = isbn; i < isbn + soluong; i++) {
-    //         result.add(new SanPhamDTO(Long.toString(i), phienbansp, maphieunhap, 0, 1));
-    //     }
-    //     return result;
-    // }
-
-    public void setFormChiTietPhieu(ChiTietPhieuNhapDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
+    public void setFormChiTietPhieu(ChiTietPhieuDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
         SanPhamDTO ctsp = spBUS.getByMaSP(phieu.getMSP());
-
+        // ChiTietMaKhuyenMaiDTO ctmkm = mkmBUS.findCT(listctMKM, ctsp.getMSP());
         this.txtMaSp.setText(Integer.toString(ctsp.getMSP()));
         this.txtTenSp.setText(spBUS.getByMaSP(ctsp.getMSP()).getTEN());
-        // this.cbxDanhMuc.setArr(getThongTinSach(pb.getDANHMUC()));
-        // this.cbxDanhMuc.setSelectedIndex(spBUS.getIndexByMaPhienBan(spdto, phieu.getMaphienbansp()));
-        this.txtDongia.setText(Integer.toString(phieu.getTIEN()));
-        this.txtSoLuongSPnhap.setText(Integer.toString(phieu.getSL()));
-    }
-    
-    public ChiTietPhieuNhapDTO getInfoChiTietPhieu() {
-        int masp = Integer.parseInt(txtMaSp.getText());
-        int gianhap = Integer.parseInt(txtDongia.getText());
-        // ArrayList<SanPhamDTO> ctSP = getChiTietSanPham();
-        // int soluong = ctSP.size();
-        // chitietsanpham.put(masp, getChiTietSanPham());
-        int soluong = Integer.parseInt(txtSoLuongSPnhap.getText());
-        
-        ChiTietPhieuNhapDTO ctphieu = new ChiTietPhieuNhapDTO(maphieunhap, masp, soluong, gianhap, 1);
-        return ctphieu;
+        this.txtGiaXuat.setText(Integer.toString(phieu.getTIEN()));
+        this.txtSoLuongSPxuat.setText(Integer.toString(phieu.getSL()));
+        cbxMaKM.setArr(getMaGiamGiaTable(ctsp.getMSP()));
     }
 
-
-    public void loadDataTalbeSanPham(ArrayList<SanPhamDTO> result) {
+    public void loadDataTalbeSanPham(ArrayList<DTO.SanPhamDTO> result) {
         tblModelSP.setRowCount(0);
         for (SanPhamDTO sp : result) {
             tblModelSP.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL()});
         }
     }
 
-    public void loadDataTableChiTietPhieu(ArrayList<ChiTietPhieuNhapDTO> ctPhieu) {
+    public void loadDataTableChiTietPhieu(ArrayList<ChiTietPhieuDTO> ctPhieu) {
         tblModel.setRowCount(0);
         int size = ctPhieu.size();
+        sum = 0;
         for (int i = 0; i < size; i++) {
-            SanPhamDTO pb = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
+            SanPhamDTO phienban = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
+            sum += ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL();
             tblModel.addRow(new Object[]{
-                i + 1, pb.getMSP(), spBUS.getByMaSP(pb.getMSP()).getTEN(), 
+                i + 1, phienban.getMSP(), spBUS.getByMaSP(phienban.getMSP()).getTEN(), 
                 Formater.FormatVND(ctPhieu.get(i).getTIEN()), ctPhieu.get(i).getSL()
             });
         }
-        lbltongtien.setText(Formater.FormatVND(phieunhapBus.getTIEN(ctPhieu)));
+        lbltongtien.setText(Formater.FormatVND(sum));
     }
 
-    public boolean validateNhap() {
-        int phuongthuc = 0;
-        if (Validation.isEmpty(txtMaSp.getText())) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm", "Chọn sản phẩm", JOptionPane.WARNING_MESSAGE);
-            return false;
-        } else if (Validation.isEmpty(txtDongia.getText())) {
-            JOptionPane.showMessageDialog(this, "Giá nhập không được để rỗng !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-            return false;
-        } else if (phuongthuc == 0) {
-            if (Validation.isEmpty(txtMaISBN.getText()) || !Validation.isNumber(txtMaISBN.getText()) || txtMaISBN.getText().length() != 13) {
-                JOptionPane.showMessageDialog(this, "Mã isbn bắt đầu không được để rỗng và phải là 13 ký tự số !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-            if (Validation.isEmpty(txtSoLuongSPnhap.getText()) || !Validation.isNumber(txtSoLuongSPnhap.getText())) {
-                JOptionPane.showMessageDialog(this, "Số lượng không được để rỗng và phải là số!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        } 
     
-        return true;
-    }
 
-
-    public void resetForm() {
-        this.txtMaSp.setText("");
-        this.txtTenSp.setText("");
-        // String[] arr = {"Chọn danh muc"};
-        // this.cbxDanhMuc.setArr(arr);
-        this.txtDongia.setText("");
-        this.txtSoLuongSPnhap.setText("");
-        this.txtMaISBN.setText("");
-    }
-
-    public ChiTietPhieuNhapDTO checkTonTai() {
-        ChiTietPhieuNhapDTO p = phieunhapBus.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText())); 
+    public boolean checkTonTai() {
+        ChiTietPhieuDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText())); 
             //kiểm tra coi masp này có trong chitietphieu này chưa 
-        return p;
+        
+        return p != null;
+    }
+
+    public boolean checkInfo() {
+        boolean check = true;
+        int index = tableSanPham.getSelectedRow();
+        if (txtMaSp.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm","Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } else if (txtGiaXuat.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Giá nhập không được để rỗng !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } else if (txtSoLuongSPxuat.getText().equals("") || Integer.parseInt(txtSoLuongSPxuat.getText()) > listSP.get(index).getSL()) {
+            JOptionPane.showMessageDialog(null, "Số lượng không được để rỗng và không lớn hơn đang có!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } 
+        return check;
     }
 
     public void addCtPhieu() { // them sp vao chitietphieu
-        ChiTietPhieuNhapDTO ctphieu = getInfoChiTietPhieu();
-        ChiTietPhieuNhapDTO p = phieunhapBus.findCT(chitietphieu, ctphieu.getMSP());
+        int masp = Integer.parseInt(txtMaSp.getText());
+        int giaxuat;
+        if(!txtGiaGiam.getText().equals(" ")) 
+            giaxuat = Integer.parseInt(txtGiaGiam.getText());
+        else
+            giaxuat = Integer.parseInt(txtGiaXuat.getText());
+        int soluong = Integer.parseInt(txtSoLuongSPxuat.getText());
+        ChiTietPhieuDTO ctphieu = new ChiTietPhieuDTO(maphieu, masp, soluong, giaxuat);
+        ChiTietPhieuDTO p = phieuXuatBUS.findCT(chitietphieu, ctphieu.getMSP());
         if (p == null) {
             chitietphieu.add(ctphieu);
             loadDataTableChiTietPhieu(chitietphieu);
@@ -464,62 +581,33 @@ public final class BanHang extends JPanel implements ItemListener, ActionListene
         }
     }
 
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'itemStateChanged'");
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-        // throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
-
-        Object source = e.getSource();
-        if (source == btnAddSp && validateNhap()) {
-            addCtPhieu();
-            
-        } else if (source == btnDelete) {
-            int index = tablePhieuNhap.getSelectedRow();
-            chitietphieu.remove(index);
-            actionbtn("add");
-            loadDataTableChiTietPhieu(chitietphieu);
-            resetForm();
-        } else if (source == btnEditSP) {
-            chitietphieu.get(rowPhieuSelect).setSL(Integer.parseInt(txtSoLuongSPnhap.getText()));
-            chitietphieu.get(rowPhieuSelect).setTIEN(Integer.parseInt(txtDongia.getText()));
-            loadDataTableChiTietPhieu(chitietphieu);
-        } else if (source == btnNhapHang) {
-            eventBtnNhapHang();
-        } 
-    }
-    
     public void eventBtnNhapHang() {
         if (chitietphieu.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu !", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+        } else if (makh == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else {
-            int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn tạo phiếu nhập !", "Xác nhận tạo phiếu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn tạo phiếu xuất !", "Xác nhận tạo phiếu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
             if (input == 0) {
-                int mancc = nccBus.getByIndex(cbxNhaCungCap.getSelectedIndex()).getMancc();
-                long now = System.currentTimeMillis();
-                Timestamp currenTime = new Timestamp(now);
-                PhieuNhapDTO pn = new PhieuNhapDTO(mancc, maphieunhap, nvDto.getMNV(), currenTime, phieunhapBus.getTIEN(chitietphieu), 1);
-                boolean result = phieunhapBus.add(pn, chitietphieu, chitietsanpham);
-                if (result) {
-                    JOptionPane.showMessageDialog(this, "Nhập hàng thành công !");
-                    PhieuNhap pnlPhieu = new PhieuNhap(m, nvDto);
-                    m.setPanel(pnlPhieu);
+                if (!phieuXuatBUS.checkSLPx(chitietphieu)) {
+                    JOptionPane.showMessageDialog(null, "Không đủ số lượng để tạo phiếu!");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Nhập hàng không thành công !", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+                    long now = System.currentTimeMillis();
+                    Timestamp currenTime = new Timestamp(now);
+                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum, 1);
+                    phieuXuatBUS.insert(phieuXuat, chitietphieu); //update số lượng trong kho
+                    /// gọi BUS, BUS gọi DAO, DAO chỉnh trong sql 
+                    // SanPhamBUS.updateXuat(chitietsanpham); 
+                    JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
+                    mainChinh.setPanel(new HoaDon(mainChinh, tk));
                 }
             }
         }
     }
+
+    public void setKhachHang(int index) {
+        makh = index;
+        KhachHangDTO khachhang = khachHangBUS.selectKh(makh);
+        txtKh.setText(khachhang.getHOTEN());
+    }
 }
-
-
-/*
-getInfoChiTietPhieu
-getChiTietSanPham
-
-*/
