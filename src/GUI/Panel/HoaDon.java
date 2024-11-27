@@ -94,7 +94,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         String[] action = {"create", "detail", "cancel", "export"};
-        mainFunction = new MainFunction(m.user.getMNQ(), "xuathang", action);
+        mainFunction = new MainFunction(m.user.getMNQ(), "hoadon", action);
         functionBar.add(mainFunction);
 
         //Add Event MouseListener

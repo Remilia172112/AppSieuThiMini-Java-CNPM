@@ -36,7 +36,7 @@ public class MenuTaskbar extends JPanel {
     SanPham sanPham;
     KhuVucKho quanLyKho;
     PhieuNhap phieuNhap;
-    HoaDon phieuXuat;
+    HoaDon hoaDon;
     KhachHang khachHang;
     NhaCungCap nhacungcap;
     NhanVien nhanVien;
@@ -54,8 +54,8 @@ public class MenuTaskbar extends JPanel {
         {"Nhân viên", "staff_1.svg", "nhanvien"},
         {"Khách hàng", "customer.svg", "khachhang"},
         {"Nhà cung cấp", "supplier.svg", "nhacungcap"},
+        {"Hóa đơn", "export.svg", "hoadon"},
         {"Phiếu nhập", "import.svg", "nhaphang"},
-        {"Hóa đơn", "export.svg", "xuathang"},
         {"Phiếu kiểm kê" , "inventory.svg", "kiemke"},
         {"Phân quyền", "protect.svg", "nhomquyen"},
         {"Tài khoản", "account.svg", "taikhoan"},
@@ -237,17 +237,18 @@ public class MenuTaskbar extends JPanel {
         listitem.get(7).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
-                phieuNhap = new PhieuNhap(main, nhanVienDTO);
-                main.setPanel(phieuNhap);
+                hoaDon = new HoaDon(main, user);
+                main.setPanel(hoaDon);
             }
         });
         listitem.get(8).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
-                phieuXuat = new HoaDon(main, user);
-                main.setPanel(phieuXuat);
+                phieuNhap = new PhieuNhap(main, nhanVienDTO);
+                main.setPanel(phieuNhap);
             }
         });
+        
         listitem.get(9).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
