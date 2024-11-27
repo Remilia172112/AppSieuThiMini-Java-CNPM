@@ -57,8 +57,8 @@ public final class TaoHoaDon extends JPanel {
     JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
     DefaultTableModel tblModel, tblModelSP; //table co san 
-    ButtonCustom btnAddSp, btnEditSP, btnDelete, btnNhapHang;
-    InputForm txtMaphieu, txtNhanVien, txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtMaGiamGia, txtGiaGiam;
+    ButtonCustom btnTaoSp, btnAddSp, btnEditSP, btnDelete, btnNhapHang;
+    InputForm txtMaphieu, txtNhanVien, txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtDTL, txtDTLG, txtMaGiamGia, txtGiaGiam;
     SelectForm cbxMaKM; 
     JTextField txtTimKiem;
     Color BackgroundColor = new Color(193 ,237 ,220);
@@ -68,6 +68,7 @@ public final class TaoHoaDon extends JPanel {
     int masp;
     int manv;
     int makh = -1;
+    int dtl = 0;
     String type;
 
     // ArrayList<SanPhamDTO> ctpb;
@@ -286,10 +287,10 @@ public final class TaoHoaDon extends JPanel {
         content_btn.setLayout(new GridLayout(1, 4, 5, 5));
         content_btn.setBorder(new EmptyBorder(8, 5, 0, 10));
         content_btn.setOpaque(false);
+        btnTaoSp = new ButtonCustom("Tạo sản phẩm", "success", 14);
         btnAddSp = new ButtonCustom("Thêm sản phẩm", "success", 14);
         btnEditSP = new ButtonCustom("Sửa sản phẩm", "warning", 14);
         btnDelete = new ButtonCustom("Xoá sản phẩm", "danger", 14);
-
         btnAddSp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -363,12 +364,14 @@ public final class TaoHoaDon extends JPanel {
         right.setLayout(new BorderLayout());
 
         JPanel right_top, right_center, right_bottom, pn_tongtien;
-        right_top = new JPanel(new GridLayout(2, 1, 0, 0));
-        right_top.setPreferredSize(new Dimension(300, 180));
+        right_top = new JPanel(new GridLayout(3, 1, 0, 0));
+        right_top.setPreferredSize(new Dimension(300, 270));
         txtMaphieu = new InputForm("Mã phiếu xuất");
         txtMaphieu.setEditable(false);
         txtNhanVien = new InputForm("Nhân viên xuất");
         txtNhanVien.setEditable(false);
+        txtDTL = new InputForm("Điểm tích lũy đang có");
+        txtDTL.setEditable(false);
         maphieu = HoaDonDAO.getInstance().getAutoIncrement();
         manv = tk.getMNV();
         txtMaphieu.setText("PX" + maphieu);
@@ -376,6 +379,7 @@ public final class TaoHoaDon extends JPanel {
         txtNhanVien.setText(nhanvien.getHOTEN());
         right_top.add(txtMaphieu);
         right_top.add(txtNhanVien);
+        right_top.add(txtDTL);
 
         right_center = new JPanel(new BorderLayout());
         right_center.setOpaque(false);
@@ -395,6 +399,9 @@ public final class TaoHoaDon extends JPanel {
 
         txtKh = new JTextField("");
         txtKh.setEditable(false);
+        txtDTLG = new InputForm("Điểm tích lũy giảm");
+        txtDTLG.setText("0");
+        txtDTLG.setEditable(false);
         khachJPanel.add(kJPanelLeft, BorderLayout.EAST);
         khachJPanel.add(txtKh, BorderLayout.CENTER);
         JPanel khPanel = new JPanel(new GridLayout(2, 1, 5, 0));
@@ -405,6 +412,7 @@ public final class TaoHoaDon extends JPanel {
         khPanel.add(khachKhangJLabel);
         khPanel.add(khachJPanel);
         right_center.add(khPanel, BorderLayout.NORTH);
+        right_center.add(txtDTLG, BorderLayout.SOUTH);
 
         right_bottom = new JPanel(new GridLayout(2, 1));
         right_bottom.setPreferredSize(new Dimension(300, 100));
@@ -422,13 +430,13 @@ public final class TaoHoaDon extends JPanel {
         pn_tongtien.add(lbltongtien);
         right_bottom.add(pn_tongtien);
 
-        btnNhapHang = new ButtonCustom("Xuất hàng", "excel", 14);
+        btnNhapHang = new ButtonCustom("Bán hàng", "excel", 14);
         btnNhapHang.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 eventBtnNhapHang();
             }
-        });;
+        });
         right_bottom.add(btnNhapHang);
 
         right.add(right_top, BorderLayout.NORTH);
@@ -582,9 +590,11 @@ public final class TaoHoaDon extends JPanel {
 
     public void eventBtnNhapHang() {
         if (chitietphieu.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu !", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else if (makh == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+        } else if(Integer.parseInt(txtDTLG.getText()) > dtl || Integer.parseInt(txtDTLG.getText()) > sum ) {
+            JOptionPane.showMessageDialog(null, "Điểm tích lũy không lớn hơn điểm đang có và giá đang bán!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else {
             int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn tạo phiếu xuất !", "Xác nhận tạo phiếu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
             if (input == 0) {
@@ -593,11 +603,12 @@ public final class TaoHoaDon extends JPanel {
                 } else {
                     long now = System.currentTimeMillis();
                     Timestamp currenTime = new Timestamp(now);
-                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum, 1);
+                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum-dtl, 1, dtl);
                     phieuXuatBUS.insert(phieuXuat, chitietphieu); //update số lượng trong kho
                     /// gọi BUS, BUS gọi DAO, DAO chỉnh trong sql 
                     // SanPhamBUS.updateXuat(chitietsanpham); 
                     JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
+                    khachHangBUS.update(makh, sum/1000);
                     mainChinh.setPanel(new HoaDon(mainChinh, tk));
                 }
             }
@@ -608,5 +619,18 @@ public final class TaoHoaDon extends JPanel {
         makh = index;
         KhachHangDTO khachhang = khachHangBUS.selectKh(makh);
         txtKh.setText(khachhang.getHOTEN());
+        if(index != 1) {
+            dtl = khachhang.getDIEMTICHLUY();
+            txtDTLG.setEditable(true);
+            txtDTL.setText(khachhang.getDIEMTICHLUY()+"");
+            txtDTLG.setText("0");
+        }
+        else {
+            dtl = 0;
+            txtDTLG.setEditable(false);
+            txtDTLG.setText("0");
+            txtDTL.setText("");
+
+        }
     }
 }

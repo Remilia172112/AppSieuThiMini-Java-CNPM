@@ -155,6 +155,7 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
 
     public void loadDataTable(ArrayList<KhachHangDTO> result) {
         tblModel.setRowCount(0);
+        result.remove(0);
         for (DTO.KhachHangDTO khachHang : result) {
             tblModel.addRow(new Object[]{
                 khachHang.getMKH(), khachHang.getHOTEN(), khachHang.getDIACHI(), khachHang.getSDT(), khachHang.getNGAYTHAMGIA(), khachHang.getDIEMTICHLUY()

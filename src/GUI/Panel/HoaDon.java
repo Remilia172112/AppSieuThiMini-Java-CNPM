@@ -120,7 +120,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
         tablePhieuXuat.setBackground(new Color(0xA1D6E2));
         scrollTablePhieuXuat = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"STT", "Mã phiếu xuất", "Khách hàng", "Nhân viên", "Thời gian", "Tổng tiền", "Trạng thái"};
+        String[] header = new String[]{"STT", "Mã phiếu xuất", "Khách hàng", "Nhân viên", "Thời gian", "Điểm tích lũy", "Tổng tiền", "Trạng thái"};
         tblModel.setColumnIdentifiers(header);
         tablePhieuXuat.setModel(tblModel);
         tablePhieuXuat.setFocusable(false);
@@ -264,6 +264,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
                 khachHangBUS.getTenKhachHang(listphieuxuat.get(i).getMKH()),
                 nvBUS.getNameById(listphieuxuat.get(i).getMNV()),
                 Formater.FormatTime(listphieuxuat.get(i).getTG()),
+                listphieuxuat.get(i).getDIEMTICHLUY(),
                 Formater.FormatVND(listphieuxuat.get(i).getTIEN()), trangthaiString});
         }
     }

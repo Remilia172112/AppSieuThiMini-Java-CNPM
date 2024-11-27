@@ -28,13 +28,14 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `HOADON` (`MNV`, `MKH`, `TIEN`, `TG`, `TT`) VALUES (?,?,?,?,?)";
+            String sql = "INSERT INTO `HOADON` (`MNV`, `MKH`, `TIEN`, `TG`, `TT`, `DIEMTICHLUY`) VALUES (?,?,?,?,?,?)";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, t.getMNV());
             pst.setInt(2, t.getMKH());
             pst.setInt(3, (int) t.getTIEN());
             pst.setTimestamp(4, t.getTG());
             pst.setInt(5, t.getTT());
+            pst.setInt(6, t.getDIEMTICHLUY());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -48,13 +49,14 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         int result = 0 ;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `HOADON` SET `MNV`=?, `MKH`=?, `TIEN`=?, `TG`=?, `TT`=? WHERE `MHD`=?";
+            String sql = "UPDATE `HOADON` SET `MNV`=?, `MKH`=?, `TIEN`=?, `TG`=?, `TT`=?, `DIEMTICHLUY` = ? WHERE `MHD`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t.getMNV());
             pst.setInt(2, t.getMKH());
             pst.setInt(3, (int) t.getTIEN());
             pst.setTimestamp(4, t.getTG());
             pst.setInt(5, t.getTT());
+            pst.setInt(6, t.getDIEMTICHLUY());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -96,7 +98,8 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
                 int MNV = rs.getInt("MNV");
                 long TIEN = rs.getLong("TIEN");
                 int TT = rs.getInt("TT");
-                HoaDonDTO HOADON = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT);
+                int DIEMTICHLUY = rs.getInt("DIEMTICHLUY");
+                HoaDonDTO HOADON = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT, DIEMTICHLUY);
                 result.add(HOADON);
             }
             JDBCUtil.closeConnection(con);
@@ -122,7 +125,8 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
                 int MNV = rs.getInt("MNV");
                 long TIEN = rs.getLong("TIEN");
                 int TT = rs.getInt("TT");
-                result = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT);
+                int DIEMTICHLUY = rs.getInt("DIEMTICHLUY");
+                result = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT, DIEMTICHLUY);
             }
             JDBCUtil.closeConnection(con);
         } catch (Exception e) {
@@ -145,7 +149,8 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
                 int MNV = rs.getInt("MNV");
                 long TIEN = rs.getLong("TIEN");
                 int TT = rs.getInt("TT");
-                HoaDonDTO tmp = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT);
+                int DIEMTICHLUY = rs.getInt("DIEMTICHLUY");
+                HoaDonDTO tmp = new HoaDonDTO(MKH, MP, MNV, TG, TIEN, TT, DIEMTICHLUY);
                 result.add(tmp);
             }
             JDBCUtil.closeConnection(con);
@@ -213,7 +218,8 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
                 int MNV = rs.getInt("MNV");
                 long TIEN = rs.getLong("TIEN");
                 int TT = rs.getInt("TT");
-                HoaDonDTO HOADON = new HoaDonDTO(kh, MP, MNV, TG, TIEN, TT);
+                int DIEMTICHLUY = rs.getInt("DIEMTICHLUY");
+                HoaDonDTO HOADON = new HoaDonDTO(kh, MP, MNV, TG, TIEN, TT, DIEMTICHLUY);
                 result.add(HOADON);
             }
             JDBCUtil.closeConnection(con);

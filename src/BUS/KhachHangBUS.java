@@ -71,6 +71,10 @@ public class KhachHangBUS {
         }
         return check;
     }
+    public Boolean update(int MKH, int dtl) {
+        boolean check = khDAO.updateDiem(MKH, dtl) != 0;
+        return check;
+    }
 
     public ArrayList<KhachHangDTO> search(String text, String type) {
         ArrayList<KhachHangDTO> result = new ArrayList<>();
