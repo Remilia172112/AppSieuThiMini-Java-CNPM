@@ -43,13 +43,13 @@ public class KhachHangDialog extends JDialog implements MouseListener {
         super(owner, title, modal);
         this.kh=kh;
         maKH = new JTextField("");
-        setMaKH(Integer.toString(kh.getMaKH()));
+        setMaKH(Integer.toString(kh.getMKH()));
         tenKH = new InputForm("Tên khách hàng");
-        setTenKH(kh.getHoten());
+        setTenKH(kh.getHOTEN());
         sdtKH = new InputForm("Số điện thoại");
-        setSdtKH(kh.getSdt());
+        setSdtKH(kh.getSDT());
         diachiKH = new InputForm("Địa chỉ");
-        setDiaChiKH(kh.getDiachi());
+        setDiaChiKH(kh.getDIACHI());
         emailKH = new InputForm("Email");
         setEmailKH(kh.getEMAIL());
         this.jpKH = jpKH;
@@ -173,14 +173,14 @@ public class KhachHangDialog extends JDialog implements MouseListener {
                 int id=KhachHangDAO.getInstance().getAutoIncrement();
                 long now = System.currentTimeMillis();
                 Timestamp currenTime = new Timestamp(now);
-                jpKH.khachhangBUS.add(new DTO.KhachHangDTO(id, tenKH.getText(),sdtKH.getText(), diachiKH.getText(), emailKH.getText(), currenTime));
+                jpKH.khachhangBUS.add(new DTO.KhachHangDTO(id, tenKH.getText(),sdtKH.getText(), diachiKH.getText(), emailKH.getText(), currenTime,0));
                 jpKH.loadDataTable(jpKH.listkh);
                 dispose();
 
         } else if (e.getSource() == btnHuyBo) {
             dispose();
         } else if (e.getSource() == btnCapNhat && Validation()) {
-            jpKH.khachhangBUS.update(new KhachHangDTO(kh.getMaKH(), tenKH.getText(), sdtKH.getText(), diachiKH.getText(), emailKH.getText()));
+            jpKH.khachhangBUS.update(new KhachHangDTO(kh.getMKH(), tenKH.getText(), sdtKH.getText(), diachiKH.getText(), emailKH.getText(), kh.getNGAYTHAMGIA(), kh.getDIEMTICHLUY()));
             jpKH.loadDataTable(jpKH.listkh);
             dispose();
         }

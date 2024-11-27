@@ -73,7 +73,7 @@ public class ListKhachHang extends JDialog implements MouseListener {
                     JOptionPane.showConfirmDialog(null, 
                 "Vui lòng chọn khách hàng!:)", "Thông báo", JOptionPane.DEFAULT_OPTION);
                 } else{
-                    taoPhieuXuat.setKhachHang(listKh.get(getRow()).getMaKH());
+                    taoPhieuXuat.setKhachHang(listKh.get(getRow()).getMKH());
                     dispose();
                 }
             }
@@ -124,7 +124,7 @@ public class ListKhachHang extends JDialog implements MouseListener {
         tblModel.setRowCount(0);
         for (KhachHangDTO kh : listKh) {
             tblModel.addRow(new Object[]{
-                kh.getMaKH(),kh.getHoten(),kh.getDiachi(),kh.getSdt(),kh.getNgaythamgia()
+                kh.getMKH(),kh.getHOTEN(),kh.getDIACHI(),kh.getSDT(),kh.getNGAYTHAMGIA()
             });
         }
     }
@@ -134,8 +134,8 @@ public class ListKhachHang extends JDialog implements MouseListener {
             text = text.toLowerCase();
         ArrayList<KhachHangDTO> result = new ArrayList<>();
         for(KhachHangDTO i : listKh) {
-           if(i.getHoten().toLowerCase().contains(text) || i.getDiachi().toLowerCase().contains(text)
-                   || i.getSdt().toLowerCase().contains(text)){
+           if(i.getHOTEN().toLowerCase().contains(text) || i.getDIACHI().toLowerCase().contains(text)
+                   || i.getSDT().toLowerCase().contains(text)){
                result.add(i);
            }
         }

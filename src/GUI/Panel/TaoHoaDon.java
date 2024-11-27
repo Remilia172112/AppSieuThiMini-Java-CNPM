@@ -607,6 +607,6 @@ public final class TaoHoaDon extends JPanel {
     public void setKhachHang(int index) {
         makh = index;
         KhachHangDTO khachhang = khachHangBUS.selectKh(makh);
-        txtKh.setText(khachhang.getHoten());
+        txtKh.setText(khachhang.getHOTEN());
     }
 }

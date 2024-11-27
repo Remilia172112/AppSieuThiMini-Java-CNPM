@@ -275,7 +275,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
     public void Fillter() throws ParseException {
         if (validateSelectDate()) {
             int type = search.cbxChoose.getSelectedIndex();
-            int makh = cbxKhachHang.getSelectedIndex() == 0 ? 0 : khachHangBUS.getByIndex(cbxKhachHang.getSelectedIndex() - 1).getMaKH();
+            int makh = cbxKhachHang.getSelectedIndex() == 0 ? 0 : khachHangBUS.getByIndex(cbxKhachHang.getSelectedIndex() - 1).getMKH();
             int manv = cbxNhanVien.getSelectedIndex() == 0 ? 0 : nvBUS.getByIndex(cbxNhanVien.getSelectedIndex() - 1).getMNV();
             String input = search.txtSearchForm.getText() != null ? search.txtSearchForm.getText() : "";
             Date time_start = dateStart.getDate() != null ? dateStart.getDate() : new Date(0);

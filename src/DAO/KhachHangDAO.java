@@ -23,12 +23,12 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `KHACHHANG`(`MKH`, `HOTEN`, `DIACHI`,`SDT`, `EMAIL`,`NGAYTHAMGIA` , `TT`) VALUES (?,?,?,?,?,?,1)";
+            String sql = "INSERT INTO `KHACHHANG`(`MKH`, `HOTEN`, `DIACHI`,`SDT`, `EMAIL`,`NGAYTHAMGIA`, `DIEMTICHLUY`, `TT`) VALUES (?,?,?,?,?,0,1)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setInt(1, t.getMaKH());
-            pst.setString(2, t.getHoten());
-            pst.setString(3, t.getDiachi());
-            pst.setString(4, t.getSdt());
+            pst.setInt(1, t.getMKH());
+            pst.setString(2, t.getHOTEN());
+            pst.setString(3, t.getDIACHI());
+            pst.setString(4, t.getSDT());
             long now = System.currentTimeMillis();
             Timestamp currenTime = new Timestamp(now);
             pst.setString(5, t.getEMAIL());
@@ -46,14 +46,14 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `KHACHHANG` SET `MKH`=?,`HOTEN`=?,`DIACHI`=?,`SDT`=? `EMAIL`=? WHERE MKH=?";
+            String sql = "UPDATE `KHACHHANG` SET HOTEN`=?,`DIACHI`=?,`SDT`=?, `EMAIL`=?, `DIEMTICHLUY` = ? WHERE MKH=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setInt(1, t.getMaKH());
-            pst.setString(2, t.getHoten());
-            pst.setString(3, t.getDiachi());
-            pst.setString(4, t.getSdt());
-            pst.setString(5, t.getEMAIL());
-            pst.setInt(6, t.getMaKH());
+            pst.setString(1, t.getHOTEN());
+            pst.setString(2, t.getDIACHI());
+            pst.setString(3, t.getSDT());
+            pst.setString(4, t.getEMAIL());
+            pst.setInt(5, t.getDIEMTICHLUY());
+            pst.setInt(6, t.getMKH());
             
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
@@ -94,7 +94,8 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
                 String SDT = rs.getString("SDT");
                 Date ngaythamgia = rs.getDate("NGAYTHAMGIA");
                 String EMAIL = rs.getString("EMAIL");
-                KhachHangDTO kh = new KhachHangDTO(MKH, HOTEN, SDT, DIACHI, EMAIL,ngaythamgia);
+                int diemtichluy = rs.getInt("DIEMTICHLUY");
+                KhachHangDTO kh = new KhachHangDTO(MKH, HOTEN, SDT, DIACHI, EMAIL,ngaythamgia, diemtichluy);
                 result.add(kh);
             }
             JDBCUtil.closeConnection(con);
@@ -118,7 +119,8 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
                 String SDT = rs.getString("SDT");
                 Date ngaythamgia = rs.getDate("NGAYTHAMGIA");
                 String EMAIL = rs.getString("EMAIL");
-                KhachHangDTO kh = new KhachHangDTO(MKH, HOTEN, SDT, DIACHI, EMAIL,ngaythamgia);
+                int diemtichluy = rs.getInt("DIEMTICHLUY");
+                KhachHangDTO kh = new KhachHangDTO(MKH, HOTEN, SDT, DIACHI, EMAIL,ngaythamgia, diemtichluy);
                 result.add(kh);
             }
             JDBCUtil.closeConnection(con);
@@ -144,7 +146,8 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
                 String SDT = rs.getString("SDT");
                 Date ngaythamgia = rs.getDate("NGAYTHAMGIA");
                 String EMAIL = rs.getString("EMAIL");
-                result = new KhachHangDTO(MKH, HOTEN, SDT, DIACHI, EMAIL,ngaythamgia);
+                int diemtichluy = rs.getInt("DIEMTICHLUY");
+                result = new KhachHangDTO(MKH, HOTEN, SDT, DIACHI, EMAIL,ngaythamgia, diemtichluy);
             }
             JDBCUtil.closeConnection(con);
         } catch (Exception e) {

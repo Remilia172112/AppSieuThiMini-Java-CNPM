@@ -26,7 +26,7 @@ public class KhachHangBUS {
         int i = 0;
         int vitri = -1;
         while (i < this.listKhachHang.size() && vitri == -1) {
-            if (listKhachHang.get(i).getHoten().equals(index)) {
+            if (listKhachHang.get(i).getHOTEN().equals(index)) {
                 vitri = i;
             } else {
                 i++;
@@ -39,7 +39,7 @@ public class KhachHangBUS {
         int i = 0;
         int vitri = -1;
         while (i < this.listKhachHang.size() && vitri == -1) {
-            if (listKhachHang.get(i).getMaKH() == makhachhang) {
+            if (listKhachHang.get(i).getMKH() == makhachhang) {
                 vitri = i;
             } else {
                 i++;
@@ -57,9 +57,9 @@ public class KhachHangBUS {
     }
 
     public Boolean delete(KhachHangDTO kh) {
-        boolean check = khDAO.delete(Integer.toString(kh.getMaKH())) != 0;
+        boolean check = khDAO.delete(Integer.toString(kh.getMKH())) != 0;
         if (check) {
-            this.listKhachHang.remove(getIndexByMaDV(kh.getMaKH()));
+            this.listKhachHang.remove(getIndexByMaDV(kh.getMKH()));
         }
         return check;
     }
@@ -67,7 +67,7 @@ public class KhachHangBUS {
     public Boolean update(KhachHangDTO kh) {
         boolean check = khDAO.update(kh) != 0;
         if (check) {
-            this.listKhachHang.set(getIndexByMaDV(kh.getMaKH()), kh);
+            this.listKhachHang.set(getIndexByMaDV(kh.getMKH()), kh);
         }
         return check;
     }
@@ -78,35 +78,35 @@ public class KhachHangBUS {
         switch (type) {
             case "Tất cả" -> {
                 for (KhachHangDTO i : this.listKhachHang) {
-                    if (Integer.toString(i.getMaKH()).toLowerCase().contains(text) || i.getHoten().toLowerCase().contains(text) || i.getDiachi().toLowerCase().contains(text) || i.getSdt().toLowerCase().contains(text)) {
+                    if (Integer.toString(i.getMKH()).toLowerCase().contains(text) || i.getHOTEN().toLowerCase().contains(text) || i.getDIACHI().toLowerCase().contains(text) || i.getSDT().toLowerCase().contains(text)) {
                         result.add(i);
                     }
                 }
             }
             case "Mã khách hàng" -> {
                 for (KhachHangDTO i : this.listKhachHang) {
-                    if (Integer.toString(i.getMaKH()).toLowerCase().contains(text)) {
+                    if (Integer.toString(i.getMKH()).toLowerCase().contains(text)) {
                         result.add(i);
                     }
                 }
             }
             case "Tên khách hàng" -> {
                 for (KhachHangDTO i : this.listKhachHang) {
-                    if (i.getHoten().toLowerCase().contains(text)) {
+                    if (i.getHOTEN().toLowerCase().contains(text)) {
                         result.add(i);
                     }
                 }
             }
             case "Địa chỉ" -> {
                 for (KhachHangDTO i : this.listKhachHang) {
-                    if (i.getDiachi().toLowerCase().contains(text)) {
+                    if (i.getDIACHI().toLowerCase().contains(text)) {
                         result.add(i);
                     }
                 }
             }
             case "Số điện thoại" -> {
                 for (KhachHangDTO i : this.listKhachHang) {
-                    if (i.getSdt().toLowerCase().contains(text)) {
+                    if (i.getSDT().toLowerCase().contains(text)) {
                         result.add(i);
                     }
                 }
@@ -119,8 +119,8 @@ public class KhachHangBUS {
     public String getTenKhachHang(int makh) {
         String name = "";
         for (KhachHangDTO khachHangDTO : listKhachHang) {
-            if (khachHangDTO.getMaKH() == makh) {
-                name = khachHangDTO.getHoten();
+            if (khachHangDTO.getMKH() == makh) {
+                name = khachHangDTO.getHOTEN();
             }
         }
         return name;
@@ -130,7 +130,7 @@ public class KhachHangBUS {
         int size = listKhachHang.size();
         String[] result = new String[size];
         for (int i = 0; i < size; i++) {
-            result[i] = listKhachHang.get(i).getHoten();
+            result[i] = listKhachHang.get(i).getHOTEN();
         }
         return result;
     }
@@ -143,7 +143,7 @@ public class KhachHangBUS {
         int s = 1;
         listKhachHang = khDAO.selectAlll();
         for (KhachHangDTO i : listKhachHang) {
-            if(i.getMaKH() > s) s = i.getMaKH();
+            if(i.getMKH() > s) s = i.getMKH();
         }
         return s;
     }

@@ -59,7 +59,7 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
         tableKhachHang.setBackground(new Color(0xA1D6E2));
         scrollTableKhachHang = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"Mã khách hàng", "Tên khách hàng", "Địa chỉ", "Số điện thoại", "Ngày tham gia"};
+        String[] header = new String[]{"Mã khách hàng", "Tên khách hàng", "Địa chỉ", "Số điện thoại", "Ngày tham gia", "Điểm tích lũy"};
         tblModel.setColumnIdentifiers(header);
         tableKhachHang.setModel(tblModel);
         tableKhachHang.setFocusable(false);
@@ -157,7 +157,7 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
         tblModel.setRowCount(0);
         for (DTO.KhachHangDTO khachHang : result) {
             tblModel.addRow(new Object[]{
-                khachHang.getMaKH(), khachHang.getHoten(), khachHang.getDiachi(), khachHang.getSdt(), khachHang.getNgaythamgia()
+                khachHang.getMKH(), khachHang.getHOTEN(), khachHang.getDIACHI(), khachHang.getSDT(), khachHang.getNGAYTHAMGIA(), khachHang.getDIEMTICHLUY()
             });
         }
     }
@@ -199,7 +199,7 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
                         check = 0;
                     }
                     if (check == 1) {
-                        khachhangBUS.add(new KhachHangDTO(id, tenkh, sdt, diachi, email));
+                        khachhangBUS.add(new KhachHangDTO(id, tenkh, sdt, diachi, email,0));
                     } else {
                         k += 1;
                     }

@@ -10,65 +10,62 @@ public class KhachHangDTO {
     private String DIACHI;
     private String EMAIL;
     private Date NGAYTHAMGIA;
+    private int DIEMTICHLUY;
 
     public KhachHangDTO() {
     }
 
-    public KhachHangDTO(int MKH, String HOTEN, String SDT, String DIACHI, String EMAIL) {
-        this.MKH = MKH;
-        this.HOTEN = HOTEN;
-        this.SDT = SDT;
-        this.DIACHI = DIACHI;
-        this.EMAIL = EMAIL;
-    }
-    
-    public KhachHangDTO(int MKH, String HOTEN, String SDT, String DIACHI, String EMAIL,Date NGAYTHAMGIA) {
-        this.MKH = MKH;
-        this.HOTEN = HOTEN;
-        this.SDT = SDT;
-        this.DIACHI = DIACHI;
-        this.EMAIL = EMAIL;
-        this.NGAYTHAMGIA = NGAYTHAMGIA;
+    public KhachHangDTO(int mKH, String hOTEN, String sDT, String dIACHI, String eMAIL, Date nGAYTHAMGIA,
+            int dIEMTICHLUY) {
+        MKH = mKH;
+        HOTEN = hOTEN;
+        SDT = sDT;
+        DIACHI = dIACHI;
+        EMAIL = eMAIL;
+        NGAYTHAMGIA = nGAYTHAMGIA;
+        DIEMTICHLUY = dIEMTICHLUY;
     }
 
-    public Date getNgaythamgia() {
-        return NGAYTHAMGIA;
+    public KhachHangDTO(int mKH, String hOTEN, String sDT, String dIACHI, String eMAIL,
+            int dIEMTICHLUY) {
+        MKH = mKH;
+        HOTEN = hOTEN;
+        SDT = sDT;
+        DIACHI = dIACHI;
+        EMAIL = eMAIL;
+        DIEMTICHLUY = dIEMTICHLUY;
     }
 
-    public void setNgaythamgia(Date NGAYTHAMGIA) {
-        this.NGAYTHAMGIA = NGAYTHAMGIA;
-    }
-
-    public int getMaKH() {
+    public int getMKH() {
         return MKH;
     }
 
-    public void setMaKH(int MKH) {
-        this.MKH = MKH;
+    public void setMKH(int mKH) {
+        MKH = mKH;
     }
 
-    public String getHoten() {
+    public String getHOTEN() {
         return HOTEN;
     }
 
-    public void setHoten(String HOTEN) {
-        this.HOTEN = HOTEN;
+    public void setHOTEN(String hOTEN) {
+        HOTEN = hOTEN;
     }
 
-    public String getSdt() {
+    public String getSDT() {
         return SDT;
     }
 
-    public void setSdt(String SDT) {
-        this.SDT = SDT;
+    public void setSDT(String sDT) {
+        SDT = sDT;
     }
 
-    public String getDiachi() {
+    public String getDIACHI() {
         return DIACHI;
     }
 
-    public void setDiachi(String DIACHI) {
-        this.DIACHI = DIACHI;
+    public void setDIACHI(String dIACHI) {
+        DIACHI = dIACHI;
     }
 
     public String getEMAIL() {
@@ -77,6 +74,22 @@ public class KhachHangDTO {
 
     public void setEMAIL(String eMAIL) {
         EMAIL = eMAIL;
+    }
+
+    public Date getNGAYTHAMGIA() {
+        return NGAYTHAMGIA;
+    }
+
+    public void setNGAYTHAMGIA(Date nGAYTHAMGIA) {
+        NGAYTHAMGIA = nGAYTHAMGIA;
+    }
+
+    public int getDIEMTICHLUY() {
+        return DIEMTICHLUY;
+    }
+
+    public void setDIEMTICHLUY(int dIEMTICHLUY) {
+        DIEMTICHLUY = dIEMTICHLUY;
     }
 
     @Override
@@ -89,6 +102,7 @@ public class KhachHangDTO {
         result = prime * result + ((DIACHI == null) ? 0 : DIACHI.hashCode());
         result = prime * result + ((EMAIL == null) ? 0 : EMAIL.hashCode());
         result = prime * result + ((NGAYTHAMGIA == null) ? 0 : NGAYTHAMGIA.hashCode());
+        result = prime * result + DIEMTICHLUY;
         return result;
     }
 
@@ -128,14 +142,18 @@ public class KhachHangDTO {
                 return false;
         } else if (!NGAYTHAMGIA.equals(other.NGAYTHAMGIA))
             return false;
+        if (DIEMTICHLUY != other.DIEMTICHLUY)
+            return false;
         return true;
     }
 
     @Override
     public String toString() {
         return "KhachHangDTO [MKH=" + MKH + ", HOTEN=" + HOTEN + ", SDT=" + SDT + ", DIACHI=" + DIACHI + ", EMAIL="
-                + EMAIL + ", NGAYTHAMGIA=" + NGAYTHAMGIA + "]";
+                + EMAIL + ", NGAYTHAMGIA=" + NGAYTHAMGIA + ", DIEMTICHLUY=" + DIEMTICHLUY + "]";
     }
+
+    
 
 
 }

@@ -276,12 +276,12 @@ public class writePDF {
             // Thêm dòng Paragraph vào file PDF
 
             Paragraph paragraph1 = new Paragraph("Mã phiếu: PX-" + px.getMP(), fontNormal10);
-            String hoten = KhachHangDAO.getInstance().selectById(px.getMKH() + "").getHoten();
+            String hoten = KhachHangDAO.getInstance().selectById(px.getMKH() + "").getHOTEN();
             Paragraph paragraph2 = new Paragraph("khách hàng: " + hoten, fontNormal10);
             paragraph2.add(new Chunk(createWhiteSpace(5)));
             paragraph2.add(new Chunk("-"));
             paragraph2.add(new Chunk(createWhiteSpace(5)));
-            String diachikh = KhachHangDAO.getInstance().selectById(px.getMKH() + "").getDiachi();
+            String diachikh = KhachHangDAO.getInstance().selectById(px.getMKH() + "").getDIACHI();
             paragraph2.add(new Chunk(diachikh, fontNormal10));
 
             String ngtao = NhanVienDAO.getInstance().selectById(px.getMNV() + "").getHOTEN();
