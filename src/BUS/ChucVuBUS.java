@@ -45,4 +45,25 @@ public class ChucVuBUS {
         return check;
     }
 
+    public String[] getArrTenCV() {
+        int size = listChucVu.size();
+        String[] result = new String[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = listChucVu.get(i).getTENCV();
+        }
+        return result;
+    }
+
+    public int getIndexByMCV(int mancc) {
+        int i = 0;
+        int vitri = -1;
+        while (i < this.listChucVu.size() && vitri == -1) {
+            if (listChucVu.get(i).getMCV() == mancc) {
+                vitri = i;
+            } else {
+                i++;
+            }
+        }
+        return vitri;
+    }
 }

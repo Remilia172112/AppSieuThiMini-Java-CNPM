@@ -2,7 +2,9 @@ package BUS;
 
 import DAO.NhanVienDAO;
 import DAO.TaiKhoanDAO;
+import DAO.ChucVuDAO;
 import DTO.NhanVienDTO;
+import DTO.ChucVuDTO;
 import GUI.Panel.NhanVien;
 import GUI.Dialog.NhanVienDialog;
 import helper.Validation;
@@ -41,6 +43,7 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
     public GUI.Panel.NhanVien nv;
     private JTextField textField;
     public ArrayList<NhanVienDTO> listNv = NhanVienDAO.getInstance().selectAll();
+    public ArrayList<ChucVuDTO> listCv = ChucVuDAO.getInstance().selectAll();
     public NhanVienDAO nhanVienDAO = NhanVienDAO.getInstance();
 
     public NhanVienBUS() {
@@ -352,7 +355,10 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
                     Date ngaysinh = (Date) excelRow.getCell(2).getDateCellValue();
                     java.sql.Date birth = new java.sql.Date(ngaysinh.getTime());
                     String email = excelRow.getCell(4).getStringCellValue();
-                    if (Validation.isEmpty(tennv) || Validation.isEmpty(email)
+                    String chucvu = excelRow.getCell(5).getStringCellValue();
+                    int i = 0;
+                    for(int j = 0; j < listCv.size(); j++) if(listCv.get(j).equals(chucvu)) i = j + 1;
+                    if (Validation.isEmpty(tennv) || Validation.isEmpty(email) || Validation.isEmpty(chucvu)
                             || !Validation.isEmail(email) || Validation.isEmpty(sdt)
                             || Validation.isEmpty(sdt) || !isPhoneNumber(sdt)
                             || sdt.length() != 10 || Validation.isEmpty(gioitinh)) {
@@ -361,7 +367,7 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
                     if (check == 0) {
                         k += 1;
                     } else {
-                        NhanVienDTO nvdto = new NhanVienDTO(id, tennv, gt, birth, sdt, 1, email);
+                        NhanVienDTO nvdto = new NhanVienDTO(id, tennv, gt,sdt, birth, 1, email, i);
                         NhanVienDAO.getInstance().insert(nvdto);
                     }
                     JOptionPane.showMessageDialog(null, "Nhập thành công");

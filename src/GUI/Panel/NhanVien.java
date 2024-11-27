@@ -1,6 +1,8 @@
 package GUI.Panel;
 
+import BUS.ChucVuBUS;
 import BUS.NhanVienBUS;
+import DTO.ChucVuDTO;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import java.awt.*;
@@ -24,6 +26,7 @@ public final class NhanVien extends JPanel {
     public IntegratedSearch search;
     Main m;
     ArrayList<DTO.NhanVienDTO> listnv = nvBus.getAll();
+    public ChucVuBUS cvbus = new ChucVuBUS();
 
     Color BackgroundColor = new Color(193 ,237 ,220);
     private DefaultTableModel tblModel;
@@ -91,7 +94,7 @@ public final class NhanVien extends JPanel {
         scrollTableSanPham = new JScrollPane();
         tableNhanVien = new JTable();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"MNV", "Họ tên", "Giới tính", "Ngày Sinh", "SDT", "Email"};
+        String[] header = new String[]{"MNV", "Họ tên", "Giới tính", "Ngày Sinh", "SDT", "Email", "Chức vụ"};
 
         tblModel.setColumnIdentifiers(header);
         tableNhanVien.setModel(tblModel);
@@ -128,10 +131,12 @@ public final class NhanVien extends JPanel {
 
     public void loadDataTalbe(ArrayList<DTO.NhanVienDTO> list) {
         listnv = list;
+        ArrayList<ChucVuDTO> listcv = cvbus.getAll();
         tblModel.setRowCount(0);
         for (DTO.NhanVienDTO nhanVien : listnv) {
             tblModel.addRow(new Object[]{
-                nhanVien.getMNV(), nhanVien.getHOTEN(), nhanVien.getGIOITINH() == 1 ? "Nam" : "Nữ", nhanVien.getNGAYSINH(), nhanVien.getSDT(), nhanVien.getEMAIL()
+                nhanVien.getMNV(), nhanVien.getHOTEN(), nhanVien.getGIOITINH() == 1 ? "Nam" : "Nữ", nhanVien.getNGAYSINH(), nhanVien.getSDT(), nhanVien.getEMAIL(),
+                listcv.get(nhanVien.getMCV()-1).getTENCV()
             });
         }
     }
