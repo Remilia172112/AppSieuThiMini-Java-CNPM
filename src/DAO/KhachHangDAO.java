@@ -63,6 +63,22 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         return result;
     }
 
+    public int updateDiem(int MKH, int dtl) {
+        int result = 0;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "UPDATE `KHACHHANG` SET `DIEMTICHLUY` = ? WHERE MKH=?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setInt(1, dtl);
+            pst.setInt(2, MKH);            
+            result = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException ex) {
+            Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+
     @Override
     public int delete(String t) {
         int result = 0;

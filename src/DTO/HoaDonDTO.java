@@ -3,16 +3,18 @@ package DTO;
 import java.sql.Timestamp;
 // import java.util.ArrayList;
 
-public class HoaDonDTO extends PhieuDTO{
+public class HoaDonDTO extends PhieuDTO {
     private int MKH;
+    private int DIEMTICHLUY;
 
     public HoaDonDTO(int MKH) {
         this.MKH = MKH;
     }
 
-    public HoaDonDTO(int MKH, int MP, int MNV, Timestamp TG, long TIENX, int TT) {
+    public HoaDonDTO(int MKH, int MP, int MNV, Timestamp TG, long TIENX, int TT, int DIEMTICHLUY) {
         super(MP, MNV, TG, TIENX, TT);
         this.MKH = MKH;
+        this.DIEMTICHLUY = DIEMTICHLUY;
     }
 
     public int getMKH() {
@@ -22,33 +24,43 @@ public class HoaDonDTO extends PhieuDTO{
     public void setMKH(int MKH) {
         this.MKH = MKH;
     }
+    
+    public int getDIEMTICHLUY() {
+        return DIEMTICHLUY;
+    }
+
+    public void setDIEMTICHLUY(int dIEMTICHLUY) {
+        DIEMTICHLUY = dIEMTICHLUY;
+    }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + this.MKH;
-        return hash;
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + MKH;
+        result = prime * result + DIEMTICHLUY;
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (!super.equals(obj))
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-        final HoaDonDTO other = (HoaDonDTO) obj;
-        return this.MKH == other.MKH;
+        HoaDonDTO other = (HoaDonDTO) obj;
+        if (MKH != other.MKH)
+            return false;
+        if (DIEMTICHLUY != other.DIEMTICHLUY)
+            return false;
+        return true;
     }
 
     @Override
     public String toString() {
-        return "PhieuXuatDTO{" + "MKH=" + MKH + '}';
+        return "HoaDonDTO [MKH=" + MKH + ", DIEMTICHLUY=" + DIEMTICHLUY + "]";
     }
-
     
 }
