@@ -444,11 +444,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
             dateStart.getDateChooser().setCalendar(null);
             return false;
         }
-        if (time_end != null && time_end.after(current_date)) {
-            JOptionPane.showMessageDialog(this, "Ngày kết thúc không được lớn hơn ngày hiện tại", "Lỗi !", JOptionPane.ERROR_MESSAGE);
-            dateEnd.getDateChooser().setCalendar(null);
-            return false;
-        }
+
         if (time_start != null && time_end != null && time_start.after(time_end)) {
             JOptionPane.showMessageDialog(this, "Ngày kết thúc phải lớn hơn ngày bắt đầu", "Lỗi !", JOptionPane.ERROR_MESSAGE);
             dateEnd.getDateChooser().setCalendar(null);

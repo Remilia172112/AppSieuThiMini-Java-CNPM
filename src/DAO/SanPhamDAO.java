@@ -195,4 +195,42 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         }
         return result;
     }
+
+    public int updateSoLuongTon(int MSP, int soluong, int tiennhap) {
+        SanPhamDTO tmp = this.selectById(Integer.toString(MSP));
+        if(tmp.getTIENX() < tiennhap*(120/100)) tiennhap = tiennhap*(120/100);
+        else tiennhap = tmp.getTIENX();
+        int quantity_current = tmp.getSL();
+        int result = 0;
+        int quantity_change = quantity_current + soluong;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "UPDATE `SANPHAM` SET `SL`=?, `TIENX` = ? WHERE MSP = ?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setInt(1, quantity_change);
+            pst.setInt(2, tiennhap);
+            pst.setInt(3, MSP);
+            result = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException ex) {
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+
+    public int updateGia(int MSP, int giaxuat) {
+        int result = 0;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "UPDATE `SANPHAM` SET `TIENX`=? WHERE MSP = ?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setInt(1, giaxuat);
+            pst.setInt(2, MSP);
+            result = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException ex) {
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
 }

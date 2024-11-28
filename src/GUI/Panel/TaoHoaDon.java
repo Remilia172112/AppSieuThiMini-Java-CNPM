@@ -563,6 +563,10 @@ public final class TaoHoaDon extends JPanel {
             JOptionPane.showMessageDialog(null, "Số lượng không được để rỗng và không lớn hơn đang có!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
         } 
+        else if (Integer.parseInt(txtSoLuongSPxuat.getText()) == 0) {
+            JOptionPane.showMessageDialog(null, "Số lượng không được bằng 0!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } 
         return check;
     }
 
@@ -620,7 +624,7 @@ public final class TaoHoaDon extends JPanel {
         KhachHangDTO khachhang = khachHangBUS.selectKh(makh);
         txtKh.setText(khachhang.getHOTEN());
         if(index != 1) {
-            dtl = khachhang.getDIEMTICHLUY();
+            dtl = 0;
             txtDTLG.setEditable(true);
             txtDTL.setText(khachhang.getDIEMTICHLUY()+"");
             txtDTLG.setText("0");

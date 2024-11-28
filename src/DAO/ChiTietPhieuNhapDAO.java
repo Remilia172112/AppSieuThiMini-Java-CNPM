@@ -35,7 +35,7 @@ public class ChiTietPhieuNhapDAO implements ChiTietInterface<ChiTietPhieuNhapDTO
             } catch (SQLException ex) {
                 Logger.getLogger(ChiTietPhieuNhapDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-            SanPhamDAO.getInstance().updateSoLuongTon(t.get(i).getMSP(), t.get(i).getSL());
+            SanPhamDAO.getInstance().updateSoLuongTon(t.get(i).getMSP(), t.get(i).getSL(), t.get(i).getTIEN());
         }
         return result;
     }
