@@ -3,6 +3,8 @@ package GUI.Dialog;
 import DAO.KhachHangDAO;
 import DTO.KhachHangDTO;
 import GUI.Component.ButtonCustom;
+import GUI.Panel.TaoHoaDon;
+
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -30,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 public class ListKhachHang extends JDialog implements MouseListener {
 
     private BanHang banhang;
+    private TaoHoaDon hoadon;
     private JTable tableKhachHang;
     private JScrollPane scrollTableSanPham;
     private DefaultTableModel tblModel;
@@ -39,6 +42,15 @@ public class ListKhachHang extends JDialog implements MouseListener {
     public ListKhachHang(BanHang banhang, JFrame owner, String title, boolean modal){
         super(owner, title, modal);
         this.banhang = banhang;
+        init();
+        loadDataTalbe(search(""));
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+    }
+
+    public ListKhachHang(TaoHoaDon hoadon, JFrame owner, String title, boolean modal){
+        super(owner, title, modal);
+        this.hoadon = hoadon;
         init();
         loadDataTalbe(search(""));
         this.setLocationRelativeTo(null);
@@ -65,19 +77,37 @@ public class ListKhachHang extends JDialog implements MouseListener {
             }
         });
         ButtonCustom buttonAdd = new ButtonCustom("Chọn khách hàng", "success", 14);
-        buttonAdd.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(getRow()<0){
-                    JOptionPane.showConfirmDialog(null, 
-                "Vui lòng chọn khách hàng!:)", "Thông báo", JOptionPane.DEFAULT_OPTION);
-                } else{
-                    banhang.setKhachHang(listKh.get(getRow()).getMKH());
-                    dispose();
+
+        if(banhang != null) {
+            buttonAdd.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(getRow()<0){
+                        JOptionPane.showConfirmDialog(null, 
+                    "Vui lòng chọn khách hàng!:)", "Thông báo", JOptionPane.DEFAULT_OPTION);
+                    } else{
+                        banhang.setKhachHang(listKh.get(getRow()).getMKH());
+                        dispose();
+                    }
                 }
-            }
-            
-        });
+                
+            });
+        }
+        else {
+            buttonAdd.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(getRow()<0){
+                        JOptionPane.showConfirmDialog(null, 
+                    "Vui lòng chọn khách hàng!:)", "Thông báo", JOptionPane.DEFAULT_OPTION);
+                    } else{
+                        hoadon.setKhachHang(listKh.get(getRow()).getMKH());
+                        dispose();
+                    }
+                }
+                
+            });
+        }
         panelSearch.add(jLabelSearch,BorderLayout.WEST);
         panelSearch.add(jTextFieldSearch,BorderLayout.CENTER);
         panelSearch.add(buttonAdd,BorderLayout.EAST);
