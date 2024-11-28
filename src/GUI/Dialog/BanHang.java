@@ -31,8 +31,7 @@ import BUS.MaKhuyenMaiBUS;
 import BUS.HoaDonBUS;
 import BUS.SanPhamBUS;
 import DAO.NhanVienDAO;
-import DAO.HoaDonDAO;
-import DTO.ChiTietPhieuDTO;
+import DTO.ChiTietHoaDonDTO;
 import DTO.KhachHangDTO;
 import DTO.MaKhuyenMaiDTO;
 import DTO.NhanVienDTO;
@@ -40,26 +39,26 @@ import DTO.HoaDonDTO;
 import DTO.SanPhamDTO;
 import DTO.TaiKhoanDTO;
 import GUI.Main;
-import GUI.Panel.HoaDon;
 import GUI.Component.ButtonCustom;
 import GUI.Component.InputForm;
 import GUI.Component.Notification;
 import GUI.Component.NumericDocumentFilter;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.SelectForm;
-import GUI.Dialog.ListKhachHang;
+import GUI.Panel.HoaDon;
 import helper.Formater;
 
 public final class BanHang extends JPanel {
-    JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this); //gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
+    JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
+     //gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
     // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của listkhachhang
     PanelBorderRadius right, left;
     JPanel  contentCenter, left_top, content_btn, left_bottom; //là cái main cữ
     JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
     DefaultTableModel tblModel, tblModelSP; //table co san 
-    ButtonCustom btnAddSp, btnEditSP, btnDelete, btnNhapHang;
-    InputForm txtMaphieu, txtNhanVien, txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtMaGiamGia, txtGiaGiam;
+    ButtonCustom btnTaoSp, btnAddSp, btnEditSP, btnDelete, btnNhapHang;
+    InputForm txtMaphieu, txtNhanVien, txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtDTL, txtDTLG, txtMaGiamGia, txtGiaGiam;
     SelectForm cbxMaKM; 
     JTextField txtTimKiem;
     Color BackgroundColor = new Color(193 ,237 ,220);
@@ -69,6 +68,7 @@ public final class BanHang extends JPanel {
     int masp;
     int manv;
     int makh = -1;
+    int dtl = 0;
     String type;
 
     // ArrayList<SanPhamDTO> ctpb;
@@ -77,30 +77,30 @@ public final class BanHang extends JPanel {
     HoaDonBUS phieuXuatBUS = new HoaDonBUS();
     // SanPhamBUS chiTietSanPhamBUS = new SanPhamBUS();
     KhachHangBUS khachHangBUS = new KhachHangBUS();
-    ArrayList<ChiTietPhieuDTO> chitietphieu = new ArrayList<>();
+    ArrayList<ChiTietHoaDonDTO> chitietphieu = new ArrayList<>();
     ArrayList<DTO.SanPhamDTO> listSP = spBUS.getAll();
     ArrayList<DTO.ChiTietMaKhuyenMaiDTO> listctMKM = new ArrayList<>();
 
     TaiKhoanDTO tk;
     private JLabel lbltongtien;
     private JTextField txtKh;
-    private Main mainChinh;
-    // private ButtonCustom btnQuayLai; //chua use
+    // private Main mainChinh;
     private InputForm txtGiaXuat;
-
-    public BanHang(Main mainChinh, TaiKhoanDTO tk, String type) {
-        this.mainChinh = mainChinh;
+    protected Frame mainChinh; //???
+    
+    // public BanHang(Main mainChinh, TaiKhoanDTO tk, String type) {
+    public BanHang (TaiKhoanDTO tk, String type) {
         this.tk = tk;
         this.type = type;
         maphieu = phieuXuatBUS.getMPMAX() + 1;
         initComponent(type);
         loadDataTalbeSanPham(listSP);
     }
-
+    
     private void initComponent(String type) {
         this.setBackground(BackgroundColor);
         this.setLayout(new BorderLayout(0, 0));
-        this.setOpaque(true);
+        // this.setOpaque(true);
 
         // Phiếu xuất
         tablePhieuXuat = new JTable();
@@ -130,7 +130,7 @@ public final class BanHang extends JPanel {
                 if (index != -1) {
                     tableSanPham.setSelectionMode(index);
                     setFormChiTietPhieu(chitietphieu.get(index));
-                    // ChiTietPhieuDTO ctphieu = chitietphieu.get(index);
+                    // ChiTietHoaDonDTO ctphieu = chitietphieu.get(index);
                     // SanPhamDTO ctspSell = spBUS.getByMaSP(ctphieu.getMSP());
                     // setInfoSanPham(ctspSell);
                     actionbtn("update");
@@ -287,10 +287,10 @@ public final class BanHang extends JPanel {
         content_btn.setLayout(new GridLayout(1, 4, 5, 5));
         content_btn.setBorder(new EmptyBorder(8, 5, 0, 10));
         content_btn.setOpaque(false);
+        btnTaoSp = new ButtonCustom("Tạo sản phẩm", "success", 14);
         btnAddSp = new ButtonCustom("Thêm sản phẩm", "success", 14);
         btnEditSP = new ButtonCustom("Sửa sản phẩm", "warning", 14);
         btnDelete = new ButtonCustom("Xoá sản phẩm", "danger", 14);
-
         btnAddSp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -364,19 +364,21 @@ public final class BanHang extends JPanel {
         right.setLayout(new BorderLayout());
 
         JPanel right_top, right_center, right_bottom, pn_tongtien;
-        right_top = new JPanel(new GridLayout(2, 1, 0, 0));
-        right_top.setPreferredSize(new Dimension(300, 180));
+        right_top = new JPanel(new GridLayout(3, 1, 0, 0));
+        right_top.setPreferredSize(new Dimension(300, 270));
         txtMaphieu = new InputForm("Mã phiếu xuất");
         txtMaphieu.setEditable(false);
         txtNhanVien = new InputForm("Nhân viên xuất");
         txtNhanVien.setEditable(false);
-        maphieu = HoaDonDAO.getInstance().getAutoIncrement();
+        txtDTL = new InputForm("Điểm tích lũy đang có");
+        txtDTL.setEditable(false);
         manv = tk.getMNV();
         txtMaphieu.setText("PX" + maphieu);
         NhanVienDTO nhanvien = NhanVienDAO.getInstance().selectById(tk.getMNV() + "");
         txtNhanVien.setText(nhanvien.getHOTEN());
         right_top.add(txtMaphieu);
         right_top.add(txtNhanVien);
+        right_top.add(txtDTL);
 
         right_center = new JPanel(new BorderLayout());
         right_center.setOpaque(false);
@@ -396,6 +398,9 @@ public final class BanHang extends JPanel {
 
         txtKh = new JTextField("");
         txtKh.setEditable(false);
+        txtDTLG = new InputForm("Điểm tích lũy giảm");
+        txtDTLG.setText("0");
+        txtDTLG.setEditable(false);
         khachJPanel.add(kJPanelLeft, BorderLayout.EAST);
         khachJPanel.add(txtKh, BorderLayout.CENTER);
         JPanel khPanel = new JPanel(new GridLayout(2, 1, 5, 0));
@@ -406,6 +411,7 @@ public final class BanHang extends JPanel {
         khPanel.add(khachKhangJLabel);
         khPanel.add(khachJPanel);
         right_center.add(khPanel, BorderLayout.NORTH);
+        right_center.add(txtDTLG, BorderLayout.SOUTH);
 
         right_bottom = new JPanel(new GridLayout(2, 1));
         right_bottom.setPreferredSize(new Dimension(300, 100));
@@ -423,13 +429,13 @@ public final class BanHang extends JPanel {
         pn_tongtien.add(lbltongtien);
         right_bottom.add(pn_tongtien);
 
-        btnNhapHang = new ButtonCustom("Xuất hàng", "excel", 14);
+        btnNhapHang = new ButtonCustom("Bán hàng", "excel", 14);
         btnNhapHang.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 eventBtnNhapHang();
             }
-        });;
+        });
         right_bottom.add(btnNhapHang);
 
         right.add(right_top, BorderLayout.NORTH);
@@ -502,7 +508,7 @@ public final class BanHang extends JPanel {
 
     
 
-    public void setFormChiTietPhieu(ChiTietPhieuDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
+    public void setFormChiTietPhieu(ChiTietHoaDonDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
         SanPhamDTO ctsp = spBUS.getByMaSP(phieu.getMSP());
         // ChiTietMaKhuyenMaiDTO ctmkm = mkmBUS.findCT(listctMKM, ctsp.getMSP());
         this.txtMaSp.setText(Integer.toString(ctsp.getMSP()));
@@ -519,7 +525,7 @@ public final class BanHang extends JPanel {
         }
     }
 
-    public void loadDataTableChiTietPhieu(ArrayList<ChiTietPhieuDTO> ctPhieu) {
+    public void loadDataTableChiTietPhieu(ArrayList<ChiTietHoaDonDTO> ctPhieu) {
         tblModel.setRowCount(0);
         int size = ctPhieu.size();
         sum = 0;
@@ -537,7 +543,7 @@ public final class BanHang extends JPanel {
     
 
     public boolean checkTonTai() {
-        ChiTietPhieuDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText())); 
+        ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText())); 
             //kiểm tra coi masp này có trong chitietphieu này chưa 
         
         return p != null;
@@ -556,19 +562,27 @@ public final class BanHang extends JPanel {
             JOptionPane.showMessageDialog(null, "Số lượng không được để rỗng và không lớn hơn đang có!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
         } 
+        else if (Integer.parseInt(txtSoLuongSPxuat.getText()) == 0) {
+            JOptionPane.showMessageDialog(null, "Số lượng không được bằng 0!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } 
         return check;
     }
 
     public void addCtPhieu() { // them sp vao chitietphieu
         int masp = Integer.parseInt(txtMaSp.getText());
         int giaxuat;
-        if(!txtGiaGiam.getText().equals(" ")) 
+        String mkm = null;
+        int index = cbxMaKM.cbb.getSelectedIndex();
+        if(index != 0) mkm = listctMKM.get(index - 1).getMKM();
+        if(!txtGiaGiam.getText().equals(" ")) {
             giaxuat = Integer.parseInt(txtGiaGiam.getText());
+        }
         else
             giaxuat = Integer.parseInt(txtGiaXuat.getText());
         int soluong = Integer.parseInt(txtSoLuongSPxuat.getText());
-        ChiTietPhieuDTO ctphieu = new ChiTietPhieuDTO(maphieu, masp, soluong, giaxuat);
-        ChiTietPhieuDTO p = phieuXuatBUS.findCT(chitietphieu, ctphieu.getMSP());
+        ChiTietHoaDonDTO ctphieu = new ChiTietHoaDonDTO(maphieu, masp, soluong, giaxuat, mkm);
+        ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, ctphieu.getMSP());
         if (p == null) {
             chitietphieu.add(ctphieu);
             loadDataTableChiTietPhieu(chitietphieu);
@@ -583,9 +597,11 @@ public final class BanHang extends JPanel {
 
     public void eventBtnNhapHang() {
         if (chitietphieu.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu !", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else if (makh == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+        } else if(Integer.parseInt(txtDTLG.getText()) > dtl || Integer.parseInt(txtDTLG.getText()) > sum ) {
+            JOptionPane.showMessageDialog(null, "Điểm tích lũy không lớn hơn điểm đang có và giá đang bán!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else {
             int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn tạo phiếu xuất !", "Xác nhận tạo phiếu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
             if (input == 0) {
@@ -594,12 +610,15 @@ public final class BanHang extends JPanel {
                 } else {
                     long now = System.currentTimeMillis();
                     Timestamp currenTime = new Timestamp(now);
-                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum, 1);
+                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum-dtl, 1, dtl);
                     phieuXuatBUS.insert(phieuXuat, chitietphieu); //update số lượng trong kho
                     /// gọi BUS, BUS gọi DAO, DAO chỉnh trong sql 
                     // SanPhamBUS.updateXuat(chitietsanpham); 
                     JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
-                    mainChinh.setPanel(new HoaDon(mainChinh, tk));
+                    khachHangBUS.update(makh, sum/1000);
+                    // this.setPanel(new HoaDon(this, tk));
+                    this.removeAll();
+                    // this.dispose();
                 }
             }
         }
@@ -609,5 +628,18 @@ public final class BanHang extends JPanel {
         makh = index;
         KhachHangDTO khachhang = khachHangBUS.selectKh(makh);
         txtKh.setText(khachhang.getHOTEN());
+        if(index != 1) {
+            dtl = 0;
+            txtDTLG.setEditable(true);
+            txtDTL.setText(khachhang.getDIEMTICHLUY()+"");
+            txtDTLG.setText("0");
+        }
+        else {
+            dtl = 0;
+            txtDTLG.setEditable(false);
+            txtDTLG.setText("0");
+            txtDTL.setText("");
+
+        }
     }
 }
