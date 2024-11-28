@@ -23,7 +23,7 @@ public class Main extends JFrame {
         this.setSize(new Dimension(1400, 800));
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(0, 0));
-        this.setTitle("Hệ thống quản lý cửa hàng sách");
+        this.setTitle("Hệ thống quản lý siêu thị mini");
 
         menuTaskbar = new MenuTaskbar(this, user);
 
