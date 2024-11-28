@@ -68,6 +68,8 @@ public class ChucVuDialog extends JDialog {
         main.setBackground(Color.white);
         name = new InputForm("Tên chức vụ");
         mucluong = new InputForm("Mức lương");
+        PlainDocument ml = (PlainDocument)mucluong.getTxtForm().getDocument();
+        ml.setDocumentFilter((new NumericDocumentFilter()));
         PlainDocument phonex = (PlainDocument) mucluong.getTxtForm().getDocument();
         phonex.setDocumentFilter((new NumericDocumentFilter()));
         JPanel jpanelG = new JPanel(new GridLayout(2, 1, 0, 2));

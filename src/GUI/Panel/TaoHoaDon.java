@@ -311,7 +311,7 @@ public final class TaoHoaDon extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 int index = tablePhieuXuat.getSelectedRow();
                 if (index < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần chỉnh");
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm cần chỉnh");
                 } else {
                     chitietphieu.get(index).setSL(Integer.parseInt(txtSoLuongSPxuat.getText()));
                     if(!txtGiaGiam.getText().equals(" ")) 
@@ -328,7 +328,7 @@ public final class TaoHoaDon extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 int index = tablePhieuXuat.getSelectedRow();
                 if (index < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần xóa");
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm cần xóa");
                 } else {
                     chitietphieu.remove(index);
                     actionbtn("add");
@@ -400,6 +400,8 @@ public final class TaoHoaDon extends JPanel {
         txtDTLG = new InputForm("Điểm tích lũy giảm");
         txtDTLG.setText("0");
         txtDTLG.setEditable(false);
+        PlainDocument dtgpd = (PlainDocument)txtDTLG.getTxtForm().getDocument();
+        dtgpd.setDocumentFilter((new NumericDocumentFilter()));
         khachJPanel.add(kJPanelLeft, BorderLayout.EAST);
         khachJPanel.add(txtKh, BorderLayout.CENTER);
         JPanel khPanel = new JPanel(new GridLayout(2, 1, 5, 0));
