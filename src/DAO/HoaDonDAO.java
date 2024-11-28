@@ -1,6 +1,6 @@
 package DAO;
 
-import DTO.ChiTietPhieuDTO;
+import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
 import DTO.SanPhamDTO;
 import config.JDBCUtil;
@@ -163,7 +163,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
         HoaDonDTO result = null;
         try {
             
-            ArrayList<ChiTietPhieuDTO> chitietphieu = ChiTietHoaDonDAO.getInstance().selectAll(phieu+"");
+            ArrayList<ChiTietHoaDonDTO> chitietphieu = ChiTietHoaDonDAO.getInstance().selectAll(phieu+"");
             ChiTietHoaDonDAO.getInstance().reset(chitietphieu);
             
             deletePhieu(phieu);
@@ -230,8 +230,8 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
     }
     public int cancelHOADON(int maphieu){
         int result = 0;
-        ArrayList<ChiTietPhieuDTO> arrCt = ChiTietHoaDonDAO.getInstance().selectAll(Integer.toString(maphieu));
-        for (ChiTietPhieuDTO chiTietPhieuNhapDTO : arrCt) {
+        ArrayList<ChiTietHoaDonDTO> arrCt = ChiTietHoaDonDAO.getInstance().selectAll(Integer.toString(maphieu));
+        for (ChiTietHoaDonDTO chiTietPhieuNhapDTO : arrCt) {
             SanPhamDAO.getInstance().updateSoLuongTon(chiTietPhieuNhapDTO.getMSP(), -(chiTietPhieuNhapDTO.getSL()));
         }
         ChiTietPhieuNhapDAO.getInstance().delete(Integer.toString(maphieu));
@@ -251,7 +251,7 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
     public boolean checkSLPx(int maphieu) {
         SanPhamBUS spBus = new SanPhamBUS();
         ArrayList<SanPhamDTO> SP = new ArrayList<SanPhamDTO>();
-        ArrayList<ChiTietPhieuDTO> result = new ArrayList<>();
+        ArrayList<ChiTietHoaDonDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "SELECT * FROM CTHOADON WHERE MHD=?";
@@ -262,7 +262,8 @@ public class HoaDonDAO implements DAOinterface<HoaDonDTO> {
                 int masp = rs.getInt("MSP");
                 int soluong = rs.getInt("SL");
                 int tiennhap = rs.getInt("TIENXUAT");
-                ChiTietPhieuDTO ct = new ChiTietPhieuDTO(maphieu, masp,  soluong, tiennhap);
+                String MKM = rs.getString("MKM");
+                ChiTietHoaDonDTO ct = new ChiTietHoaDonDTO(maphieu, masp,  soluong, tiennhap, MKM);
                 result.add(ct);
                 SP.add(spBus.spDAO.selectById(ct.getMSP() + ""));
             }

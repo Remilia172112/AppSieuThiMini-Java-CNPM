@@ -67,7 +67,7 @@ public class ListKhachHang extends JDialog implements MouseListener {
         jLabelSearch.setSize(new Dimension(100,0));
         JTextField jTextFieldSearch = new JTextField();
         jTextFieldSearch.setFont(new Font(FlatRobotoFont.FAMILY, 0, 13));
-        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm nhân viên....");
+        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm khách hàng....");
         jTextFieldSearch.putClientProperty("JTextField.showClearButton", true);
         jTextFieldSearch.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {

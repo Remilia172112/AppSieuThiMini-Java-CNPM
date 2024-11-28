@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.TableSorter;
 import GUI.Dialog.SanPhamDialog;
+import helper.Formater;
 import helper.JTableExporter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -123,7 +124,8 @@ public final class SanPham extends JPanel implements ActionListener {
     public void loadDataTalbe(ArrayList<DTO.SanPhamDTO> result) {
         tblModel.setRowCount(0);
         for (DTO.SanPhamDTO sp : result) {
-            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), sp.getDONVI(), sp.getLOAI(), sp.getTIENX()
+            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), sp.getDONVI(), sp.getLOAI(), 
+                Formater.FormatVND(sp.getTIENX())
             });
         }
     }

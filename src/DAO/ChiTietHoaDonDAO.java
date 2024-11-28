@@ -1,7 +1,6 @@
 package DAO;
 
-import DTO.ChiTietMaKhuyenMaiDTO;
-import DTO.ChiTietPhieuDTO;
+import DTO.ChiTietHoaDonDTO;
 import config.JDBCUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,24 +9,22 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import BUS.MaKhuyenMaiBUS;
-
 import java.sql.ResultSet;
 
 
-public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
+public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietHoaDonDTO> {
 
     public static ChiTietHoaDonDAO getInstance() {
         return new ChiTietHoaDonDAO();
     }
 
     @Override
-    public int insert(ArrayList<ChiTietPhieuDTO> t) {
+    public int insert(ArrayList<ChiTietHoaDonDTO> t) {
         int result = 0;
         for (int i = 0; i < t.size(); i++) {
             try {
                 Connection con = (Connection) JDBCUtil.getConnection();
-                String sql = "INSERT INTO `CTHOADON` (`MHD`, `MSP`, `SL`,  `TIENXUAT`) VALUES (?,?,?,?)";
+                String sql = "INSERT INTO `CTHOADON` (`MHD`, `MSP`, `SL`, `TIENXUAT`, `MKM`) VALUES (?,?,?,?,?)";
                 PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
                 pst.setInt(1, t.get(i).getMP());
                 pst.setInt(2, t.get(i).getMSP());
@@ -35,6 +32,7 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
                 pst.setInt(3, t.get(i).getSL());
                 SanPhamDAO.getInstance().updateSoLuongTon(t.get(i).getMSP(), SL);
                 pst.setInt(4, t.get(i).getTIEN());
+                pst.setString(5, t.get(i).getMKM());
                 result = pst.executeUpdate();
                 JDBCUtil.closeConnection(con);
             } catch (SQLException ex) {
@@ -44,52 +42,7 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
         return result;
     }
 
-    public int insertGH(ArrayList<ChiTietPhieuDTO> t) {
-        int result = 0;
-        for (int i = 0; i < t.size(); i++) {
-            try {
-                Connection con = (Connection) JDBCUtil.getConnection();
-                String sql = "INSERT INTO `CTHOADON` (`MHD`, `MSP`, `SL`, `TIENXUAT`) VALUES (?,?,?,?)";
-                PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-                pst.setInt(1, t.get(i).getMP());
-                pst.setInt(2, t.get(i).getMSP());
-                pst.setInt(3, t.get(i).getSL());
-                pst.setInt(4, t.get(i).getTIEN());
-                result = pst.executeUpdate();
-                JDBCUtil.closeConnection(con);
-            } catch (SQLException ex) {
-                Logger.getLogger(ChiTietHoaDonDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return result;
-    }
-    
-    public int insert(ArrayList<ChiTietPhieuDTO> t, ArrayList<ChiTietMaKhuyenMaiDTO> ctmkm) {
-        int result = 0;
-        for (int i = 0; i < t.size(); i++) {
-            try {
-                Connection con = (Connection) JDBCUtil.getConnection();
-                String sql = "INSERT INTO `CTHOADON` (`MHD`, `MSP`, `MKM`, SL`,  `TIENXUAT`) VALUES (?,?,?,?.?)";
-                PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-                pst.setInt(1, t.get(i).getMP());
-                pst.setInt(2, t.get(i).getMSP());
-                MaKhuyenMaiBUS mkmbus = new MaKhuyenMaiBUS();
-                ChiTietMaKhuyenMaiDTO mkm = mkmbus.findCT(ctmkm, t.get(i).getMSP());
-                pst.setString(4, mkm.getMKM());
-                int SL = -(t.get(i).getSL());
-                pst.setInt(4, t.get(i).getSL());
-                SanPhamDAO.getInstance().updateSoLuongTon(t.get(i).getMSP(), SL);
-                pst.setInt(5, t.get(i).getTIEN());
-                result = pst.executeUpdate();
-                JDBCUtil.closeConnection(con);
-            } catch (SQLException ex) {
-                Logger.getLogger(ChiTietHoaDonDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return result;
-    }
-
-    public int reset(ArrayList<ChiTietPhieuDTO> t){
+    public int reset(ArrayList<ChiTietHoaDonDTO> t){
         int result = 0;
         for (int i = 0; i < t.size(); i++) {
         SanPhamDAO.getInstance().updateSoLuongTon(t.get(i).getMSP(), +(t.get(i).getSL()));
@@ -115,7 +68,7 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
     }
 
     @Override
-    public int update(ArrayList<ChiTietPhieuDTO> t, String pk) {
+    public int update(ArrayList<ChiTietHoaDonDTO> t, String pk) {
         int result = this.delete(pk);
         if (result != 0) {
             result = this.insert(t);
@@ -124,8 +77,8 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
     }
 
     @Override
-    public ArrayList<ChiTietPhieuDTO> selectAll(String t) {
-        ArrayList<ChiTietPhieuDTO> result = new ArrayList<>();
+    public ArrayList<ChiTietHoaDonDTO> selectAll(String t) {
+        ArrayList<ChiTietHoaDonDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "SELECT * FROM CTHOADON WHERE MHD = ?";
@@ -137,7 +90,8 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
                 int MSP = rs.getInt("MSP");
                 int SL = rs.getInt("SL");
                 int tienxuat = rs.getInt("TIENXUAT");
-                ChiTietPhieuDTO ctphieu = new ChiTietPhieuDTO(maphieu, MSP, SL, tienxuat);
+                String mkm = rs.getString("MKM");
+                ChiTietHoaDonDTO ctphieu = new ChiTietHoaDonDTO(maphieu, MSP, SL, tienxuat, mkm);
                 result.add(ctphieu);
             }
             JDBCUtil.closeConnection(con);
@@ -159,7 +113,8 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietPhieuDTO> {
                 int MSP = rs.getInt("MSP");
                 int SL = rs.getInt("SL");
                 int tienxuat = rs.getInt("TIENXUAT");
-                ChiTietPhieuDTO ctphieu = new ChiTietPhieuDTO(maphieu, MSP, SL, tienxuat);
+                String mkm = rs.getString("MKM");
+                ChiTietHoaDonDTO ctphieu = new ChiTietHoaDonDTO(maphieu, MSP, SL, tienxuat, mkm);
                 int SLsp = -(ctphieu.getSL());
                 SanPhamDAO.getInstance().updateSoLuongTon(ctphieu.getMSP(), SLsp);
             }

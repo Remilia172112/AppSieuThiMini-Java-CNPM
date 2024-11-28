@@ -74,7 +74,7 @@ public final class ChiTietPhieuDialog extends JDialog implements ActionListener 
         super(owner, title, modal);
         this.phieuxuat = phieuxuatDTO;
         phieuxuatBus = new HoaDonBUS();
-        chitietphieu = phieuxuatBus.selectCTP(phieuxuatDTO.getMP());
+        chitietphieu = phieuxuatBus.getChiTietPhieu_Type(phieuxuatDTO.getMP());
         initComponent(title);
         if(phieuxuatDTO.getTT() != 2) {
             btnDuyet.setEnabled(false);

@@ -3,6 +3,7 @@ package BUS;
 import DAO.ChiTietHoaDonDAO;
 // import DAO.SanPhamDAO;
 import DAO.HoaDonDAO;
+import DTO.ChiTietHoaDonDTO;
 import DTO.ChiTietPhieuDTO;
 import DTO.HoaDonDTO;
 import DTO.SanPhamDTO;
@@ -55,18 +56,22 @@ public class HoaDonBUS {
         chiTietPhieuXuatDAO.updateSL(px.getMP()+"");
     }
 
-    public void insert(HoaDonDTO px, ArrayList<ChiTietPhieuDTO> ct) {
+    public void insert(HoaDonDTO px, ArrayList<ChiTietHoaDonDTO> ct) {
         phieuXuatDAO.insert(px); //ghi phieu xuat vao sql
         chiTietPhieuXuatDAO.insert(ct); //goi updatesoluongTon cua sanphamDAO để chỉnh số lượng trong kho -> ghi váo sql
     }
 
-    public void insertGH(HoaDonDTO px, ArrayList<ChiTietPhieuDTO> ct) {
-        phieuXuatDAO.insert(px); //ghi phieu xuat vao sql
-        chiTietPhieuXuatDAO.insertGH(ct); //goi updatesoluongTon cua sanphamDAO để chỉnh số lượng trong kho -> ghi váo sql
+    public ArrayList<ChiTietHoaDonDTO> selectCTP(int maphieu) {
+        return chiTietPhieuXuatDAO.selectAll(Integer.toString(maphieu));
     }
 
-    public ArrayList<ChiTietPhieuDTO> selectCTP(int maphieu) {
-        return chiTietPhieuXuatDAO.selectAll(Integer.toString(maphieu));
+    public ArrayList<ChiTietPhieuDTO> getChiTietPhieu_Type(int maphieunhap) {
+        ArrayList<ChiTietHoaDonDTO> arr = chiTietPhieuXuatDAO.selectAll(Integer.toString(maphieunhap));
+        ArrayList<ChiTietPhieuDTO> result = new ArrayList<>();
+        for (ChiTietPhieuDTO i : arr) {
+            result.add(i);
+        }
+        return result;
     }
 
     public int getMPMAX() {
@@ -78,7 +83,7 @@ public class HoaDonBUS {
         return s;
     }
     //moi them, nó tương tự insert nhưng có check
-    // public boolean add(PhieuXuatDTO phieu, ArrayList<ChiTietPhieuDTO> ctPhieu, HashMap<Integer, ArrayList<SanPhamDTO>> chitietsanpham) {
+    // public boolean add(PhieuXuatDTO phieu, ArrayList<ChiTietHoaDonDTO> ctPhieu, HashMap<Integer, ArrayList<SanPhamDTO>> chitietsanpham) {
     //     boolean check = phieuXuatDAO.insert(phieu) != 0;
     //     if (check) {
     //         check = chiTietPhieuXuatDAO.insert(ctPhieu) != 0;
@@ -86,8 +91,8 @@ public class HoaDonBUS {
     //     return check;
     // }
 
-    public ChiTietPhieuDTO findCT(ArrayList<ChiTietPhieuDTO> ctphieu, int masp) {
-        ChiTietPhieuDTO p = null;
+    public ChiTietHoaDonDTO findCT(ArrayList<ChiTietHoaDonDTO> ctphieu, int masp) {
+        ChiTietHoaDonDTO p = null;
         int i = 0;
         while (i < ctphieu.size() && p == null) {
             if (ctphieu.get(i).getMSP() == masp) {
@@ -169,10 +174,10 @@ public class HoaDonBUS {
         return this.listPhieuXuat.get(index);
     }
 
-    public boolean checkSLPx(ArrayList <ChiTietPhieuDTO> listctpx) {
+    public boolean checkSLPx(ArrayList <ChiTietHoaDonDTO> listctpx) {
         SanPhamBUS spBus = new SanPhamBUS();
         ArrayList<SanPhamDTO> SP = new ArrayList<SanPhamDTO>();
-        for(ChiTietPhieuDTO i : listctpx) SP.add(spBus.spDAO.selectById(i.getMSP() + ""));
+        for(ChiTietHoaDonDTO i : listctpx) SP.add(spBus.spDAO.selectById(i.getMSP() + ""));
         for (int i = 0; i < SP.size(); i++) {
             if(listctpx.get(i).getSL() > SP.get(i).getSL()){
                 return false;

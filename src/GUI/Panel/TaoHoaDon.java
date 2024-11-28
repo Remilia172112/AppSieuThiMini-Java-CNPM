@@ -31,8 +31,7 @@ import BUS.MaKhuyenMaiBUS;
 import BUS.HoaDonBUS;
 import BUS.SanPhamBUS;
 import DAO.NhanVienDAO;
-import DAO.HoaDonDAO;
-import DTO.ChiTietPhieuDTO;
+import DTO.ChiTietHoaDonDTO;
 import DTO.KhachHangDTO;
 import DTO.MaKhuyenMaiDTO;
 import DTO.NhanVienDTO;
@@ -77,7 +76,7 @@ public final class TaoHoaDon extends JPanel {
     HoaDonBUS phieuXuatBUS = new HoaDonBUS();
     // SanPhamBUS chiTietSanPhamBUS = new SanPhamBUS();
     KhachHangBUS khachHangBUS = new KhachHangBUS();
-    ArrayList<ChiTietPhieuDTO> chitietphieu = new ArrayList<>();
+    ArrayList<ChiTietHoaDonDTO> chitietphieu = new ArrayList<>();
     ArrayList<DTO.SanPhamDTO> listSP = spBUS.getAll();
     ArrayList<DTO.ChiTietMaKhuyenMaiDTO> listctMKM = new ArrayList<>();
 
@@ -130,7 +129,7 @@ public final class TaoHoaDon extends JPanel {
                 if (index != -1) {
                     tableSanPham.setSelectionMode(index);
                     setFormChiTietPhieu(chitietphieu.get(index));
-                    // ChiTietPhieuDTO ctphieu = chitietphieu.get(index);
+                    // ChiTietHoaDonDTO ctphieu = chitietphieu.get(index);
                     // SanPhamDTO ctspSell = spBUS.getByMaSP(ctphieu.getMSP());
                     // setInfoSanPham(ctspSell);
                     actionbtn("update");
@@ -372,7 +371,6 @@ public final class TaoHoaDon extends JPanel {
         txtNhanVien.setEditable(false);
         txtDTL = new InputForm("Điểm tích lũy đang có");
         txtDTL.setEditable(false);
-        maphieu = HoaDonDAO.getInstance().getAutoIncrement();
         manv = tk.getMNV();
         txtMaphieu.setText("PX" + maphieu);
         NhanVienDTO nhanvien = NhanVienDAO.getInstance().selectById(tk.getMNV() + "");
@@ -509,7 +507,7 @@ public final class TaoHoaDon extends JPanel {
 
     
 
-    public void setFormChiTietPhieu(ChiTietPhieuDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
+    public void setFormChiTietPhieu(ChiTietHoaDonDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
         SanPhamDTO ctsp = spBUS.getByMaSP(phieu.getMSP());
         // ChiTietMaKhuyenMaiDTO ctmkm = mkmBUS.findCT(listctMKM, ctsp.getMSP());
         this.txtMaSp.setText(Integer.toString(ctsp.getMSP()));
@@ -526,7 +524,7 @@ public final class TaoHoaDon extends JPanel {
         }
     }
 
-    public void loadDataTableChiTietPhieu(ArrayList<ChiTietPhieuDTO> ctPhieu) {
+    public void loadDataTableChiTietPhieu(ArrayList<ChiTietHoaDonDTO> ctPhieu) {
         tblModel.setRowCount(0);
         int size = ctPhieu.size();
         sum = 0;
@@ -544,7 +542,7 @@ public final class TaoHoaDon extends JPanel {
     
 
     public boolean checkTonTai() {
-        ChiTietPhieuDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText())); 
+        ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText())); 
             //kiểm tra coi masp này có trong chitietphieu này chưa 
         
         return p != null;
@@ -573,13 +571,17 @@ public final class TaoHoaDon extends JPanel {
     public void addCtPhieu() { // them sp vao chitietphieu
         int masp = Integer.parseInt(txtMaSp.getText());
         int giaxuat;
-        if(!txtGiaGiam.getText().equals(" ")) 
+        String mkm = null;
+        int index = cbxMaKM.cbb.getSelectedIndex();
+        if(index != 0) mkm = listctMKM.get(index - 1).getMKM();
+        if(!txtGiaGiam.getText().equals(" ")) {
             giaxuat = Integer.parseInt(txtGiaGiam.getText());
+        }
         else
             giaxuat = Integer.parseInt(txtGiaXuat.getText());
         int soluong = Integer.parseInt(txtSoLuongSPxuat.getText());
-        ChiTietPhieuDTO ctphieu = new ChiTietPhieuDTO(maphieu, masp, soluong, giaxuat);
-        ChiTietPhieuDTO p = phieuXuatBUS.findCT(chitietphieu, ctphieu.getMSP());
+        ChiTietHoaDonDTO ctphieu = new ChiTietHoaDonDTO(maphieu, masp, soluong, giaxuat, mkm);
+        ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, ctphieu.getMSP());
         if (p == null) {
             chitietphieu.add(ctphieu);
             loadDataTableChiTietPhieu(chitietphieu);
