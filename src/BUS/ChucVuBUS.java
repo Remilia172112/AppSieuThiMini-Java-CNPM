@@ -52,11 +52,13 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
 
     public ChucVuBUS(ChucVu cv) {
         this.cv = cv;
+        this.listChucVu = ChucVuDAO.selectAll();
     }
 
     public ChucVuBUS(JTextField textField, ChucVu cv) {
         this.textField = textField;
         this.cv = cv;
+        this.listChucVu = ChucVuDAO.selectAll();
     }
 
     public ChucVuDTO getByIndex(int index) {

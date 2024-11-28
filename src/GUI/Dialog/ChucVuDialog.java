@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -59,7 +58,7 @@ public class ChucVuDialog extends JDialog {
     }
 
     public void init(String title, String type) {
-        this.setSize(new Dimension(450, 590));
+        this.setSize(new Dimension(450, 500));
         this.setLayout(new BorderLayout(0, 0));
 
         titlePage = new HeaderTitle(title.toUpperCase());
@@ -77,13 +76,9 @@ public class ChucVuDialog extends JDialog {
         JPanel jgender = new JPanel(new GridLayout(1, 2));
         jgender.setSize(new Dimension(500, 80));
         jgender.setBackground(Color.white);
-        JLabel labelGender = new JLabel("Giới tính");
-        jpanelG.add(labelGender);
         jpanelG.add(jgender);
         JPanel jpaneljd = new JPanel();
         jpaneljd.setBorder(new EmptyBorder(10, 10, 10, 10));
-        JLabel lbBd = new JLabel("Ngày sinh");
-        lbBd.setSize(new Dimension(100, 100));
         jpaneljd.setSize(new Dimension(500, 100));
         jpaneljd.setLayout(new FlowLayout(FlowLayout.LEFT));
         jpaneljd.setBackground(Color.white);
@@ -94,7 +89,7 @@ public class ChucVuDialog extends JDialog {
         bottom = new JPanel(new FlowLayout());
         bottom.setBorder(new EmptyBorder(10, 0, 10, 0));
         bottom.setBackground(Color.white);
-        btnAdd = new ButtonCustom("Thêm người dùng", "success", 14);
+        btnAdd = new ButtonCustom("Thêm chức vụ", "success", 14);
         btnEdit = new ButtonCustom("Lưu thông tin", "success", 14);
         btnExit = new ButtonCustom("Hủy bỏ", "danger", 14);
         btnExit.addActionListener(new ActionListener() {

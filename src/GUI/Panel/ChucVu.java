@@ -126,9 +126,8 @@ public final class ChucVu extends JPanel {
     }
 
     public void loadDataTalbe(ArrayList<DTO.ChucVuDTO> list) {
-        listnv = list;
         tblModel.setRowCount(0);
-        for (DTO.ChucVuDTO nhanVien : listnv) {
+        for (DTO.ChucVuDTO nhanVien : list) {
             tblModel.addRow(new Object[]{
                 nhanVien.getMCV(), nhanVien.getTENCV(), Formater.FormatVND(nhanVien.getMUCLUONG())
             });
