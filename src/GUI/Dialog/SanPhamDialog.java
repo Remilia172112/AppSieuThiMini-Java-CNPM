@@ -1,6 +1,5 @@
 package GUI.Dialog;
 
-import BUS.KhuVucKhoBUS;
 import BUS.SanPhamBUS;
 import DAO.SanPhamDAO;
 import DTO.SanPhamDTO;
@@ -50,7 +49,6 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
     GUI.Panel.SanPham jpSP;
 
     
-    KhuVucKhoBUS kvkhoBus = new KhuVucKhoBUS();
     SanPhamBUS spBus = new SanPhamBUS();
 
     SanPhamDTO sp;
