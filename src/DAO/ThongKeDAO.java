@@ -43,8 +43,8 @@ public class ThongKeDAO {
                             ),
                             xuat AS (
                             SELECT MSP, SUM(SL) AS sl_xuat
-                            FROM CTPHIEUXUAT
-                            JOIN PHIEUXUAT ON PHIEUXUAT.MPX = CTPHIEUXUAT.MPX
+                            FROM CTHOADON
+                            JOIN HOADON ON HOADON.MHD = CTHOADON.MHD
                             WHERE TG BETWEEN ? AND ?
                             GROUP BY MSP
                             ),
@@ -56,11 +56,11 @@ public class ThongKeDAO {
                             GROUP BY CTPHIEUNHAP.MSP
                             ),
                             xuat_dau AS (
-                            SELECT CTPHIEUXUAT.MSP, SUM(CTPHIEUXUAT.SL) AS sl_xuat_dau
-                            FROM PHIEUXUAT
-                            JOIN CTPHIEUXUAT ON PHIEUXUAT.MPX = CTPHIEUXUAT.MPX
-                            WHERE PHIEUXUAT.TG < ?
-                            GROUP BY CTPHIEUXUAT.MSP
+                            SELECT CTHOADON.MSP, SUM(CTHOADON.SL) AS sl_xuat_dau
+                            FROM HOADON
+                            JOIN CTHOADON ON HOADON.MHD = CTHOADON.MHD
+                            WHERE HOADON.TG < ?
+                            GROUP BY CTHOADON.MSP
                             ),
                             dau_ky AS (
                             SELECT
@@ -124,11 +124,11 @@ public class ThongKeDAO {
                         SELECT 
                         years.year AS nam,
                         COALESCE(SUM(CTPHIEUNHAP.TIENNHAP), 0) AS chiphi, 
-                        COALESCE(SUM(CTPHIEUXUAT.TIENXUAT), 0) AS doanhthu
+                        COALESCE(SUM(CTHOADON.TIENXUAT), 0) AS doanhthu
                         FROM years
-                        LEFT JOIN PHIEUXUAT ON YEAR(PHIEUXUAT.TG) = years.year
-                        LEFT JOIN CTPHIEUXUAT ON PHIEUXUAT.MPX = CTPHIEUXUAT.MPX
-                        LEFT JOIN SANPHAM ON SANPHAM.MSP = CTPHIEUXUAT.MSP
+                        LEFT JOIN HOADON ON YEAR(HOADON.TG) = years.year
+                        LEFT JOIN CTHOADON ON HOADON.MHD = CTHOADON.MHD
+                        LEFT JOIN SANPHAM ON SANPHAM.MSP = CTHOADON.MSP
                         LEFT JOIN CTPHIEUNHAP ON SANPHAM.MSP = CTPHIEUNHAP.MSP
                         GROUP BY years.year
                         ORDER BY years.year;""";
@@ -169,10 +169,10 @@ public class ThongKeDAO {
             Connection con = JDBCUtil.getConnection();
             String sql = """
                             WITH kh AS (
-                            SELECT KHACHHANG.MKH, KHACHHANG.HOTEN , COUNT(PHIEUXUAT.MPX) AS tongsophieu, SUM(PHIEUXUAT.TIEN) AS tongsotien
+                            SELECT KHACHHANG.MKH, KHACHHANG.HOTEN , COUNT(HOADON.MHD) AS tongsophieu, SUM(HOADON.TIEN) AS tongsotien
                             FROM KHACHHANG
-                            JOIN PHIEUXUAT ON KHACHHANG.MKH = PHIEUXUAT.MKH
-                            WHERE PHIEUXUAT.TG BETWEEN ? AND ? 
+                            JOIN HOADON ON KHACHHANG.MKH = HOADON.MKH
+                            WHERE HOADON.TG BETWEEN ? AND ? 
                             GROUP BY KHACHHANG.MKH, KHACHHANG.HOTEN)
                             SELECT MKH,HOTEN,COALESCE(kh.tongsophieu, 0) AS SL ,COALESCE(kh.tongsotien, 0) AS total 
                             FROM kh WHERE HOTEN LIKE ? OR MKH LIKE ?""";
@@ -244,7 +244,7 @@ public class ThongKeDAO {
             Connection con = JDBCUtil.getConnection();
             String sql = "SELECT months.month AS thang, \n"
                     + "       COALESCE(SUM(CTPHIEUNHAP.TIENNHAP), 0) AS chiphi,\n"
-                    + "       COALESCE(SUM(CTPHIEUXUAT.TIENXUAT), 0) AS doanhthu\n"
+                    + "       COALESCE(SUM(CTHOADON.TIENXUAT), 0) AS doanhthu\n"
                     + "FROM (\n"
                     + "       SELECT 1 AS month\n"
                     + "       UNION ALL SELECT 2\n"
@@ -259,9 +259,9 @@ public class ThongKeDAO {
                     + "       UNION ALL SELECT 11\n"
                     + "       UNION ALL SELECT 12\n"
                     + "     ) AS months\n"
-                    + "LEFT JOIN PHIEUXUAT ON MONTH(PHIEUXUAT.TG) = months.month AND YEAR(PHIEUXUAT.TG) = ? \n"
-                    + "LEFT JOIN CTPHIEUXUAT ON PHIEUXUAT.MPX = CTPHIEUXUAT.MPX\n"
-                    + "LEFT JOIN SANPHAM ON SANPHAM.MSP = CTPHIEUXUAT.MSP\n"
+                    + "LEFT JOIN HOADON ON MONTH(HOADON.TG) = months.month AND YEAR(HOADON.TG) = ? \n"
+                    + "LEFT JOIN CTHOADON ON HOADON.MHD = CTHOADON.MHD\n"
+                    + "LEFT JOIN SANPHAM ON SANPHAM.MSP = CTHOADON.MSP\n"
                     + "LEFT JOIN CTPHIEUNHAP ON SANPHAM.MSP = CTPHIEUNHAP.MSP\n"
                     + "GROUP BY months.month\n"
                     + "ORDER BY months.month;";
@@ -290,7 +290,7 @@ public class ThongKeDAO {
             String sql = "SELECT \n"
                     + "  dates.date AS ngay, \n"
                     + "  COALESCE(SUM(CTPHIEUNHAP.TIENNHAP), 0) AS chiphi, \n"
-                    + "  COALESCE(SUM(CTPHIEUXUAT.TIENXUAT), 0) AS doanhthu\n"
+                    + "  COALESCE(SUM(CTHOADON.TIENXUAT), 0) AS doanhthu\n"
                     + "FROM (\n"
                     + "  SELECT DATE('" + ngayString + "') + INTERVAL c.number DAY AS date\n"
                     + "  FROM (\n"
@@ -328,9 +328,9 @@ public class ThongKeDAO {
                     + "  ) AS c\n"
                     + "  WHERE DATE('" + ngayString + "') + INTERVAL c.number DAY <= LAST_DAY('" + ngayString + "')\n"
                     + ") AS dates\n"
-                    + "LEFT JOIN PHIEUXUAT ON DATE(PHIEUXUAT.TG) = dates.date\n"
-                    + "LEFT JOIN CTPHIEUXUAT ON PHIEUXUAT.MPX = CTPHIEUXUAT.MPX\n"
-                    + "LEFT JOIN SANPHAM ON SANPHAM.MSP = CTPHIEUXUAT.MSP\n"
+                    + "LEFT JOIN HOADON ON DATE(HOADON.TG) = dates.date\n"
+                    + "LEFT JOIN CTHOADON ON HOADON.MHD = CTHOADON.MHD\n"
+                    + "LEFT JOIN SANPHAM ON SANPHAM.MSP = CTHOADON.MSP\n"
                     + "LEFT JOIN CTPHIEUNHAP ON SANPHAM.MSP = CTPHIEUNHAP.MSP\n"
                     + "GROUP BY dates.date\n"
                     + "ORDER BY dates.date;";
@@ -364,12 +364,12 @@ public class ThongKeDAO {
                             )
                             SELECT 
                             dates.date AS ngay,
-                            COALESCE(SUM(CTPHIEUXUAT.TIENXUAT), 0) AS doanhthu,
+                            COALESCE(SUM(CTHOADON.TIENXUAT), 0) AS doanhthu,
                             COALESCE(SUM(CTPHIEUNHAP.TIENNHAP), 0) AS chiphi
                             FROM dates
-                            LEFT JOIN PHIEUXUAT ON DATE(PHIEUXUAT.TG) = dates.date
-                            LEFT JOIN CTPHIEUXUAT ON PHIEUXUAT.MPX = CTPHIEUXUAT.MPX
-                            LEFT JOIN SANPHAM ON SANPHAM.MSP = CTPHIEUXUAT.MSP
+                            LEFT JOIN HOADON ON DATE(HOADON.TG) = dates.date
+                            LEFT JOIN CTHOADON ON HOADON.MHD = CTHOADON.MHD
+                            LEFT JOIN SANPHAM ON SANPHAM.MSP = CTHOADON.MSP
                             LEFT JOIN CTPHIEUNHAP ON SANPHAM.MSP = CTPHIEUNHAP.MSP
                             GROUP BY dates.date
                             ORDER BY dates.date;""";
@@ -398,7 +398,7 @@ public class ThongKeDAO {
             String sqlSelect = "SELECT \n"
                     + "  dates.date AS ngay, \n"
                     + "  COALESCE(SUM(CTPHIEUNHAP.TIENNHAP), 0) AS chiphi, \n"
-                    + "  COALESCE(SUM(CTPHIEUXUAT.TIENXUAT), 0) AS doanhthu\n"
+                    + "  COALESCE(SUM(CTHOADON.TIENXUAT), 0) AS doanhthu\n"
                     + "FROM (\n"
                     + "  SELECT DATE_ADD(@start_date, INTERVAL c.number DAY) AS date\n"
                     + "  FROM (\n"
@@ -452,9 +452,9 @@ public class ThongKeDAO {
                     + "  ) AS c\n"
                     + "  WHERE DATE_ADD(@start_date, INTERVAL c.number DAY) <= @end_date\n"
                     + ") AS dates\n"
-                    + "LEFT JOIN PHIEUXUAT ON DATE(PHIEUXUAT.TG) = dates.date\n"
-                    + "LEFT JOIN CTPHIEUXUAT ON PHIEUXUAT.MPX = CTPHIEUXUAT.MPX\n"
-                    + "LEFT JOIN SANPHAM ON SANPHAM.MSP = CTPHIEUXUAT.MSP\n"
+                    + "LEFT JOIN HOADON ON DATE(HOADON.TG) = dates.date\n"
+                    + "LEFT JOIN CTHOADON ON HOADON.MHD = CTHOADON.MHD\n"
+                    + "LEFT JOIN SANPHAM ON SANPHAM.MSP = CTHOADON.MSP\n"
                     + "LEFT JOIN CTPHIEUNHAP ON SANPHAM.MSP = CTPHIEUNHAP.MSP\n"
                     + "GROUP BY dates.date\n"
                     + "ORDER BY dates.date;";
