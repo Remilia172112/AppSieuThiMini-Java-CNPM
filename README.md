@@ -1,4 +1,4 @@
-## Đồ án Java - Quản lý siêu thị mini - NHÓM 08
+## Đồ án Java - Quản lý siêu thị mini - NHÓM 07
 
 ## Thành viên nhóm:
 
