@@ -51,16 +51,15 @@ public class login_page extends JFrame implements KeyListener{
         imgIntro();
         
         login_nhap = new JPanel();
-        // login_nhap.setLayout(new BoxLayout(login_nhap, BoxLayout.Y_AXIS)); // Vertical BoxLayout
         login_nhap.setBackground(Color.WHITE);
         login_nhap.setLayout(new FlowLayout(1 , 0 , 10 ));
         login_nhap.setBorder(new EmptyBorder(20,0,0,0));
-        login_nhap.setPreferredSize(new Dimension(500 , 740));
+        login_nhap.setPreferredSize(new Dimension(490 , 500));
         
         GridBagConstraints gbc = new GridBagConstraints();
-        lb1 = new JLabel("ĐĂNG NHẬP VÀO HỆ THỐNG");
-        lb1.setFont(new Font("Tahoma", Font.BOLD , 20));
-        lb1.setForeground(Color.BLACK); // Set text color
+        JLabel lb1 = new JLabel("<html><p style='font-size: 28px; font-weight: bold; font-family: Tahoma; color: #239F82;'>Đăng nhập</p><p style='font-size: 10px; font-family: Tahoma; margin-left: 20px;'>Xin chào, hãy bắt đầu!</p></html>");
+        // lb1.setFont(new Font("Tahoma", Font.BOLD , 20));
+        // lb1.setForeground(Color.BLACK); // Set text color
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2; // Span across two columns
@@ -189,13 +188,22 @@ public class login_page extends JFrame implements KeyListener{
 
     public void imgIntro() {
         JPanel bo = new JPanel();
-        bo.setBorder(new EmptyBorder(3, 10, 5, 5));
-        bo.setPreferredSize(new Dimension(410, 740));
+        bo.setPreferredSize(new Dimension(410, 500));
         bo.setBackground(Color.white);
-        this.add(bo, BorderLayout.WEST);
+        bo.setLayout(new BorderLayout());
+        
+        ImageIcon iconOrgin = new ImageIcon("./src/img/1.png");
+        Image imageOrgin = iconOrgin.getImage();
 
-        lb_img_1 = new JLabel(new ImageIcon("./src/img/1.png"));
-        bo.add(lb_img_1);
+        int width = bo.getPreferredSize().width;
+        int height = bo.getPreferredSize().height;
+        Image scaleImage = imageOrgin.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+        ImageIcon scaledIcon = new ImageIcon(scaleImage);
+        JLabel lb_img_1 = new JLabel(scaledIcon);
+        bo.add(lb_img_1, BorderLayout.CENTER);
+
+        this.add(bo, BorderLayout.WEST);
     }
     
     @Override
