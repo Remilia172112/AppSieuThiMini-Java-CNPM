@@ -202,7 +202,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         txtTenSp.setPreferredSize(new Dimension(100, 90));
         txtMaSp = new InputForm("Mã sản phẩm");
         txtMaSp.setEditable(false);
-        txtMaISBN = new InputForm("Mã ISBN");
+        txtMaISBN = new InputForm("Mã vạch");
         txtMaISBN.setEditable(false);
         txtMaISBN.getTxtForm().addKeyListener(new KeyAdapter() {
             @Override

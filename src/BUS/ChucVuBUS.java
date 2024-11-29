@@ -249,7 +249,7 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
         switch (luachon) {
             case "Tất cả" -> {
                 for (ChucVuDTO i : this.listChucVu) {
-                    if (i.getTENCV().toLowerCase().contains(text) || i.getMUCLUONG() == Integer.parseInt(text)) {
+                    if (i.getTENCV().toLowerCase().contains(text) || (i.getMUCLUONG()+"").contains(text)) {
                         result.add(i);
                     }
                 }
@@ -263,7 +263,7 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
             }
             case "Mức lương" -> {
                 for (ChucVuDTO i : this.listChucVu) {
-                    if (i.getMUCLUONG() == Integer.parseInt(text)) {
+                    if ((i.getMUCLUONG()+"").contains(text)) {
                         result.add(i);
                     }
                 }
