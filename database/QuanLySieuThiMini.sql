@@ -184,12 +184,14 @@ CREATE TABLE `DONVI` (
   `MDV` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Mã đơn vị',
   `TENDV` VARCHAR(255) NOT NULL COMMENT 'Tên đơn vị',
   `TT` INT(11) NOT NULL DEFAULT 1 COMMENT 'Trạng thái',
+  PRIMARY KEY(MDV)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `LOAI` (
   `ML` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Mã loại',
   `TENL` VARCHAR(255) NOT NULL COMMENT 'Tên loại',
   `TT` INT(11) NOT NULL DEFAULT 1 COMMENT 'Trạng thái',
+  PRIMARY KEY(ML)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `KHUVUCSP` (
@@ -215,7 +217,7 @@ CREATE TABLE `CTKHUVUCSP` (
 INSERT INTO `DANHMUCCHUCNANG`(`MCN`, `TEN`, `TT`)
 VALUES 
         ('sanpham', 'Quản lý sản phẩm', 1),
-        ('thuoctinh', 'Quản lý thuộc tính sản phẩm', 1),
+        ('thuoctinh', 'Quản lý thuộc tính', 1),
         ('khachhang', 'Quản lý khách hàng', 1),
         ('nhacungcap', 'Quản lý nhà cung cấp', 1),
         ('nhanvien', 'Quản lý nhân viên', 1),
@@ -225,7 +227,6 @@ VALUES
         ('hoadon', 'Quản lý hóa đơn', 1),
         ('banhang', 'Bán hàng', 1),
         ('kiemke', 'Quản lý kiểm kê', 1),
-        ('khuvucsp', 'Quản lý khu vực sản phẩm', 1),
         ('nhomquyen', 'Quản lý nhóm quyền', 1),
         ('taikhoan', 'Quản lý tài khoản', 1),
         ('makhuyenmai', 'Quản lý mã khuyến mãi', 1),
@@ -273,10 +274,6 @@ VALUES
         (1, 'kiemke', 'delete'),
         (1, 'kiemke', 'update'),
         (1, 'kiemke', 'view'),
-        (1, 'khuvucsp', 'create'),
-        (1, 'khuvucsp', 'delete'),
-        (1, 'khuvucsp', 'update'),
-        (1, 'khuvucsp', 'view'),
         (1, 'nhomquyen', 'create'),
         (1, 'nhomquyen', 'delete'),
         (1, 'nhomquyen', 'update'),

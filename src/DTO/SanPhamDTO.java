@@ -5,24 +5,24 @@ public class SanPhamDTO {
     private int MSP;
     private String TEN;
     private String HINHANH;
-    private String LOAI;
+    private int ML;
     private int TIENX;
     private int SL;
-    private String DONVI;
+    private int MDV;
     private String MV;
 
     public SanPhamDTO() {
 
     }
 
-    public SanPhamDTO(int mSP, String tEN, String hINHANH, String lOAI, int tIENX, int sL, String dONVI, String mV) {
+    public SanPhamDTO(int mSP, String tEN, String hINHANH, int mL, int tIENX, int sL, int mDV, String mV) {
         MSP = mSP;
         TEN = tEN;
         HINHANH = hINHANH;
-        LOAI = lOAI;
+        ML = mL;
         TIENX = tIENX;
         SL = sL;
-        DONVI = dONVI;
+        MDV = mDV;
         MV = mV;
     }
 
@@ -50,12 +50,12 @@ public class SanPhamDTO {
         HINHANH = hINHANH;
     }
 
-    public String getLOAI() {
-        return LOAI;
+    public int getML() {
+        return ML;
     }
 
-    public void setLOAI(String lOAI) {
-        LOAI = lOAI;
+    public void setML(int mL) {
+        ML = mL;
     }
 
     public int getTIENX() {
@@ -74,12 +74,12 @@ public class SanPhamDTO {
         SL = sL;
     }
 
-    public String getDONVI() {
-        return DONVI;
+    public int getMDV() {
+        return MDV;
     }
 
-    public void setDONVI(String dONVI) {
-        DONVI = dONVI;
+    public void setMDV(int mDV) {
+        MDV = mDV;
     }
 
     public String getMV() {
@@ -97,10 +97,10 @@ public class SanPhamDTO {
         result = prime * result + MSP;
         result = prime * result + ((TEN == null) ? 0 : TEN.hashCode());
         result = prime * result + ((HINHANH == null) ? 0 : HINHANH.hashCode());
-        result = prime * result + ((LOAI == null) ? 0 : LOAI.hashCode());
+        result = prime * result + ML;
         result = prime * result + TIENX;
         result = prime * result + SL;
-        result = prime * result + ((DONVI == null) ? 0 : DONVI.hashCode());
+        result = prime * result + MDV;
         result = prime * result + ((MV == null) ? 0 : MV.hashCode());
         return result;
     }
@@ -126,19 +126,13 @@ public class SanPhamDTO {
                 return false;
         } else if (!HINHANH.equals(other.HINHANH))
             return false;
-        if (LOAI == null) {
-            if (other.LOAI != null)
-                return false;
-        } else if (!LOAI.equals(other.LOAI))
+        if (ML != other.ML)
             return false;
         if (TIENX != other.TIENX)
             return false;
         if (SL != other.SL)
             return false;
-        if (DONVI == null) {
-            if (other.DONVI != null)
-                return false;
-        } else if (!DONVI.equals(other.DONVI))
+        if (MDV != other.MDV)
             return false;
         if (MV == null) {
             if (other.MV != null)
@@ -150,8 +144,9 @@ public class SanPhamDTO {
 
     @Override
     public String toString() {
-        return "SanPhamDTO [MSP=" + MSP + ", TEN=" + TEN + ", HINHANH=" + HINHANH + ", LOAI=" + LOAI + ", TIENX="
-                + TIENX + ", SL=" + SL + ", DONVI=" + DONVI + ", MV=" + MV + "]";
+        return "SanPhamDTO [MSP=" + MSP + ", TEN=" + TEN + ", HINHANH=" + HINHANH + ", ML=" + ML + ", TIENX=" + TIENX
+                + ", SL=" + SL + ", MDV=" + MDV + ", MV=" + MV + "]";
     }
+    
 
 }

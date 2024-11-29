@@ -21,10 +21,9 @@ public class LoaiDAO implements DAOinterface<LoaiDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `LOAI`(`ML`, `TENL`,`TT`) VALUES (?,?,1)";
+            String sql = "INSERT INTO `LOAI`(`TENL`,`TT`) VALUES (?,1)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setInt(1, t.getML());
-            pst.setString(2, t.getTENL());
+            pst.setString(1, t.getTENL());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {

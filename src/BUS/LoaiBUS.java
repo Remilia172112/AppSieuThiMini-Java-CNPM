@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class LoaiBUS {
 
     private LoaiDAO mausacDAO = new LoaiDAO();
-    private ArrayList<LoaiDTO> listLoai = new ArrayList<>();
+    public ArrayList<LoaiDTO> listLoai = new ArrayList<>();
 
     public LoaiBUS() {
         this.listLoai = mausacDAO.selectAll();
@@ -75,7 +75,7 @@ public class LoaiBUS {
     public boolean checkDup(String name) {
         boolean check = true;
         int i = 0;
-        while (i <= this.listLoai.size() && check == true) {
+        while (i < this.listLoai.size() && check == true) {
             if (this.listLoai.get(i).getTENL().toLowerCase().contains(name.toLowerCase())) {
                 check = false;
             } else {

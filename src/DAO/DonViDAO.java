@@ -21,10 +21,9 @@ public class DonViDAO implements DAOinterface<DonViDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `DONVI`(`MDV`, `TENDV`,`TT`) VALUES (?,?,1)";
+            String sql = "INSERT INTO `DONVI`(`TENDV`,`TT`) VALUES (?,1)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setInt(1, t.getMDV());
-            pst.setString(2, t.getTENDV());
+            pst.setString(1, t.getTENDV());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class DonViBUS {
 
     private DonViDAO mausacDAO = new DonViDAO();
-    private ArrayList<DonViDTO> listDonVi = new ArrayList<>();
+    public ArrayList<DonViDTO> listDonVi = new ArrayList<>();
 
     public DonViBUS() {
         this.listDonVi = mausacDAO.selectAll();
@@ -75,7 +75,7 @@ public class DonViBUS {
     public boolean checkDup(String name) {
         boolean check = true;
         int i = 0;
-        while (i <= this.listDonVi.size() && check == true) {
+        while (i < this.listDonVi.size() && check == true) {
             if (this.listDonVi.get(i).getTENDV().toLowerCase().contains(name.toLowerCase())) {
                 check = false;
             } else {

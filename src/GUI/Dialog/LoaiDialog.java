@@ -2,7 +2,6 @@ package GUI.Dialog;
 
 import BUS.LoaiBUS;
 import BUS.NhomQuyenBUS;
-import DAO.LoaiDAO;
 import DTO.LoaiDTO;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
@@ -136,7 +135,7 @@ public class LoaiDialog extends JDialog implements MouseListener {
             } else {
                 String tenmau = ms.getText();
                 if (msBUS.checkDup(tenmau)) {
-                    int id = LoaiDAO.getInstance().getAutoIncrement();
+                    int id = msBUS.listLoai.size()+1;
                     msBUS.add(new LoaiDTO(id, tenmau));
                     loadDataTable(list);
                     ms.setText("");

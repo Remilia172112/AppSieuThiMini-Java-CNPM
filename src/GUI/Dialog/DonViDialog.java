@@ -2,7 +2,6 @@ package GUI.Dialog;
 
 import BUS.DonViBUS;
 import BUS.NhomQuyenBUS;
-import DAO.DonViDAO;
 import DTO.DonViDTO;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
@@ -136,7 +135,7 @@ public class DonViDialog extends JDialog implements MouseListener {
             } else {
                 String tenmau = ms.getText();
                 if (msBUS.checkDup(tenmau)) {
-                    int id = DonViDAO.getInstance().getAutoIncrement();
+                    int id = msBUS.listDonVi.size()+1;
                     msBUS.add(new DonViDTO(id, tenmau));
                     loadDataTable(list);
                     ms.setText("");

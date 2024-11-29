@@ -1,5 +1,7 @@
 package GUI.Dialog;
 
+import BUS.DonViBUS;
+import BUS.LoaiBUS;
 import BUS.SanPhamBUS;
 import DAO.SanPhamDAO;
 import DTO.SanPhamDTO;
@@ -8,6 +10,7 @@ import GUI.Component.HeaderTitle;
 import GUI.Component.InputForm;
 import GUI.Component.InputImage;
 import GUI.Component.NumericDocumentFilter;
+import GUI.Component.SelectForm;
 import GUI.Panel.SanPham;
 import helper.Validation;
 import java.awt.BorderLayout;
@@ -40,7 +43,8 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
     private HeaderTitle titlePage;
     private JPanel pninfosanpham, pnbottom, pnCenter, pninfosanphamright, pnmain;
     private ButtonCustom btnHuyBo, btnAddSanPham;
-    InputForm tenSP, donvi, loai, mv;
+    private SelectForm donvi, loai;
+    InputForm tenSP, mv;
     InputForm txtgiaxuat;
     InputImage hinhanh;
     JTable tblcauhinh;
@@ -50,6 +54,8 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
 
     
     SanPhamBUS spBus = new SanPhamBUS();
+    DonViBUS dvbus = new DonViBUS();
+    LoaiBUS loaibus = new LoaiBUS();
 
     SanPhamDTO sp;
     String[] arrkhuvuc;
@@ -88,8 +94,8 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
         pnCenter.add(pninfosanphamright, BorderLayout.WEST);
 
         tenSP = new InputForm("Tên sản phẩm");
-        loai = new InputForm("Loại");
-        donvi = new InputForm("Đơn vị");
+        loai = new SelectForm("Loại", loaibus.getArrTenLoai());
+        donvi = new SelectForm("Đơn vị", dvbus.getArrTenDonVi());
         txtgiaxuat = new InputForm("Giá xuất");
         PlainDocument xuat = (PlainDocument)txtgiaxuat.getTxtForm().getDocument();
         xuat.setDocumentFilter((new NumericDocumentFilter()));
@@ -208,19 +214,19 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
     public SanPhamDTO getInfo() {
         String vtensp = tenSP.getText();
         String hinhanh = this.hinhanh.getUrl_img();
-        String danhMuc = loai.getText();
-        String naMXB  = donvi.getText();
+        int loai = loaibus.getByIndex(this.loai.getSelectedIndex()).getML();
+        int donvi  = dvbus.getByIndex(this.donvi.getSelectedIndex()).getMDV();
         int tIENX = Integer.parseInt(txtgiaxuat.getText());
         String ISBN = mv.getText();
-        SanPhamDTO result = new SanPhamDTO(masp, vtensp, hinhanh, danhMuc, tIENX, 0, naMXB, ISBN);
+        SanPhamDTO result = new SanPhamDTO(masp, vtensp, hinhanh, loai, tIENX, 0, donvi, ISBN);
         return result;
     }
 
     public void setInfo(SanPhamDTO sp) {
         hinhanh.setUrl_img(sp.getHINHANH());
         tenSP.setText(sp.getTEN());
-        loai.setText(sp.getLOAI());
-        donvi.setText(sp.getDONVI());
+        loai.setSelectedIndex(sp.getML()-1);
+        donvi.setSelectedIndex(sp.getMDV()-1);
         txtgiaxuat.setText(Integer.toString(sp.getTIENX()));
         mv.setText(sp.getMV());
     }
@@ -229,7 +235,6 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
     public boolean checkCreate() {
         boolean check = true;
         if (Validation.isEmpty(tenSP.getText())
-                || Validation.isEmpty(loai.getText()) || Validation.isEmpty(donvi.getText())
                 || Validation.isEmpty(txtgiaxuat.getText()) || Validation.isEmpty(mv.getText())) {
             check = false;
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !");
@@ -249,7 +254,6 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
     public boolean checkUpdate() {
         boolean check = true;
         if (Validation.isEmpty(tenSP.getText())
-                || Validation.isEmpty(loai.getText()) || Validation.isEmpty(donvi.getText())
                 || Validation.isEmpty(txtgiaxuat.getText()) || Validation.isEmpty(mv.getText())) {
             check = false;
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin !");
