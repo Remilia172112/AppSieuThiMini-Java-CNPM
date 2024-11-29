@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import GUI.Dialog.MyAccount;
+import GUI.Dialog.BanHang;
 import GUI.Panel.ThongKe.ThongKe;
 public class MenuTaskbar extends JPanel {
 
@@ -45,6 +46,7 @@ public class MenuTaskbar extends JPanel {
     PhieuKiemKe phieuKiemKe;
     PhanQuyen phanQuyen;
     ThongKe thongKe;
+    BanHang banHang;
     JScrollPane scrollPaneMenuTask ;
     String[][] getSt = {
         {"Trang chủ", "home.svg", "trangchu"},
@@ -60,6 +62,7 @@ public class MenuTaskbar extends JPanel {
         {"Phân quyền", "protect.svg", "nhomquyen"},
         {"Tài khoản", "account.svg", "taikhoan"},
         {"Thống kê", "statistical_1.svg", "thongke"},
+        {"Bán Hàng", "import.svg", "banhang"},
         {"Đăng xuất", "log_out.svg", "dangxuat"},
     };
 
@@ -278,6 +281,13 @@ public class MenuTaskbar extends JPanel {
             }
         });
         listitem.get(13).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent evt) {
+                banHang = new BanHang(user, "create");
+                main.setPanel(banHang);
+            }
+        });
+        listitem.get(14).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
 
