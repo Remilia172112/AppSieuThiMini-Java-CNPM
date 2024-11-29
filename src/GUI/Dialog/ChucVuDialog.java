@@ -106,7 +106,7 @@ public class ChucVuDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (ValidationInput()) {
-                        int manv = ChucVuDAO.getInstance().getAutoIncrement();
+                        int manv = nv.getAll().size() + 1;
                             String txtName = name.getText();
                             String txtSdt = mucluong.getText();
                             ChucVuDTO nV = new ChucVuDTO(manv, txtName, Integer.parseInt(txtSdt));

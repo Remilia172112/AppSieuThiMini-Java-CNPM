@@ -2,7 +2,6 @@ package GUI.Panel;
 
 import DTO.KhachHangDTO;
 import BUS.KhachHangBUS;
-import DAO.KhachHangDAO;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import java.awt.*;
@@ -189,7 +188,7 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
                 for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
                     int check = 1;
                     XSSFRow excelRow = excelSheet.getRow(row);
-                    int id = KhachHangDAO.getInstance().getAutoIncrement();
+                    int id = khachhangBUS.getAll().size() + 1;
                     String tenkh = excelRow.getCell(0).getStringCellValue();
                     String sdt = excelRow.getCell(1).getStringCellValue();
                     String diachi = excelRow.getCell(2).getStringCellValue();

@@ -3,7 +3,6 @@ package GUI.Dialog;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputForm;
 import GUI.Component.ButtonCustom;
-import DAO.KhachHangDAO;
 import DTO.KhachHangDTO;
 import GUI.Panel.KhachHang;
 import GUI.Component.NumericDocumentFilter;
@@ -170,7 +169,7 @@ public class KhachHangDialog extends JDialog implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         if (e.getSource() == btnThem && Validation()) {
-                int id=KhachHangDAO.getInstance().getAutoIncrement();
+                int id= jpKH.khachhangBUS.getAll().size() + 1;
                 long now = System.currentTimeMillis();
                 Timestamp currenTime = new Timestamp(now);
                 jpKH.khachhangBUS.add(new DTO.KhachHangDTO(id, tenKH.getText(),sdtKH.getText(), diachiKH.getText(), emailKH.getText(), currenTime,0));
