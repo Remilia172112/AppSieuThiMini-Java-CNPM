@@ -13,8 +13,8 @@ public class SendEmailSMTP {
     }
     
     public static void sendOTP(String emailTo, String otp) {
-        final String username = "chamsockhachhangbestbook@gmail.com";
-        final String password = "bestbook123";
+        final String username = "adm.booksales.2023@gmail.com"; // Email cũ
+        final String password = "fdqvpwjwhfmgqgda"; // Mật khẩu cũ
         Properties prop = new Properties();
         prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         prop.put("mail.smtp.host", "smtp.gmail.com");
