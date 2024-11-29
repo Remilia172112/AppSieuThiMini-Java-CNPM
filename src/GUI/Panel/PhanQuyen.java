@@ -82,7 +82,6 @@ public class PhanQuyen extends JPanel implements ActionListener {
         contentCenter.add(main, BorderLayout.CENTER);
 
         tblNhomQuyen = new JTable();
-        tblNhomQuyen.setBackground(new Color(0xA1D6E2));
         tblNhomQuyen.setDefaultEditor(Object.class, null);
         scrollTable = new JScrollPane();
         tblModel = new DefaultTableModel();

@@ -103,7 +103,6 @@ public final class ThongKeDoanhThuTuNgayDenNgay extends JPanel {
         });
 
         tableThongKe = new JTable();
-        tableThongKe.setBackground(new Color(0xA1D6E2));
         scrollTableThongKe = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"Ngày", "Chi phí", "Doanh thu", "Lợi nhuận"};

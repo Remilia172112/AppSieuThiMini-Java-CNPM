@@ -56,7 +56,6 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
         this.setOpaque(true);
 
         tableKhachHang = new JTable();
-        tableKhachHang.setBackground(new Color(0xA1D6E2));
         scrollTableKhachHang = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"Mã khách hàng", "Tên khách hàng", "Địa chỉ", "Số điện thoại", "Ngày tham gia", "Điểm tích lũy"};

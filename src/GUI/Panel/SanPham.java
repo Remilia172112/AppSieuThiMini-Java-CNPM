@@ -51,7 +51,6 @@ public final class SanPham extends JPanel implements ActionListener {
         this.setLayout(new BorderLayout(0, 0));
         this.setOpaque(true);
         tableSanPham = new JTable();
-        tableSanPham.setBackground(new Color(0xA1D6E2));
         scrollTableSanPham = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"Mã SP", "Tên sản phẩm", "Số lượng tồn", "Đơn vị", "Loại", "Tiền xuất"};

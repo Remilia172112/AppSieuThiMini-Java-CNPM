@@ -99,7 +99,6 @@ public class ThongKeKhachHang extends JPanel implements ActionListener, KeyListe
         nhapxuat_center.setLayout(boxly);
 
         tblKH = new JTable();
-        tblKH.setBackground(new Color(0xA1D6E2));
 
         scrollTblTonKho = new JScrollPane();
         tblModel = new DefaultTableModel();

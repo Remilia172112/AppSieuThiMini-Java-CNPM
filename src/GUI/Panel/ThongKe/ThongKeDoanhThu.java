@@ -31,7 +31,6 @@ public class ThongKeDoanhThu extends JPanel {
         thongkedoanhthutungaydenngay = new ThongKeDoanhThuTuNgayDenNgay(thongkeBUS);
 
         tabbedPane = new JTabbedPane();
-        tabbedPane.setBackground(new Color(0xA1D6E2));
         tabbedPane.setOpaque(false);
         tabbedPane.addTab("Thống kê theo năm", thongketungnam);
         tabbedPane.addTab("Thống kê từng tháng trong năm", thongkedoanhthutungthang);
