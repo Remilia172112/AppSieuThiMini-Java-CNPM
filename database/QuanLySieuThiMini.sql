@@ -171,14 +171,28 @@ CREATE TABLE `SANPHAM` (
     `MSP` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Mã sản phẩm',
     `TEN` VARCHAR(255) NOT NULL COMMENT 'Tên sản phẩm',
     `HINHANH` VARCHAR(255) NOT NULL COMMENT 'Hình sản phẩm',
-    `LOAI` VARCHAR(255) NOT NULL COMMENT 'Loại sản phẩm',
+    `ML` INT(11) NOT NULL COMMENT 'Mã loại',
     `TIENX` INT(11) NOT NULL COMMENT 'Tiền xuất',
     `SL` INT(11) DEFAULT 0 COMMENT 'Số lượng',
-    `DONVI` VARCHAR(255) NOT NULL COMMENT 'Đơn vị tính',
+    `MDV` INT(11) NOT NULL COMMENT 'Mã đơn vị',
     `MV` VARCHAR(255) UNIQUE NOT NULL COMMENT 'Mã vạch',
     `TT` INT(11) NOT NULL DEFAULT 1 COMMENT 'Trạng thái',
     PRIMARY KEY(MSP)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+CREATE TABLE `DONVI` (
+  `MDV` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Mã đơn vị',
+  `TENDV` VARCHAR(255) NOT NULL COMMENT 'Tên đơn vị',
+  `TT` INT(11) NOT NULL DEFAULT 1 COMMENT 'Trạng thái',
+  PRIMARY KEY(MDV)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `LOAI` (
+  `ML` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Mã loại',
+  `TENL` VARCHAR(255) NOT NULL COMMENT 'Tên loại',
+  `TT` INT(11) NOT NULL DEFAULT 1 COMMENT 'Trạng thái',
+  PRIMARY KEY(ML)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `KHUVUCSP` (
     `MKVSP` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Mã khu vực sản phẩm',
@@ -203,6 +217,7 @@ CREATE TABLE `CTKHUVUCSP` (
 INSERT INTO `DANHMUCCHUCNANG`(`MCN`, `TEN`, `TT`)
 VALUES 
         ('sanpham', 'Quản lý sản phẩm', 1),
+        ('thuoctinh', 'Quản lý thuộc tính', 1),
         ('khachhang', 'Quản lý khách hàng', 1),
         ('nhacungcap', 'Quản lý nhà cung cấp', 1),
         ('nhanvien', 'Quản lý nhân viên', 1),
@@ -212,7 +227,6 @@ VALUES
         ('hoadon', 'Quản lý hóa đơn', 1),
         ('banhang', 'Bán hàng', 1),
         ('kiemke', 'Quản lý kiểm kê', 1),
-        ('khuvucsp', 'Quản lý khu vực sản phẩm', 1),
         ('nhomquyen', 'Quản lý nhóm quyền', 1),
         ('taikhoan', 'Quản lý tài khoản', 1),
         ('makhuyenmai', 'Quản lý mã khuyến mãi', 1),
@@ -224,6 +238,10 @@ VALUES
         (1, 'sanpham', 'delete'),
         (1, 'sanpham', 'update'),
         (1, 'sanpham', 'view'),
+        (1, 'thuoctinh', 'create'),
+        (1, 'thuoctinh', 'delete'),
+        (1, 'thuoctinh', 'update'),
+        (1, 'thuoctinh', 'view'),
         (1, 'khachhang', 'create'),
         (1, 'khachhang', 'delete'),
         (1, 'khachhang', 'update'),
@@ -256,10 +274,6 @@ VALUES
         (1, 'kiemke', 'delete'),
         (1, 'kiemke', 'update'),
         (1, 'kiemke', 'view'),
-        (1, 'khuvucsp', 'create'),
-        (1, 'khuvucsp', 'delete'),
-        (1, 'khuvucsp', 'update'),
-        (1, 'khuvucsp', 'view'),
         (1, 'nhomquyen', 'create'),
         (1, 'nhomquyen', 'delete'),
         (1, 'nhomquyen', 'update'),
@@ -401,11 +415,25 @@ VALUES
 --         ('MINGEY2024', 5, 50),
 --         ('MINGEY2024', 6, 60);
 
-INSERT INTO `SANPHAM` (`TEN`, `HINHANH`, `LOAI`, `TIENX`, `SL`, `DONVI`, `MV`, `TT`)
+INSERT INTO `SANPHAM` (`TEN`, `HINHANH`, `ML`, `TIENX`, `SL`, `MDV`, `MV`, `TT`)
 VALUES
-        ('Ám thị tâm lý', 'kogoiob1cgjlqhndkc0dcw1hzj1kqook.png', 'Sách dành cho giới trẻ', 134000, 5, 'Cái', 9786046863748, 1);
+        ('Ám thị tâm lý', 'kogoiob1cgjlqhndkc0dcw1hzj1kqook.png', 1, 134000, 5, 1, 9786046863748, 1);
 
-
+INSERT INTO `DONVI` (`TENDV`)
+VALUES
+        ('Cái'),
+        ('Kg'),
+        ('Hộp'),
+        ('Thùng'),
+        ('Gói'),
+        ('Chai'),
+        ('Lốc');
+INSERT INTO `LOAI` (`TENL`)
+VALUES
+        ('Nước ngọt'),
+        ('Thịt'),
+        ('Mì gói'),
+        ('Nước giặt');
 INSERT INTO `KHUVUCSP` (`TEN`, `GHICHU`, `LOAIKV`, `TT`)
 VALUES
         ('Khu vực A', 'Mì gói', 'Bán hàng', 1),
@@ -425,6 +453,9 @@ ALTER TABLE `HOADON` ADD CONSTRAINT FK_MKH_HOADON FOREIGN KEY (MKH) REFERENCES `
 ALTER TABLE `CTHOADON` ADD CONSTRAINT FK_MHD_CTHOADON FOREIGN KEY (MHD) REFERENCES `HOADON`(MHD) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `CTHOADON` ADD CONSTRAINT FK_MSP_CTHOADON FOREIGN KEY (MSP) REFERENCES `SANPHAM`(MSP) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `CTHOADON` ADD CONSTRAINT FK_MKM_CTHOADON FOREIGN KEY (MKM) REFERENCES `MAKHUYENMAI`(MKM) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE `SANPHAM` ADD CONSTRAINT FK_ML_SANPHAM FOREIGN KEY (ML) REFERENCES `LOAI`(ML) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE `SANPHAM` ADD CONSTRAINT FK_MDV_SANPHAM FOREIGN KEY (MDV) REFERENCES `DONVI`(MDV) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE `PHIEUNHAP` ADD CONSTRAINT FK_MNV_PHIEUNHAP FOREIGN KEY (MNV) REFERENCES `NHANVIEN`(MNV) ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE `PHIEUNHAP` ADD CONSTRAINT FK_MNCC_PHIEUNHAP FOREIGN KEY (MNCC) REFERENCES `NHACUNGCAP`(MNCC) ON DELETE NO ACTION ON UPDATE NO ACTION;

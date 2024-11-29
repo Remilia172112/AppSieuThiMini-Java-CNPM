@@ -100,7 +100,6 @@ public final class ThongKeTonKho extends JPanel implements ActionListener, KeyLi
         nhapxuat_center.setLayout(boxly);
 
         tblTonKho = new JTable();
-        tblTonKho.setBackground(new Color(0xA1D6E2));
         scrollTblTonKho = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"Mã SP", "Tên sản phẩm", "Tồn đầu kỳ", "Nhập trong kỳ", "Xuất trong kỳ", "Tồn cuối kỳ"};

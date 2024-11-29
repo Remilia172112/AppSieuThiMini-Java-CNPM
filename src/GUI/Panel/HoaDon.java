@@ -117,7 +117,6 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
         contentCenter.add(main, BorderLayout.CENTER);
 
         tablePhieuXuat = new JTable();
-        tablePhieuXuat.setBackground(new Color(0xA1D6E2));
         scrollTablePhieuXuat = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"STT", "Mã phiếu xuất", "Khách hàng", "Nhân viên", "Thời gian", "Điểm tích lũy", "Tổng tiền", "Trạng thái"};

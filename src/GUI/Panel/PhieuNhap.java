@@ -100,7 +100,6 @@ public final class PhieuNhap extends JPanel implements ActionListener, KeyListen
         this.setOpaque(true);
 
         tablePhieuNhap = new JTable();
-        tablePhieuNhap.setBackground(new Color(0xA1D6E2));
         scrollTablePhieuNhap = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"STT", "Mã phiếu nhập", "Nhà cung cấp", "Nhân viên nhập", "Thời gian", "Tổng tiền", "Trạng thái"};

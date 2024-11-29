@@ -1,6 +1,10 @@
 package GUI.Panel;
 
+import BUS.DonViBUS;
+import BUS.LoaiBUS;
 import BUS.SanPhamBUS;
+import DTO.DonViDTO;
+import DTO.LoaiDTO;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Main;
@@ -35,6 +39,8 @@ public final class SanPham extends JPanel implements ActionListener {
     DefaultTableModel tblModel;
     Main m;
     public SanPhamBUS spBUS = new SanPhamBUS();
+    public DonViBUS dvbus = new DonViBUS();
+    public LoaiBUS loaibus = new LoaiBUS();
     
     public ArrayList<DTO.SanPhamDTO> listSP = spBUS.getAll();
 
@@ -45,7 +51,6 @@ public final class SanPham extends JPanel implements ActionListener {
         this.setLayout(new BorderLayout(0, 0));
         this.setOpaque(true);
         tableSanPham = new JTable();
-        tableSanPham.setBackground(new Color(0xA1D6E2));
         scrollTableSanPham = new JScrollPane();
         tblModel = new DefaultTableModel();
         String[] header = new String[]{"Mã SP", "Tên sản phẩm", "Số lượng tồn", "Đơn vị", "Loại", "Tiền xuất"};
@@ -123,8 +128,12 @@ public final class SanPham extends JPanel implements ActionListener {
 
     public void loadDataTalbe(ArrayList<DTO.SanPhamDTO> result) {
         tblModel.setRowCount(0);
+        ArrayList<DonViDTO> listdv = dvbus.getAll();
+        ArrayList<LoaiDTO> listloai = loaibus.getAll();
+
         for (DTO.SanPhamDTO sp : result) {
-            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), sp.getDONVI(), sp.getLOAI(), 
+            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), listdv.get(sp.getMDV() - 1).getTENDV(), 
+                listloai.get(sp.getML() - 1).getTENL(), 
                 Formater.FormatVND(sp.getTIENX())
             });
         }

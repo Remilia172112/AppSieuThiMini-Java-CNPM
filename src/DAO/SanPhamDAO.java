@@ -21,14 +21,14 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `SANPHAM` (`TEN`, `HINHANH`, `LOAI`, `TIENX`, `SL`, `DONVI`, `MV`, `TT`) VALUES (?,?,?,?,?,?,?,1)";
+            String sql = "INSERT INTO `SANPHAM` (`TEN`, `HINHANH`, `ML`, `TIENX`, `SL`, `MDV`, `MV`, `TT`) VALUES (?,?,?,?,?,?,?,1)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t.getTEN());
             pst.setString(2, t.getHINHANH());
-            pst.setString(3, t.getLOAI());
+            pst.setInt(3, t.getML());
             pst.setInt(4, t.getTIENX());
             pst.setInt(5, t.getSL());
-            pst.setString(6, t.getDONVI());
+            pst.setInt(6, t.getMDV());
             pst.setString(7, t.getMV());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
@@ -43,14 +43,14 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `SANPHAM` SET `TEN` = ?, `HINHANH` = ?, `LOAI` = ?, `TIENX` = ?, `SL` = ?, `DONVI` = ?, `MV` = ? WHERE `MSP`=?";
+            String sql = "UPDATE `SANPHAM` SET `TEN` = ?, `HINHANH` = ?, `ML` = ?, `TIENX` = ?, `SL` = ?, `MDV` = ?, `MV` = ? WHERE `MSP`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t.getTEN());
             pst.setString(2, t.getHINHANH());
-            pst.setString(3, t.getLOAI());
+            pst.setInt(3, t.getML());
             pst.setInt(4, t.getTIENX());
             pst.setInt(5, t.getSL());
-            pst.setString(6, t.getDONVI());
+            pst.setInt(6, t.getMDV());
             pst.setString(7, t.getMV());
             pst.setInt(8, t.getMSP());
 
@@ -90,10 +90,10 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
                 int madm = rs.getInt("MSP");
                 String tendm = rs.getString("TEN");
                 String HINHANH = rs.getString("HINHANH");
-                String loai = rs.getString("LOAI");
+                int loai = rs.getInt("ML");
                 int TIENX = rs.getInt("TIENX");
                 int SL = rs.getInt("SL");
-                String DV = rs.getString("DONVI");
+                int DV = rs.getInt("MDV");
                 String MV = rs.getString("MV");
                 SanPhamDTO sp = new SanPhamDTO(madm, tendm, HINHANH, loai, TIENX, SL, DV, MV);
                 result.add(sp);
@@ -117,10 +117,10 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
                 int madm = rs.getInt("MSP");
                 String tendm = rs.getString("TEN");
                 String HINHANH = rs.getString("HINHANH");
-                String loai = rs.getString("LOAI");
+                int loai = rs.getInt("ML");
                 int TIENX = rs.getInt("TIENX");
                 int SL = rs.getInt("SL");
-                String DV = rs.getString("DONVI");
+                int DV = rs.getInt("MDV");
                 String MV = rs.getString("MV");
                 result = new SanPhamDTO(madm, tendm, HINHANH, loai, TIENX, SL, DV, MV);
             }
@@ -134,7 +134,7 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         SanPhamDTO result = null;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM SANPHAM WHERE LOAI = ?";
+            String sql = "SELECT * FROM SANPHAM WHERE ML = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
@@ -142,10 +142,10 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
                 int madm = rs.getInt("MSP");
                 String tendm = rs.getString("TEN");
                 String HINHANH = rs.getString("HINHANH");
-                String loai = rs.getString("LOAI");
+                int loai = rs.getInt("ML");
                 int TIENX = rs.getInt("TIENX");
                 int SL = rs.getInt("SL");
-                String DV = rs.getString("DONVI");
+                int DV = rs.getInt("MDV");
                 String MV = rs.getString("MV");
                 result = new SanPhamDTO(madm, tendm, HINHANH, loai, TIENX, SL, DV, MV);
             }

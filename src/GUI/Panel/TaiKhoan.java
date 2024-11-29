@@ -63,7 +63,6 @@ public class TaiKhoan extends JPanel implements ActionListener, ItemListener {
 
     private void initComponent() {
         tableTaiKhoan = new JTable();
-        tableTaiKhoan.setBackground(new Color(0xA1D6E2));
         tableTaiKhoan.setDefaultEditor(Object.class, null);
         scrollTableSanPham = new JScrollPane();
         tblModel = new DefaultTableModel();

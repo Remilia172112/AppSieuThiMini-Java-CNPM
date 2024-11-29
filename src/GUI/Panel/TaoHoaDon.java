@@ -312,12 +312,14 @@ public final class TaoHoaDon extends JPanel {
                 int index = tablePhieuXuat.getSelectedRow();
                 if (index < 0) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm cần chỉnh");
-                } else {
+                } else if(checkInfoEdit()) {
                     chitietphieu.get(index).setSL(Integer.parseInt(txtSoLuongSPxuat.getText()));
                     if(!txtGiaGiam.getText().equals(" ")) 
                         chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaGiam.getText()));
                     else
-                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaXuat.getText()));                    
+                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaXuat.getText()));       
+                    Notification thongbaoNoi = new Notification(mainChinh,  Notification.Type.SUCCESS, Notification.Location.TOP_CENTER, "Sửa sản phẩm thành công!");
+                    thongbaoNoi.showNotification();             
                     loadDataTableChiTietPhieu(chitietphieu);
                 }
             }
@@ -560,6 +562,28 @@ public final class TaoHoaDon extends JPanel {
             JOptionPane.showMessageDialog(null, "Giá nhập không được để rỗng !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
         } else if (txtSoLuongSPxuat.getText().equals("") || Integer.parseInt(txtSoLuongSPxuat.getText()) > listSP.get(index).getSL()) {
+            JOptionPane.showMessageDialog(null, "Số lượng không được để rỗng và không lớn hơn đang có!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } 
+        else if (Integer.parseInt(txtSoLuongSPxuat.getText()) == 0) {
+            JOptionPane.showMessageDialog(null, "Số lượng không được bằng 0!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } 
+        return check;
+    }
+
+    public boolean checkInfoEdit() {
+        boolean check = true;
+        int index = tablePhieuXuat.getSelectedRow();
+        int sl = 0;
+        for(SanPhamDTO i : listSP) if(i.getMSP() == chitietphieu.get(index).getMSP()) sl = i.getSL();
+        if (txtMaSp.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm","Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } else if (txtGiaXuat.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Giá nhập không được để rỗng !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            check = false;
+        } else if (txtSoLuongSPxuat.getText().equals("") || Integer.parseInt(txtSoLuongSPxuat.getText()) > sl) {
             JOptionPane.showMessageDialog(null, "Số lượng không được để rỗng và không lớn hơn đang có!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
         } 

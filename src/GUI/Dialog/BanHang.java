@@ -20,6 +20,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.PlainDocument;
 
@@ -48,7 +49,7 @@ import GUI.Component.SelectForm;
 import GUI.Panel.HoaDon;
 import helper.Formater;
 
-public final class BanHang extends JPanel {
+public final class BanHang extends JFrame {
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
      //gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
     // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của listkhachhang
@@ -57,8 +58,9 @@ public final class BanHang extends JPanel {
     JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
     DefaultTableModel tblModel, tblModelSP; //table co san 
-    ButtonCustom btnTaoSp, btnAddSp, btnEditSP, btnDelete, btnNhapHang;
-    InputForm txtMaphieu, txtNhanVien, txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtDTL, txtDTLG, txtMaGiamGia, txtGiaGiam;
+    ButtonCustom btnTaoSp, btnAddSp, btnEditSP, btnDelete, btnRefresh, btnIn, btnThanhToan;
+    InputForm txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtMaGiamGia, txtGiaGiam;
+    
     SelectForm cbxMaKM; 
     JTextField txtTimKiem;
     Color BackgroundColor = new Color(193 ,237 ,220);
@@ -66,7 +68,7 @@ public final class BanHang extends JPanel {
     int sum; //do ctpxuất ko có sẵn tính tiền 
     int maphieu;
     int masp;
-    int manv;
+    // int manv;
     int makh = -1;
     int dtl = 0;
     String type;
@@ -82,8 +84,8 @@ public final class BanHang extends JPanel {
     ArrayList<DTO.ChiTietMaKhuyenMaiDTO> listctMKM = new ArrayList<>();
 
     TaiKhoanDTO tk;
-    private JLabel lbltongtien;
-    private JTextField txtKh;
+    private JLabel lbltongtien, lblgiamgia, lbldungdiem, lblkhachcantra, lbldathu, lbltienthua, lbldiemtamtinh;
+    private JTextField txtKh, txtDTL, txtDTLG;
     // private Main mainChinh;
     private InputForm txtGiaXuat;
     protected Frame mainChinh; //???
@@ -98,23 +100,32 @@ public final class BanHang extends JPanel {
     }
     
     private void initComponent(String type) {
-        this.setBackground(BackgroundColor);
+        this.setSize(new Dimension(1600, 900));
         this.setLayout(new BorderLayout(0, 0));
-        // this.setOpaque(true);
-
+        this.setBackground(BackgroundColor);
+        // this.setVisible(true);
+        this.setLocationRelativeTo(null);
+        this.setTitle("POS");
+        
         // Phiếu xuất
         tablePhieuXuat = new JTable();
         scrollTablePhieuNhap = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"STT", "Mã SP", "Tên sản phẩm", "Đơn giá", "Số lượng"};
+        // String[] header = new String[]{"STT", "Mã SP", "Tên sản phẩm", "Đơn giá", "Số lượng"};
+        String[] header = new String[]{ "Mã SP", "Tên sản phẩm", "Đơn giá", "Số lượng", "Đơn vị", "Giảm", "Số tiền", "Xóa"};
         tblModel.setColumnIdentifiers(header);
         tablePhieuXuat.setModel(tblModel);
+        int[] columnWidths = {120,400,80,70,70,50,150,30}; // Mảng chứa kích thước các cột
+        for (int i = 0; i < tablePhieuXuat.getColumnCount(); i++) {
+            TableColumn column = tablePhieuXuat.getColumnModel().getColumn(i);
+            column.setPreferredWidth(columnWidths[i]); 
+        }
         scrollTablePhieuNhap.setViewportView(tablePhieuXuat);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         TableColumnModel columnModel = tablePhieuXuat.getColumnModel();
-        for (int i = 0; i < 5; i++) {
-            if (i != 2) {
+        for (int i = 0; i < 8; i++) {
+            if (i != 1) {  //Ngoại trừ cột thứ 2 thì tất cả đều căn giữa
                 columnModel.getColumn(i).setCellRenderer(centerRenderer);
             }
         }
@@ -138,7 +149,7 @@ public final class BanHang extends JPanel {
             }
         });
 
-        // Table sản phẩm
+        // Table sản phẩm // THAY ĐỔI 
         tableSanPham = new JTable();
         tableSanPham.setBackground(new Color(0xA1D6E2));
         scrollTableSanPham = new JScrollPane();
@@ -359,84 +370,147 @@ public final class BanHang extends JPanel {
 
         // RIGHT 
         right = new PanelBorderRadius();
-        right.setPreferredSize(new Dimension(320, 0));
+        right.setPreferredSize(new Dimension(400, 0));
         right.setBorder(new EmptyBorder(5, 5, 5, 5));
         right.setLayout(new BorderLayout());
 
-        JPanel right_top, right_center, right_bottom, pn_tongtien;
-        right_top = new JPanel(new GridLayout(3, 1, 0, 0));
-        right_top.setPreferredSize(new Dimension(300, 270));
-        txtMaphieu = new InputForm("Mã phiếu xuất");
-        txtMaphieu.setEditable(false);
-        txtNhanVien = new InputForm("Nhân viên xuất");
-        txtNhanVien.setEditable(false);
-        txtDTL = new InputForm("Điểm tích lũy đang có");
-        txtDTL.setEditable(false);
-        manv = tk.getMNV();
-        txtMaphieu.setText("PX" + maphieu);
-        NhanVienDTO nhanvien = NhanVienDAO.getInstance().selectById(tk.getMNV() + "");
-        txtNhanVien.setText(nhanvien.getHOTEN());
-        right_top.add(txtMaphieu);
-        right_top.add(txtNhanVien);
-        right_top.add(txtDTL);
-
-        right_center = new JPanel(new BorderLayout());
-        right_center.setOpaque(false);
+        JPanel right_top, right_center, right_bottom, pn_button;
+        right_top = new JPanel(new BorderLayout());
+        right_top.setPreferredSize(new Dimension(0, 160));
+        right_top.setBorder(new EmptyBorder(0, 10, 40, 5));
+        right_top.setOpaque(false);
 
         JPanel khachJPanel = new JPanel(new BorderLayout());
-        khachJPanel.setPreferredSize(new Dimension(0, 40));
-        khachJPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+        khachJPanel.setPreferredSize(new Dimension(0, 60));
+        khachJPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
         khachJPanel.setOpaque(false);
         JPanel kJPanelLeft = new JPanel(new GridLayout(1, 1));
-        kJPanelLeft.setOpaque(false);
         kJPanelLeft.setPreferredSize(new Dimension(40, 0));
         ButtonCustom btnKh = new ButtonCustom("Chọn khách hàng", "success", 14);
         kJPanelLeft.add(btnKh);
         btnKh.addActionListener((ActionEvent e) -> {
             new ListKhachHang(BanHang.this, owner, "Chọn khách hàng", true);
         });
-
-        txtKh = new JTextField("");
+        
+        txtKh = new JTextField("Chon khach hang");
         txtKh.setEditable(false);
-        txtDTLG = new InputForm("Điểm tích lũy giảm");
+        JLabel lbDTL = new JLabel("Điểm: ");
+        txtDTL = new JTextField();
+        // txtDTL.setBorder(new EmptyBorder(0, 0, 0, 0));
+        txtDTL.setEditable(false);
+        JLabel lbDTLG = new JLabel("Dùng: ");
+        txtDTLG = new JTextField();
         txtDTLG.setText("0");
-        txtDTLG.setEditable(false);
-        khachJPanel.add(kJPanelLeft, BorderLayout.EAST);
+        
         khachJPanel.add(txtKh, BorderLayout.CENTER);
+        khachJPanel.add(kJPanelLeft, BorderLayout.EAST); 
         JPanel khPanel = new JPanel(new GridLayout(2, 1, 5, 0));
         khPanel.setBackground(Color.WHITE);
-        khPanel.setPreferredSize(new Dimension(0, 80));
+        khPanel.setPreferredSize(new Dimension(0, 60));
         JLabel khachKhangJLabel = new JLabel("Khách hàng");
         khachKhangJLabel.setBorder(new EmptyBorder(0, 10, 0, 10));
         khPanel.add(khachKhangJLabel);
         khPanel.add(khachJPanel);
-        right_center.add(khPanel, BorderLayout.NORTH);
-        right_center.add(txtDTLG, BorderLayout.SOUTH);
 
-        right_bottom = new JPanel(new GridLayout(2, 1));
-        right_bottom.setPreferredSize(new Dimension(300, 100));
+        JPanel dtlPanel = new JPanel(new GridLayout(1, 4, 5, 0));
+        dtlPanel.setPreferredSize(new Dimension(0, 30));
+        dtlPanel.setOpaque(false);
+        dtlPanel.add(lbDTL);
+        dtlPanel.add(txtDTL);
+        dtlPanel.add(lbDTLG);
+        dtlPanel.add(txtDTLG);
+        right_top.add(khPanel, BorderLayout.CENTER);
+        right_top.add(dtlPanel, BorderLayout.SOUTH);
+
+
+        right_center = new JPanel(new GridLayout(9, 2, 10,0));
+        right_center.setBorder(new EmptyBorder(0, 40, 10, 40));
+        // right_center.setOpaque(false);
+
+        JLabel lbl1 = new JLabel("Tổng tiền: ");
+        lbl1.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        // lbl1.setForeground(new Color(255, 51, 51));
+        lbltongtien = new JLabel("0đ");
+        lbltongtien.setHorizontalAlignment(JLabel.RIGHT);
+        lbltongtien.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        JLabel lbl2 = new JLabel("Giảm giá: ");
+        lbl2.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        lblgiamgia = new JLabel("0đ");
+        lblgiamgia.setHorizontalAlignment(JLabel.RIGHT);
+        lblgiamgia.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        JLabel lbl3 = new JLabel("Dùng điểm: ");
+        lbl3.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        lbldungdiem = new JLabel("0đ");
+        lbldungdiem.setHorizontalAlignment(JLabel.RIGHT);
+        lbldungdiem.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        JLabel lbl4 = new JLabel("Khách cần trả: ");
+        lbl4.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        lblkhachcantra = new JLabel("0đ");
+        lblkhachcantra.setHorizontalAlignment(JLabel.RIGHT);
+        lblkhachcantra.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        JLabel lbl5 = new JLabel("Hình thức: ");
+        lbl5.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        JLabel lblhinhthuc = new JLabel("Tiền mặt");
+        lblhinhthuc.setHorizontalAlignment(JLabel.CENTER);
+        lblhinhthuc.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        JLabel lbl6 = new JLabel("Đã thu: ");
+        lbl6.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        lbldathu = new JLabel("0đ");
+        lbldathu.setHorizontalAlignment(JLabel.RIGHT);
+        lbldathu.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        JLabel lbl7 = new JLabel("Tiền thừa: ");
+        lbl7.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        lbltienthua = new JLabel("0đ");
+        lbltienthua.setHorizontalAlignment(JLabel.RIGHT);
+        lbltienthua.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        JLabel lbl8 = new JLabel("Điểm tạm tính: ");
+        lbl8.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
+        lbldiemtamtinh = new JLabel("0đ");
+        lbldiemtamtinh.setHorizontalAlignment(JLabel.RIGHT);
+        lbldiemtamtinh.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+
+        right_center.add(lbl1);
+        right_center.add(lbltongtien);
+        right_center.add(lbl2);
+        right_center.add(lblgiamgia);
+        right_center.add(lbl3);
+        right_center.add(lbldungdiem);
+        right_center.add(lbl4);
+        right_center.add(lblkhachcantra);
+        right_center.add(lbl5);
+        right_center.add(lblhinhthuc);
+        right_center.add(lbl6);
+        right_center.add(lbldathu);
+        right_center.add(lbl7);
+        right_center.add(lbltienthua);
+        right_center.add(lbl8);
+        right_center.add(lbldiemtamtinh);
+
+        right_bottom = new JPanel(new FlowLayout(1));
+        right_bottom.setPreferredSize(new Dimension(350, 100));
         right_bottom.setBorder(new EmptyBorder(10, 10, 10, 10));
         right_bottom.setOpaque(false);
 
-        pn_tongtien = new JPanel(new FlowLayout(1, 20, 0));
-        pn_tongtien.setOpaque(false);
-        JLabel lbltien = new JLabel("TỔNG TIỀN: ");
-        lbltien.setFont(new Font(FlatRobotoFont.FAMILY, 1, 18));
-        lbltongtien = new JLabel("0đ");
-        lbltongtien.setFont(new Font(FlatRobotoFont.FAMILY, 1, 18));
-        lbltien.setForeground(new Color(255, 51, 51));
-        pn_tongtien.add(lbltien);
-        pn_tongtien.add(lbltongtien);
-        right_bottom.add(pn_tongtien);
-
-        btnNhapHang = new ButtonCustom("Bán hàng", "excel", 14);
-        btnNhapHang.addActionListener(new ActionListener() {
+    
+        btnRefresh = new ButtonCustom("Làm mới", "excel", 16,100,45);
+        btnIn = new ButtonCustom("In", "excel", 16, 60, 45);
+        btnThanhToan = new ButtonCustom("Thanh Toán", "excel", 16, 150, 45);
+        btnThanhToan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 eventBtnNhapHang();
             }
         });
-        right_bottom.add(btnNhapHang);
+        right_bottom.add(btnRefresh);
+        right_bottom.add(btnIn);
+        right_bottom.add(btnThanhToan);
 
         right.add(right_top, BorderLayout.NORTH);
         right.add(right_center, BorderLayout.CENTER);
@@ -530,11 +604,13 @@ public final class BanHang extends JPanel {
         int size = ctPhieu.size();
         sum = 0;
         for (int i = 0; i < size; i++) {
-            SanPhamDTO phienban = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
+            SanPhamDTO sp = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
             sum += ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL();
             tblModel.addRow(new Object[]{
-                i + 1, phienban.getMSP(), spBUS.getByMaSP(phienban.getMSP()).getTEN(), 
-                Formater.FormatVND(ctPhieu.get(i).getTIEN()), ctPhieu.get(i).getSL()
+                sp.getMV(), spBUS.getByMaSP(sp.getMSP()).getTEN(), 
+                Formater.FormatVND(ctPhieu.get(i).getTIEN()), ctPhieu.get(i).getSL(), "0%",
+                sp.getDONVI(), Formater.FormatVND(ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL()),"X"
+
             });
         }
         lbltongtien.setText(Formater.FormatVND(sum));
