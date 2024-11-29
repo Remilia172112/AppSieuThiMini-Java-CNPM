@@ -2,185 +2,221 @@ package GUI.Dialog;
 
 import DAO.TaiKhoanDAO;
 import DTO.TaiKhoanDTO;
+import BUS.TaiKhoanBUS;
+import com.formdev.flatlaf.FlatLightLaf;
 import helper.SendEmailSMTP;
-import helper.BCrypt;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Label;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
-public class QuenMatKhau extends JDialog implements ActionListener {
+public class QuenMatKhau extends JDialog {
+    private TaiKhoanDTO tk;
+    private TaiKhoanBUS tkbus;
+    private boolean daGui;
+    private String maXN;
+    private JButton btnCheck, btnSend, btnBack, btnSave;
+    private JTextField txtEmail, txtCode;
+    private JPasswordField txtNewPassword, txtConfirmPassword;
+    private Timer timer;
+    private int countdown = 60;
+    private JFrame loginFrame; // Tham chiếu đến login_page
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("[a-zA-z0-9]{1,}@gmail.com$", Pattern.CASE_INSENSITIVE);
 
-    private JButton btnSendMail, btnConfirmOTP, btnChangePass;
-    private JPanel jpTop, jpMain, jpCard_1, jpCard_2, jpCard_3;
-    private JLabel lblTitle, lblNhapEmail, lblNhapOTP, lblNhapPassword;
-    private JTextField txtEmail, txtOTP;
-    private JPasswordField txtPassword;
-    private String emailCheck;
-
-    public QuenMatKhau(Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-        setLocationRelativeTo(null);
+    public QuenMatKhau(JFrame parent) {
+        super(parent, "Quên Mật Khẩu", true);
+        this.loginFrame = parent; // Lưu tham chiếu đến login_page
+        setResizable(false);
+        daGui = false;
+        maXN = null;
+        tk = null;
+        tkbus = new TaiKhoanBUS();
+        initializeUI();
+        setSize(500, 400);
+        setLocationRelativeTo(parent);
+        getContentPane().setBackground(new Color(230, 240, 250));
     }
 
-    public void initComponents() {
-        this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        this.setTitle("Quên mật khẩu");
-        this.setSize(new Dimension(500, 200));
-        this.setResizable(false);
-        this.setLayout(new BorderLayout());
+    private void initializeUI() {
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        jpTop = new JPanel(new BorderLayout());
-        jpTop.setBackground(new Color(22, 122, 198));
-        jpTop.setPreferredSize(new Dimension(400, 60));
+        JLabel lblEmail = new JLabel("Nhập email");
+        txtEmail = new JTextField(20);
+        btnSend = new JButton("Gửi");
+        configureButton(btnSend, "/icon/send_16.png", new Color(200, 220, 240));
+        btnSend.addActionListener(this::btnGuiActionPerformed);
+        addComponent(lblEmail, 0, 0, 1, gbc);
+        addComponent(txtEmail, 0, 1, 2, gbc);
+        addComponent(btnSend, 0, 3, 1, gbc);
 
-        lblTitle = new JLabel();
-        lblTitle.setFont(new Font("Segoe UI", 1, 18));
-        lblTitle.setForeground(new Color(255, 255, 255));
-        lblTitle.setHorizontalAlignment(JLabel.CENTER);
-        lblTitle.setText("QUÊN MẬT KHẨU");
-        lblTitle.setPreferredSize(new Dimension(400, 50));
-        jpTop.add(lblTitle, BorderLayout.CENTER);
+        JLabel lblCode = new JLabel("Mã xác nhận");
+        txtCode = new JTextField(20);
+        btnCheck = new JButton("Kiểm tra");
+        configureButton(btnCheck, "/icon/check_16.png", new Color(200, 220, 240));
+        btnCheck.addActionListener(this::btnKiemtraActionPerformed);
+        addComponent(lblCode, 1, 0, 1, gbc);
+        addComponent(txtCode, 1, 1, 2, gbc);
+        addComponent(btnCheck, 1, 3, 1, gbc);
 
-        jpMain = new JPanel();
-        jpMain.setLayout(new CardLayout());
+        JLabel lblNewPassword = new JLabel("Mật khẩu mới");
+        txtNewPassword = new JPasswordField(20);
+        txtNewPassword.setEnabled(false); // Vô hiệu hóa ban đầu
+        addComponent(lblNewPassword, 2, 0, 1, gbc);
+        addComponent(txtNewPassword, 2, 1, 3, gbc);
 
-        // Step 1
-        jpCard_1 = new JPanel(new FlowLayout(2, 10, 10));
-        jpCard_1.setBackground(new Color(255, 255, 255));
-        lblNhapEmail = new JLabel();
-        lblNhapEmail.setText("Nhập địa chỉ email");
-        lblNhapEmail.setHorizontalAlignment(Label.LEFT);
-        txtEmail = new JTextField();
-        txtEmail.setPreferredSize(new java.awt.Dimension(350, 35));
+        JLabel lblConfirmPassword = new JLabel("Xác nhận MK");
+        txtConfirmPassword = new JPasswordField(20);
+        txtConfirmPassword.setEnabled(false); // Vô hiệu hóa ban đầu
+        addComponent(lblConfirmPassword, 3, 0, 1, gbc);
+        addComponent(txtConfirmPassword, 3, 1, 3, gbc);
 
-        btnSendMail = new JButton("Gửi mã");
-        btnSendMail.setPreferredSize(new Dimension(100, 35));
-        btnSendMail.addActionListener(this);
-        jpCard_1.add(lblNhapEmail);
-        jpCard_1.add(txtEmail);
-        jpCard_1.add(btnSendMail);
+        btnBack = new JButton("Quay lại");
+        configureButton(btnBack, "/icon/back_24.png", new Color(200, 220, 240));
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.LINE_END;
+        add(btnBack, gbc);
+        btnBack.addActionListener(e -> {
+            this.dispose(); // Đóng QuenMatKhau
+            loginFrame.setVisible(true); // Hiển thị lại login_page
+        });
 
-        // Step 2
-        jpCard_2 = new JPanel(new FlowLayout(2, 10, 10));
-        jpCard_2.setBackground(new Color(255, 255, 255));
-        lblNhapOTP = new JLabel();
-        lblNhapOTP.setText("Nhập mã OTP");
-
-        txtOTP = new JTextField();
-        txtOTP.setPreferredSize(new java.awt.Dimension(350, 35));
-
-        btnConfirmOTP = new JButton("Xác nhận");
-        btnConfirmOTP.setPreferredSize(new Dimension(100, 35));
-        btnConfirmOTP.addActionListener(this);
-        jpCard_2.add(lblNhapOTP);
-        jpCard_2.add(txtOTP);
-        jpCard_2.add(btnConfirmOTP);
-
-        // Step 3
-        jpCard_3 = new JPanel(new FlowLayout(2, 10, 10));
-        jpCard_3.setBackground(new Color(255, 255, 255));
-        lblNhapPassword = new JLabel();
-        lblNhapPassword.setText("Nhập mật khẩu mới");
-
-        txtPassword = new JPasswordField();
-        txtPassword.setPreferredSize(new java.awt.Dimension(350, 35));
-
-        btnChangePass = new JButton("Xác nhận");
-        btnChangePass.setPreferredSize(new Dimension(100, 35));
-        btnChangePass.addActionListener(this);
-        jpCard_3.add(lblNhapPassword);
-        jpCard_3.add(txtPassword);
-        jpCard_3.add(btnChangePass);
-
-        jpMain.add(jpCard_1);
-        jpMain.add(jpCard_2);
-        jpMain.add(jpCard_3);
-
-        this.getContentPane().add(jpTop, BorderLayout.NORTH);
-        this.getContentPane().add(jpMain, BorderLayout.CENTER);
-
+        btnSave = new JButton("Lưu thay đổi");
+        configureButton(btnSave, "/icon/save.png", new Color(200, 220, 240));
+        btnSave.setEnabled(false); // Vô hiệu hóa ban đầu
+        btnSave.addActionListener(this::btnLuuActionPerformed);
+        gbc.gridx = 2;
+        gbc.gridy = 5;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.LINE_START;
+        add(btnSave, gbc);
     }
 
+    private void addComponent(Component component, int row, int col, int width, GridBagConstraints gbc) {
+        gbc.gridx = col;
+        gbc.gridy = row;
+        gbc.gridwidth = width;
+        add(component, gbc);
+    }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    private void configureButton(JButton button, String iconPath, Color bgColor) {
+        button.setIcon(new ImageIcon(getClass().getResource(iconPath)));
+        button.setBackground(bgColor);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
 
-        if (e.getSource() == btnSendMail) {
-//            c.next(jpMain);
-            //Test pull github
-            String email = txtEmail.getText().trim();
-            if (email.equals("")) {
-                JOptionPane.showMessageDialog(this, "Vui lòng không để trống email");
+    private void btnGuiActionPerformed(ActionEvent evt) {
+        String emailTo = txtEmail.getText();
+        if (isValid(emailTo)) {
+            tk = TaiKhoanDAO.getInstance().selectByEmail(emailTo);
+            if (tk == null) {
+                JOptionPane.showMessageDialog(this, "Tài khoản của email này không tồn tại trên hệ thống");
             } else {
-                String regex = "^(.+)@(.+)$";
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(email);
-                if (matcher.matches() == false) {
-                    JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng email");
-                } else {
-                    TaiKhoanDTO tk = TaiKhoanDAO.getInstance().selectByEmail(email);
-                    if (tk == null) {
-                        JOptionPane.showMessageDialog(this, "Tài khoản của email này không tồn tại trên hệ thống");
-                    } else {
-                        CardLayout c = (CardLayout) jpMain.getLayout();
-                        c.next(jpMain);
-                        this.emailCheck = email;
-                        String opt = SendEmailSMTP.getOTP();
-                        SendEmailSMTP.sendOTP(email, opt);
-                        TaiKhoanDAO.getInstance().sendOpt(email, opt);
-                        // TaiKhoanDAO.getInstance().updateTTCXL(email);
-                        JOptionPane.showMessageDialog(this, "Đã gửi thông tin đến admin! Hãy chờ phản hồi từ gmail.");
-                    }
-                }
-            }
-        } else if(e.getSource() == btnConfirmOTP){
-            String otp = txtOTP.getText().trim();
-            if(otp.equals("")){
-                JOptionPane.showMessageDialog(this, "Vui lòng không để trống mã OTP");
-            } else {
-                Pattern digitPattern = Pattern.compile("\\d{6}");
-                Matcher matcher = digitPattern.matcher(otp);
-                if(matcher.matches() == false){
-                    JOptionPane.showMessageDialog(this, "Vui lòng nhập mã OTP có 6 chữ số!");
-                } else {
-                    boolean check = TaiKhoanDAO.getInstance().checkOtp(this.emailCheck, otp);
-                   if(check){
-                       CardLayout c = (CardLayout) jpMain.getLayout();
-                       c.next(jpMain);
-                   } else{
-                       JOptionPane.showMessageDialog(this, "Mã OTP không khớp");
-                   }
-                }
-            }
-        } else if (e.getSource() == btnChangePass){
-            @SuppressWarnings("deprecation")
-            String pass = txtPassword.getText().trim();
-            if(pass.equals("")){
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu");
-            } else {
-                String password = BCrypt.hashpw(pass, BCrypt.gensalt(12));
-                TaiKhoanDAO.getInstance().updatePass(this.emailCheck, password);
-                TaiKhoanDAO.getInstance().sendOpt(emailCheck, "null");
-               JOptionPane.showMessageDialog(this, "Thay đổi mật khẩu thành công");
-               this.dispose();
+                maXN = SendEmailSMTP.getOTP();
+                SendEmailSMTP.sendOTP(emailTo, maXN);
+                daGui = true;
+                JOptionPane.showMessageDialog(this, "Gửi thành công. Vui lòng kiểm tra email để lấy mã xác nhận");
+                startCountdown();
+                // Mở khóa các trường và nút khi gửi lại mã
+                txtCode.setEnabled(true);
+                btnCheck.setEnabled(true);
+                // Vô hiệu hóa các trường mật khẩu
+                txtNewPassword.setEnabled(false);
+                txtConfirmPassword.setEnabled(false);
+                btnSave.setEnabled(false);
             }
         }
+    }
+
+    private void startCountdown() {
+        btnSend.setEnabled(false);
+        timer = new Timer(1000, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (countdown > 0) {
+                    btnSend.setText("Gửi lại (" + countdown + "s)");
+                    countdown--;
+                } else {
+                    timer.stop();
+                    btnSend.setText("Gửi");
+                    btnSend.setEnabled(true);
+                    countdown = 60;
+                }
+            }
+        });
+        timer.start();
+    }
+
+    private void btnKiemtraActionPerformed(ActionEvent evt) {
+        String txtMaXN = txtCode.getText();
+        if (daGui) {
+            if (txtMaXN == null || txtMaXN.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Bạn chưa nhập mã xác nhận");
+                txtCode.requestFocus();
+            } else if (txtMaXN.equals(maXN)) {
+                JOptionPane.showMessageDialog(this, "Mã xác nhận trùng khớp!");
+                txtCode.setEnabled(false);
+                btnCheck.setEnabled(false);
+                txtNewPassword.setEnabled(true); // Kích hoạt trường mật khẩu mới
+                txtConfirmPassword.setEnabled(true); // Kích hoạt trường xác nhận mật khẩu
+                btnSave.setEnabled(true); // Kích hoạt nút lưu
+            } else {
+                JOptionPane.showMessageDialog(this, "Mã xác nhận không trùng khớp!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhấn nút gửi để lấy mã xác nhận");
+        }
+    }
+
+    private void btnLuuActionPerformed(ActionEvent evt) {
+        String mk = new String(txtNewPassword.getPassword());
+        String xnmk = new String(txtConfirmPassword.getPassword());
+        if (mk.isEmpty() || xnmk.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin các trường");
+        } else {
+            if (mk.equals(xnmk)) {
+                tkbus.doiMatKhauBangEmail(tk.getMNV(), mk);
+                JOptionPane.showMessageDialog(this, "Thay đổi mật khẩu thành công");
+                this.dispose(); // Đóng QuenMatKhau
+                loginFrame.setVisible(true); // Hiển thị lại login_page
+            } else {
+                JOptionPane.showMessageDialog(this, "Xác nhận mật khẩu không trùng khớp.");
+            }
+        }
+    }
+
+    private boolean isValid(String email) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        if (email == null || email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa nhập email");
+            txtEmail.requestFocus();
+            return false;
+        }
+
+        if (matcher.matches()) {
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng email. Vd: abc@gmail.com");
+            txtEmail.requestFocus();
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        FlatLightLaf.setup(); // Sử dụng FlatLaf
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Quên Mật Khẩu");
+            QuenMatKhau dialog = new QuenMatKhau(frame);
+            dialog.setVisible(true);
+        });
     }
 }

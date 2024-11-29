@@ -85,6 +85,19 @@ public class TaiKhoanDAO implements DAOinterface<TaiKhoanDTO>{
             Logger.getLogger(TaiKhoanDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public void updatePassByMNV(int mnv, String password) {
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "UPDATE TAIKHOAN SET `MK` = ? WHERE `MNV` = ?";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setString(1, BCrypt.hashpw(password, BCrypt.gensalt(12)));
+        pst.setInt(2, mnv);
+        pst.executeUpdate();
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(TaiKhoanDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}
     
     public TaiKhoanDTO selectByEmail(String t) {
         TaiKhoanDTO tk = null;
