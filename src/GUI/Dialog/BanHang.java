@@ -28,12 +28,16 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 
 import BUS.KhachHangBUS;
+import BUS.LoaiBUS;
 import BUS.MaKhuyenMaiBUS;
+import BUS.DonViBUS;
 import BUS.HoaDonBUS;
 import BUS.SanPhamBUS;
 import DAO.NhanVienDAO;
 import DTO.ChiTietHoaDonDTO;
+import DTO.DonViDTO;
 import DTO.KhachHangDTO;
+import DTO.LoaiDTO;
 import DTO.MaKhuyenMaiDTO;
 import DTO.NhanVienDTO;
 import DTO.HoaDonDTO;
@@ -54,7 +58,7 @@ public final class BanHang extends JFrame {
      //gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
     // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của listkhachhang
     PanelBorderRadius right, left;
-    JPanel  contentCenter, left_top, content_btn, left_bottom; //là cái main cữ
+    JPanel  contentCenter, left_top, left_bottom; //, content_btn
     JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
     DefaultTableModel tblModel, tblModelSP; //table co san 
@@ -65,13 +69,16 @@ public final class BanHang extends JFrame {
     JTextField txtTimKiem;
     Color BackgroundColor = new Color(193 ,237 ,220);
     
-    int sum; //do ctpxuất ko có sẵn tính tiền 
+    int sum, giagiam, dungdiem, khachcantra, tienthua, dathu, diemtamtinh; //do ctpxuất ko có sẵn tính tiền 
+
     int maphieu;
     int masp;
     // int manv;
     int makh = -1;
     int dtl = 0;
     String type;
+
+
 
     // ArrayList<SanPhamDTO> ctpb;
     SanPhamBUS spBUS = new SanPhamBUS();
@@ -84,8 +91,10 @@ public final class BanHang extends JFrame {
     ArrayList<DTO.ChiTietMaKhuyenMaiDTO> listctMKM = new ArrayList<>();
 
     TaiKhoanDTO tk;
-    private JLabel lbltongtien, lblgiamgia, lbldungdiem, lblkhachcantra, lbldathu, lbltienthua, lbldiemtamtinh;
-    private JTextField txtKh, txtDTL, txtDTLG;
+    DonViBUS dvbus = new DonViBUS();
+
+    private JLabel lbltongtien, lblgiamgia, lbldungdiem, lblkhachcantra , lbltienthua, lbldiemtamtinh;
+    private JTextField txtKh, txtDTL, txtDTLG, txtDaThu;
     // private Main mainChinh;
     private InputForm txtGiaXuat;
     protected Frame mainChinh; //???
@@ -185,7 +194,8 @@ public final class BanHang extends JFrame {
         contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(BackgroundColor);
         contentCenter.setLayout(new BorderLayout(5, 5));
-        this.add(contentCenter, BorderLayout.CENTER);
+        // this.add(contentCenter, BorderLayout.CENTER);
+        this.add(contentCenter);
 
         //LEFT
         left = new PanelBorderRadius();
@@ -222,12 +232,12 @@ public final class BanHang extends JFrame {
         content_left.add(txtTimKiem, BorderLayout.NORTH);
         content_left.add(scrollTableSanPham, BorderLayout.CENTER);
 
-        content_right = new JPanel(new BorderLayout(5, 5));
-        content_right.setOpaque(false);
+        // content_right = new JPanel(new BorderLayout(5, 5));
+        // content_right.setOpaque(false);
         // content_right.setBackground(Color.WHITE);
 
-        content_right_top = new JPanel(new BorderLayout());
-        content_right_top.setPreferredSize(new Dimension(100, 335));
+        // content_right_top = new JPanel(new BorderLayout());
+        // content_right_top.setPreferredSize(new Dimension(100, 335));
         txtTenSp = new InputForm("Tên sản phẩm");
         txtTenSp.setEditable(false);
         txtTenSp.setPreferredSize(new Dimension(100, 90));
@@ -238,10 +248,11 @@ public final class BanHang extends JFrame {
         txtGiaXuat = new InputForm("Giá xuất");
         PlainDocument dongia = (PlainDocument) txtGiaXuat.getTxtForm().getDocument();
         dongia.setDocumentFilter((new NumericDocumentFilter()));   //chỉ cho nhập số
+
         txtSoLuongSPxuat = new InputForm("Số lượng");
         PlainDocument soluong = (PlainDocument) txtSoLuongSPxuat.getTxtForm().getDocument();
         soluong.setDocumentFilter((new NumericDocumentFilter())); //chỉ cho nhập số
-        // txtMaGiamGia = new InputForm("Mã giảm giá");
+
         String[] maGiamGia = {"Chọn"};
         cbxMaKM = new SelectForm("Mã giảm giá", maGiamGia);
         txtGiaGiam = new InputForm("Giá giảm");
@@ -261,44 +272,12 @@ public final class BanHang extends JFrame {
             }
             
         });
-        // txtMaGiamGia.getTxtForm().addKeyListener(new KeyAdapter() {
-        //         @Override
-        //         public void keyReleased(java.awt.event.KeyEvent evt) {
-        //             ArrayList<MaKhuyenMaiDTO> rs = mkmBUS.search(txtMaGiamGia.getText());
-        //     // hhhhhhhhhhhhhhhhhhhhhhhhhhhhh
-        //         }
-        //     });
 
-            
-        JPanel merge1 = new JPanel(new BorderLayout());
-        merge1.setPreferredSize(new Dimension(100, 50));
-        merge1.add(txtMaSp, BorderLayout.WEST);
-        merge1.add(txtMaISBN, BorderLayout.CENTER);
-
-        JPanel merge2 = new JPanel(new GridLayout(2,2));
-        merge2.setPreferredSize(new Dimension(100, 160));
-        merge2.add(txtGiaXuat);
-        merge2.add(txtSoLuongSPxuat);
-        // merge2.add(txtMaGiamGia);
-        merge2.add(cbxMaKM);
-        merge2.add(txtGiaGiam);
-
-        content_right_top.add(txtTenSp, BorderLayout.NORTH);
-        content_right_top.add(merge1, BorderLayout.CENTER);
-        content_right_top.add(merge2, BorderLayout.SOUTH);
-        content_right.add(content_right_top, BorderLayout.NORTH);
-
+    
         content_top.add(content_left);
-        content_top.add(content_right);
         left_top.add(content_top, BorderLayout.CENTER);
 
-        //content_btn  -  4 nút ở left_top (South) 
-        content_btn = new JPanel();
-        content_btn.setPreferredSize(new Dimension(0, 47));
-        content_btn.setLayout(new GridLayout(1, 4, 5, 5));
-        content_btn.setBorder(new EmptyBorder(8, 5, 0, 10));
-        content_btn.setOpaque(false);
-        btnTaoSp = new ButtonCustom("Tạo sản phẩm", "success", 14);
+        // btnTaoSp = new ButtonCustom("Tạo sản phẩm", "success", 14);
         btnAddSp = new ButtonCustom("Thêm sản phẩm", "success", 14);
         btnEditSP = new ButtonCustom("Sửa sản phẩm", "warning", 14);
         btnDelete = new ButtonCustom("Xoá sản phẩm", "danger", 14);
@@ -352,10 +331,17 @@ public final class BanHang extends JFrame {
 
         btnEditSP.setEnabled(false);
         btnDelete.setEnabled(false);
-        content_btn.add(btnAddSp);
-        content_btn.add(btnEditSP);
-        content_btn.add(btnDelete);
-        left_top.add(content_btn, BorderLayout.SOUTH);
+
+        JPanel merge1 = new JPanel();
+        merge1.setPreferredSize(new Dimension(0, 40));
+        merge1.setOpaque(false);
+        merge1.add(btnAddSp);
+        merge1.add(btnEditSP);
+        JPanel merge2 = new JPanel(new GridLayout(1, 2));
+        merge2.setPreferredSize(new Dimension(0, 80));
+        merge2.add(txtSoLuongSPxuat);
+        merge2.add(cbxMaKM);
+    
 
         //left_bottom này là danh sách xuất ở left phía nam, chứa tablelistnhap
         left_bottom = new JPanel();
@@ -376,8 +362,8 @@ public final class BanHang extends JFrame {
 
         JPanel right_top, right_center, right_bottom, pn_button;
         right_top = new JPanel(new BorderLayout());
-        right_top.setPreferredSize(new Dimension(0, 160));
-        right_top.setBorder(new EmptyBorder(0, 10, 40, 5));
+        right_top.setPreferredSize(new Dimension(0, 300));
+        right_top.setBorder(new EmptyBorder(0, 10, 30, 5));
         right_top.setOpaque(false);
 
         JPanel khachJPanel = new JPanel(new BorderLayout());
@@ -404,28 +390,33 @@ public final class BanHang extends JFrame {
         
         khachJPanel.add(txtKh, BorderLayout.CENTER);
         khachJPanel.add(kJPanelLeft, BorderLayout.EAST); 
-        JPanel khPanel = new JPanel(new GridLayout(2, 1, 5, 0));
+        JPanel khPanel = new JPanel(new GridLayout(4, 1, 5, 0));
         khPanel.setBackground(Color.WHITE);
-        khPanel.setPreferredSize(new Dimension(0, 60));
+        khPanel.setPreferredSize(new Dimension(0, 120));
         JLabel khachKhangJLabel = new JLabel("Khách hàng");
+        khachKhangJLabel.setPreferredSize(new Dimension(0, 40));
         khachKhangJLabel.setBorder(new EmptyBorder(0, 10, 0, 10));
+
+        khPanel.add(merge2);
+        khPanel.add(merge1);
         khPanel.add(khachKhangJLabel);
         khPanel.add(khachJPanel);
 
         JPanel dtlPanel = new JPanel(new GridLayout(1, 4, 5, 0));
-        dtlPanel.setPreferredSize(new Dimension(0, 30));
+        dtlPanel.setPreferredSize(new Dimension(0, 40));
         dtlPanel.setOpaque(false);
         dtlPanel.add(lbDTL);
         dtlPanel.add(txtDTL);
         dtlPanel.add(lbDTLG);
         dtlPanel.add(txtDTLG);
+        // right_top.add(content_btn, BorderLayout.NORTH);
         right_top.add(khPanel, BorderLayout.CENTER);
         right_top.add(dtlPanel, BorderLayout.SOUTH);
 
 
-        right_center = new JPanel(new GridLayout(9, 2, 10,0));
-        right_center.setBorder(new EmptyBorder(0, 40, 10, 40));
-        // right_center.setOpaque(false);
+        right_center = new JPanel(new GridLayout(8, 2, 10,0));
+        right_center.setBorder(new EmptyBorder(5, 20, 5, 20));
+        right_center.setOpaque(false);
 
         JLabel lbl1 = new JLabel("Tổng tiền: ");
         lbl1.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
@@ -460,9 +451,11 @@ public final class BanHang extends JFrame {
 
         JLabel lbl6 = new JLabel("Đã thu: ");
         lbl6.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
-        lbldathu = new JLabel("0đ");
-        lbldathu.setHorizontalAlignment(JLabel.RIGHT);
-        lbldathu.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
+        txtDaThu = new JTextField();
+        txtDaThu.setSize(40, 30);
+        // lbldathu = new JLabel("0đ");
+        // lbldathu.setHorizontalAlignment(JLabel.RIGHT);
+        // lbldathu.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
 
         JLabel lbl7 = new JLabel("Tiền thừa: ");
         lbl7.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
@@ -487,15 +480,15 @@ public final class BanHang extends JFrame {
         right_center.add(lbl5);
         right_center.add(lblhinhthuc);
         right_center.add(lbl6);
-        right_center.add(lbldathu);
+        right_center.add(txtDaThu);
         right_center.add(lbl7);
         right_center.add(lbltienthua);
         right_center.add(lbl8);
         right_center.add(lbldiemtamtinh);
 
         right_bottom = new JPanel(new FlowLayout(1));
-        right_bottom.setPreferredSize(new Dimension(350, 100));
-        right_bottom.setBorder(new EmptyBorder(10, 10, 10, 10));
+        right_bottom.setPreferredSize(new Dimension(350,55));
+        right_bottom.setBorder(new EmptyBorder(5, 10, 5, 10));
         right_bottom.setOpaque(false);
 
     
@@ -527,15 +520,15 @@ public final class BanHang extends JFrame {
         btnAddSp.setEnabled(val_1);
         btnEditSP.setEnabled(val_2);
         btnDelete.setEnabled(val_2);
-        content_btn.revalidate();
-        content_btn.repaint();
+        // content_btn.revalidate();
+        // content_btn.repaint();
     }
     public void resetForm() {
         this.txtTenSp.setText("");
         this.txtMaSp.setText("");
         this.txtMaISBN.setText("");
         this.txtGiaXuat.setText("");
-        this.txtSoLuongSPxuat.setText("");
+        this.txtSoLuongSPxuat.setText("1");
         // this.txtMaGiamGia.setText("");
         this.txtGiaGiam.setText(" ");
     }
@@ -603,13 +596,17 @@ public final class BanHang extends JFrame {
         tblModel.setRowCount(0);
         int size = ctPhieu.size();
         sum = 0;
+        ArrayList<DonViDTO> listdv = dvbus.getAll();
         for (int i = 0; i < size; i++) {
             SanPhamDTO sp = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
             sum += ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL();
             tblModel.addRow(new Object[]{
                 sp.getMV(), spBUS.getByMaSP(sp.getMSP()).getTEN(), 
-                Formater.FormatVND(ctPhieu.get(i).getTIEN()), ctPhieu.get(i).getSL(), "0%",
-                sp.getDONVI(), Formater.FormatVND(ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL()),"X"
+                Formater.FormatVND(ctPhieu.get(i).getTIEN()), ctPhieu.get(i).getSL(),
+                listdv.get(sp.getMDV() - 1).getTENDV(), "0%",
+                Formater.FormatVND(ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL()), "X"
+                
+        
 
             });
         }

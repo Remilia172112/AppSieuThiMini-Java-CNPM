@@ -28,7 +28,7 @@ public class ThuocTinhSanPham extends JPanel {
     Main m;
     public itemTaskbar[] listitem;
 
-    String iconst[] = {"brand_100px.svg", "factory_100px.svg"};
+    String iconst[] = {"brand_100px.svg", "unit.svg"};
 
     String header[] = {"Loại", "Đơn vị"};
     Color BackgroundColor = new Color(240, 247, 250);
