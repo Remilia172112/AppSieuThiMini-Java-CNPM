@@ -2,7 +2,6 @@ package GUI.Panel;
 
 import GUI.Dialog.NhaCungCapDialog;
 import BUS.NhaCungCapBUS;
-import DAO.NhaCungCapDAO;
 import DTO.NhaCungCapDTO;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
@@ -179,7 +178,7 @@ public final class NhaCungCap extends JPanel implements ActionListener, ItemList
                 for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
                     int check = 1;
                     XSSFRow excelRow = excelSheet.getRow(row);
-                    int id = NhaCungCapDAO.getInstance().getAutoIncrement();
+                    int id = nccBUS.getAll().size() + 1;
                     String tenNCC = excelRow.getCell(0).getStringCellValue();
                     String diachi = excelRow.getCell(1).getStringCellValue();
                     String email = excelRow.getCell(2).getStringCellValue();

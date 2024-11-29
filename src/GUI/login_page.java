@@ -20,7 +20,7 @@ import DTO.TaiKhoanDTO;
 public class login_page extends JFrame implements KeyListener {
 
     private JPanel login_nhap;
-    private JLabel lb1, lb2, lb_img_1;
+    private JLabel lb2;
     private InputForm txtUsername, txtPassword;
     private JButton bt;
 

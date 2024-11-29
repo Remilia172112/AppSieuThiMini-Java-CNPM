@@ -278,7 +278,7 @@ public final class TaoPhieuKiemKe extends JPanel implements ItemListener, Action
         right_top.setPreferredSize(new Dimension(300, 360));
         right_top.setOpaque(false);
         txtMaphieu = new InputForm("Mã phiếu");
-        txtMaphieu.setText("PKK" + phieuKiemKeBUS.getAutoIncrement());
+        txtMaphieu.setText("PKK" + phieuKiemKeBUS.selectAll().size() + 1);
         txtMaphieu.setEditable(false);
         txtNhanVien = new InputForm("Nhân viên");
         txtNhanVien.setText(nhanVien.getHOTEN());

@@ -65,7 +65,7 @@ public final class SanPhamDialog extends JDialog implements ActionListener {
 
     public void init(SanPham jpSP) {
         this.jpSP = jpSP;
-        masp = jpSP.spBUS.spDAO.getAutoIncrement();
+        masp = jpSP.spBUS.getAll().size() + 1;
     }
 
     public SanPhamDialog(SanPham jpSP, JFrame owner, String title, boolean modal, String type) {
