@@ -26,10 +26,10 @@ public class PanelShadow extends JPanel {
     public PanelShadow(String linkIcon, String title, String content) {
         this.setPreferredSize(new Dimension(450, 300));
         this.setBackground(new Color(0xDFF4E1));
-        this.putClientProperty( FlatClientProperties.STYLE, "arc: 30; background: #DFF4E1; borderColor: #FFFFFF;borderWidth: 5;" );
+        this.putClientProperty( FlatClientProperties.STYLE, "arc: 30;" );
         this.setLayout(new FlowLayout(0 ,20 , 5));
         this.setBorder(new EmptyBorder(0,10,50,0));
-        // this.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.WHITE)); // Viền xanh lam
+        // this.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.WHITE));
 
 
         iconBackground = new JPanel();
