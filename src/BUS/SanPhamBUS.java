@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class SanPhamBUS {
 
     public final SanPhamDAO spDAO = new SanPhamDAO();
-    private ArrayList<SanPhamDTO> listSP = new ArrayList<>();
+    public ArrayList<SanPhamDTO> listSP = new ArrayList<>();
 
     public SanPhamBUS() {
         listSP = spDAO.selectAll();

@@ -23,6 +23,19 @@ public class SelectForm extends JPanel{
         this.add(lblTitle);
         this.add(cbb);
     }
+
+
+    public SelectForm(String title, DefaultComboBoxModel<String> obj) {
+        this.setLayout(new GridLayout(2, 1));
+        this.setBackground(Color.white);
+        this.setBorder(new EmptyBorder(0, 10, 5, 10));
+        
+        lblTitle = new JLabel(title);
+        cbb = new JComboBox(obj);
+        
+        this.add(lblTitle);
+        this.add(cbb);
+    }
     
     public void setArr(String[] obj) {
         this.cbb.setModel(new DefaultComboBoxModel(obj));
