@@ -60,12 +60,12 @@ public class MenuTaskbar extends JPanel {
         {"Khách hàng", "customer.svg", "khachhang"},
         {"Nhà cung cấp", "supplier.svg", "nhacungcap"},
         {"Hóa đơn", "export.svg", "hoadon"},
+        {"Bán Hàng", "import.svg", "banhang"},
         {"Phiếu nhập", "import.svg", "nhaphang"},
         {"Phiếu kiểm kê" , "inventory.svg", "kiemke"},
         {"Phân quyền", "protect.svg", "nhomquyen"},
         {"Tài khoản", "account.svg", "taikhoan"},
         {"Thống kê", "statistical_1.svg", "thongke"},
-        {"Bán Hàng", "import.svg", "banhang"},
         {"Đăng xuất", "log_out.svg", "dangxuat"},
     };
 
@@ -260,44 +260,44 @@ public class MenuTaskbar extends JPanel {
         listitem.get(9).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
+                banHang = new BanHang(user, "create");
+                banHang.setVisible(true);
+            }
+        });
+        listitem.get(10).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent evt) {
                 phieuNhap = new PhieuNhap(main, nhanVienDTO);
                 main.setPanel(phieuNhap);
             }
         });
         
-        listitem.get(10).addMouseListener(new MouseAdapter() {
+        listitem.get(11).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
                 phieuKiemKe = new PhieuKiemKe(main , nhanVienDTO);
                 main.setPanel(phieuKiemKe);
             }
         });
-        listitem.get(11).addMouseListener(new MouseAdapter() {
+        listitem.get(12).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
                 phanQuyen = new PhanQuyen(main);
                 main.setPanel(phanQuyen);
             }
         });
-        listitem.get(12).addMouseListener(new MouseAdapter() {
+        listitem.get(13).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
                 taiKhoan = new TaiKhoan(main);
                 main.setPanel(taiKhoan);
             }
         });
-        listitem.get(13).addMouseListener(new MouseAdapter() {
+        listitem.get(14).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
                 thongKe = new ThongKe();
                 main.setPanel(thongKe);
-            }
-        });
-        listitem.get(14).addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                banHang = new BanHang(user, "create");
-                banHang.setVisible(true);
             }
         });
         listitem.get(15).addMouseListener(new MouseAdapter() {
