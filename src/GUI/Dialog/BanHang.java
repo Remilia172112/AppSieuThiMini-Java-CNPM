@@ -426,7 +426,8 @@ public final class BanHang extends JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                updateLabels();
+                lblkhachcantra.setText("0đ");
+                lbldiemtamtinh.setText("0đ");
             }
 
             @Override
@@ -517,7 +518,6 @@ public final class BanHang extends JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                updateLabels();
             }
 
             @Override
@@ -787,17 +787,22 @@ public final class BanHang extends JFrame {
                 } else {
                     long now = System.currentTimeMillis();
                     Timestamp currenTime = new Timestamp(now);
-                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, (int)(khachcantra), 1, Integer.parseInt(txtDTLG.getText()));
+                    String khachtra = lblkhachcantra.getText().replaceAll("[^0-9]", ""); 
+                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, Integer.parseInt(khachtra), 1, Integer.parseInt(lbldiemtamtinh.getText().replaceAll("[^0-9]", "")));
                     
                     ArrayList<SanPhamDTO> lstSpDTO = new ArrayList<>();
                     lstSpDTO = spBUS.listSP;
+                    
                     for (int i = 0; i < chitietphieu.size(); i++) {
                         if(chitietphieu.get(i).getMKM().equals("Chọn")) {
                             chitietphieu.get(i).setMKM(null);
                         }
                         if (chitietphieu.get(i).getMSP() == lstSpDTO.get(i).getMSP()) {
-                            lstSpDTO.get(i).setSL(lstSpDTO.get(i).getSL() - chitietphieu.get(i).getSL());
+                            int solSPT = lstSpDTO.get(i).getSL();
+                            int soLMua = chitietphieu.get(i).getSL();
+                            lstSpDTO.get(i).setSL(solSPT - soLMua);
                             spBUS.update(lstSpDTO.get(i));
+                            listSP.get(i).setSL(solSPT - soLMua);
                         }
                     }
                     phieuXuatBUS.insert(phieuXuat, chitietphieu); // update số lượng trong kho
@@ -805,12 +810,15 @@ public final class BanHang extends JFrame {
                     // SanPhamBUS.updateXuat(chitietsanpham);
                     JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
                     khachHangBUS.update(makh, (dtl - Integer.parseInt(txtDTLG.getText())) + diemtamtinh);
-                    new ChiTietPhieuDialog(this, "Thông tin phiếu xuất", true, phieuXuat);
-                    // this.setPanel(new HoaDon(this, tk));
                     chitietphieu.clear();
-                    tblModel.fireTableDataChanged();
+                    tblModel.setRowCount(0);
+                    loadDataTalbeSanPham(listSP);
                     resetForm();
                     resetFormRight();
+                    maphieu = phieuXuatBUS.getMPMAX() + 1;
+                    new ChiTietPhieuDialog(this, "Thông tin phiếu xuất", true, phieuXuat);
+                    // this.setPanel(new HoaDon(this, tk));
+                    
                     // this.dispose();
                 }
             }
@@ -865,15 +873,22 @@ public final class BanHang extends JFrame {
     }
 
     public void resetFormRight() {
+        khachcantra = 0;
+        diemtamtinh = 0;
+        dathu = 0;
+        giagiam = 0;
+        dungdiem = 0;
+        sum = 0;
         lbltongtien.setText("0đ");
         lblgiamgia.setText("0đ");
         lbldungdiem.setText("0đ");
-        lblkhachcantra.setText("0đ");
+        lblkhachcantra.setText(khachcantra+"");
         txtDaThu.setText("");
         lbltienthua.setText("0đ");
-        lbldiemtamtinh.setText("0đ");
+        lbldiemtamtinh.setText(diemtamtinh+"");
         txtDTLG.setText("0");
         txtDTL.setText("");
         txtKh.setText("Chọn khách hàng");
+
     }
 }
