@@ -209,7 +209,7 @@ public final class TaoPhieuNhap extends JPanel implements ItemListener, ActionLi
         txtTenSp.setPreferredSize(new Dimension(100, 90));
         txtMaSp = new InputForm("Mã sản phẩm");
         txtMaSp.setEditable(false);
-        txtMaISBN = new InputForm("Mã ISBN");
+        txtMaISBN = new InputForm("Mã vạch");
         txtMaISBN.setEditable(false);
         // cái này dùng để nhập isbn dô khung txtMaISBN có thể search đc sp, nhưng disable ko dùng ròi
         txtMaISBN.getTxtForm().addKeyListener(new KeyAdapter() {
