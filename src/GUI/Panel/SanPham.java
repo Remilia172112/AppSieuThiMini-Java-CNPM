@@ -128,8 +128,8 @@ public final class SanPham extends JPanel implements ActionListener {
 
     public void loadDataTalbe(ArrayList<DTO.SanPhamDTO> result) {
         tblModel.setRowCount(0);
-        ArrayList<DonViDTO> listdv = dvbus.getAll();
-        ArrayList<LoaiDTO> listloai = loaibus.getAll();
+        ArrayList<DonViDTO> listdv = dvbus.getAlll();
+        ArrayList<LoaiDTO> listloai = loaibus.getAlll();
 
         for (DTO.SanPhamDTO sp : result) {
             tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), listdv.get(sp.getMDV() - 1).getTENDV(), 

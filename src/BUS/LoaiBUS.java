@@ -17,6 +17,10 @@ public class LoaiBUS {
         return this.listLoai;
     }
 
+    public ArrayList<LoaiDTO> getAlll() {
+        return mausacDAO.getAll();
+    }
+
     public String[] getArrTenLoai() {
         String[] result = new String[listLoai.size()];
         for (int i = 0; i < listLoai.size(); i++) {
