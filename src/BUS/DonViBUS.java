@@ -17,6 +17,10 @@ public class DonViBUS {
         return this.listDonVi;
     }
 
+    public ArrayList<DonViDTO> getAlll() {
+        return mausacDAO.getAll();
+    }
+
     public String[] getArrTenDonVi() {
         String[] result = new String[listDonVi.size()];
         for (int i = 0; i < listDonVi.size(); i++) {
