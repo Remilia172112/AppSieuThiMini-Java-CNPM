@@ -14,13 +14,13 @@ public class TrangChu extends JPanel {
     JPanel info[];
     JLabel title, subTit, infoDetail[], objDetail[], objDetail1[], infoIcon[];
         String[][] getSt = {
-        {"Tính <br><br>tiện <br><br>lợi", "convenient_100px.svg", "<html>Có tính năng tìm kiếm nhanh chóng giúp người dùng dễ dàng<br><br> tìm sách theo tiêu chí cụ thể như tiêu đề, tác giả thể loại hoặc <br><br>theo mã ISBN sẽ đảm bảo tính chính xác và độ tin cậy cao hơn .</html>"},
-        {"Tính <br><br>bảo <br><br>mật", "secure_100px.svg", "<html>Thông tin cá nhân và thông tin liên quan đến sách mượn thường <br><br>được bảo mật và chỉ được truy cập bởi người dùng hoặc những <br><br>người được ủy quyền.</html>"},
-        {"Tính <br><br>hiệu <br><br>quả", "effective_100px.svg", "<html>Nhờ vào tính năng đặc biệt của mã ISBN giúp xác định được thông <br><br>tin về từng cuốn sách một cách nhanh chóng và chính xác, giúp <br><br>cho việc quản lý sách được thực hiện một cách hiệu quả hơn.</html>"},
+        {"Tính <br><br>tiện <br><br>lợi", "convenient_100px.svg", "<html>Ứng dụng cung cấp tính năng tìm kiếm nhanh các sản phẩm <br><br>dựa trên tên, danh mục, hoặc mã sản phẩm (SKU), giúp người <br><br>dùng dễ dàng xác định vị trí hàng hóa trong siêu thị hoặc kiểm <br><br>tra tình trạng còn hàng.</html>"},
+        {"Tính <br><br>bảo <br><br>mật", "secure_100px.svg", "<html>Thông tin cá nhân và lịch sử mua sắm của khách hàng được <br><br>bảo mật tuyệt đối, chỉ có người dùng và hệ thống quản lý truy <br><br>cập, đảm bảo quyền riêng tư.</html>"},
+        {"Tính <br><br>hiệu <br><br>quả", "effective_100px.svg", "<html>Tích hợp mã QR và công nghệ nhận diện sản phẩm giúp tăng <br><br>tốc độ thanh toán và giảm thời gian chờ, đồng thời cải thiện <br><br>quy trình quản lý kho và kiểm kê hàng hóa.</html>"},
     };
-    Color MainColor = new Color(193,237,220);
+    Color MainColor = new Color(255,255,255);
     Color FontColor = new Color(96, 125, 139);
-    Color BackgroundColor = new Color(0x4F6457);
+    Color BackgroundColor = new Color(0xC4E9B8);
     Color HowerFontColor = new Color(225, 230, 232);
 
     private void initComponent() {
