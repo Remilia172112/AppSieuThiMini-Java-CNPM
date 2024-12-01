@@ -129,5 +129,8 @@ public class TaiKhoanBUS {
         }
         return result;
     }
+    public void doiMatKhauBangEmail(int id, String newPassword) {
+        TaiKhoanDAO.getInstance().updatePassByMNV(id, newPassword);
+    }
 
 }

@@ -374,7 +374,7 @@ public final class TaoHoaDon extends JPanel {
         txtDTL = new InputForm("Điểm tích lũy đang có");
         txtDTL.setEditable(false);
         manv = tk.getMNV();
-        txtMaphieu.setText("PX" + maphieu);
+        txtMaphieu.setText("HD" + maphieu);
         NhanVienDTO nhanvien = NhanVienDAO.getInstance().selectById(tk.getMNV() + "");
         txtNhanVien.setText(nhanvien.getHOTEN());
         right_top.add(txtMaphieu);

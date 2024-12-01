@@ -3,7 +3,6 @@ package GUI.Dialog;
 import BUS.NhomQuyenBUS;
 import DAO.ChiTietQuyenDAO;
 import DAO.DanhMucChucNangDAO;
-import DAO.NhomQuyenDAO;
 import DTO.ChiTietQuyenDTO;
 import DTO.DanhMucChucNangDTO;
 import DTO.NhomQuyenDTO;
@@ -149,7 +148,7 @@ public final class PhanQuyenDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnAddNhomQuyen) {
-            ctQuyen = this.getListChiTietQuyen(NhomQuyenDAO.getInstance().getAutoIncrement());
+            ctQuyen = this.getListChiTietQuyen(nhomquyenBUS.getAll().size() + 1);
             nhomquyenBUS.add(txtTennhomquyen.getText(),ctQuyen);
             this.jpPhanQuyen.loadDataTalbe(nhomquyenBUS.getAll());
             dispose();

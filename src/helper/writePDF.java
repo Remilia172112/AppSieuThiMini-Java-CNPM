@@ -149,7 +149,7 @@ public class writePDF {
             PdfWriter writer = PdfWriter.getInstance(document, file);
             document.open();
 
-            Paragraph company = new Paragraph("Hệ thống quản lý cửa hàng sách BestBook", fontBold15);
+            Paragraph company = new Paragraph("Hệ thống quản lý siêu thị mini", fontBold15);
             company.add(new Chunk(createWhiteSpace(20)));
             Date today = new Date(System.currentTimeMillis());
             company.add(new Chunk("Thời gian in phiếu: " + formatDate.format(today), fontNormal10));
@@ -249,7 +249,7 @@ public class writePDF {
     public void writePX(int maphieu) {
         String url = "";
         try {
-            fd.setTitle("In phiếu xuất");
+            fd.setTitle("In hóa đơn");
             fd.setLocationRelativeTo(null);
             url = getFile("PX" + maphieu + "");
             if (url.equals("nullnull")) {
@@ -261,21 +261,21 @@ public class writePDF {
             PdfWriter writer = PdfWriter.getInstance(document, file);
             document.open();
 
-            Paragraph company = new Paragraph("Hệ thống quản lý cửa hàng sách BestBook", fontBold15);
+            Paragraph company = new Paragraph("Hệ thống quản lý siêu thị mini", fontBold15);
             company.add(new Chunk(createWhiteSpace(20)));
             Date today = new Date(System.currentTimeMillis());
-            company.add(new Chunk("Thời gian in phiếu: " + formatDate.format(today), fontNormal10));
+            company.add(new Chunk("Thời gian in: " + formatDate.format(today), fontNormal10));
             company.setAlignment(Element.ALIGN_LEFT);
             document.add(company);
             // Thêm tên công ty vào file PDF
             document.add(Chunk.NEWLINE);
-            Paragraph header = new Paragraph("THÔNG TIN PHIẾU XUẤT", fontBold25);
+            Paragraph header = new Paragraph("THÔNG TIN HÓA ĐƠN", fontBold25);
             header.setAlignment(Element.ALIGN_CENTER);
             document.add(header);
             HoaDonDTO px = HoaDonDAO.getInstance().selectById(maphieu + "");
             // Thêm dòng Paragraph vào file PDF
 
-            Paragraph paragraph1 = new Paragraph("Mã phiếu: PX-" + px.getMP(), fontNormal10);
+            Paragraph paragraph1 = new Paragraph("Mã hóa đơn: HD-" + px.getMP(), fontNormal10);
             String hoten = KhachHangDAO.getInstance().selectById(px.getMKH() + "").getHOTEN();
             Paragraph paragraph2 = new Paragraph("khách hàng: " + hoten, fontNormal10);
             paragraph2.add(new Chunk(createWhiteSpace(5)));
@@ -370,7 +370,7 @@ public class writePDF {
             PdfWriter writer = PdfWriter.getInstance(document, file);
             document.open();
 
-            Paragraph company = new Paragraph("Hệ thống quản lý cửa hàng sách BestBook", fontBold15);
+            Paragraph company = new Paragraph("Hệ thống quản lý siêu thị mini", fontBold15);
             company.add(new Chunk(createWhiteSpace(20)));
             Date today = new Date(System.currentTimeMillis());
             company.add(new Chunk("Thời gian in phiếu: " + formatDate.format(today), fontNormal10));
@@ -384,7 +384,7 @@ public class writePDF {
             PhieuKiemKeDTO pn = PhieuKiemKeDAO.getInstance().selectById(maphieu + "");
             // Thêm dòng Paragraph vào file PDF
 
-            Paragraph paragraph1 = new Paragraph("Mã phiếu: PN-" + pn.getMP(), fontNormal10);
+            Paragraph paragraph1 = new Paragraph("Mã phiếu: PKK-" + pn.getMP(), fontNormal10);
 
             String ngtao = NhanVienDAO.getInstance().selectById(pn.getNguoitao() + "").getHOTEN();
             Paragraph paragraph3 = new Paragraph("Người thực hiện: " + ngtao, fontNormal10);

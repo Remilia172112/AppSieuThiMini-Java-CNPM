@@ -31,13 +31,21 @@ public class TrangChu extends JPanel {
 
         top = new JPanel();
         top.setBackground(MainColor);
-        top.setPreferredSize(new Dimension(1100, 200));
+        top.setPreferredSize(new Dimension(1200, 230));
         top.setLayout(new FlowLayout(1, 0, 10));
 
-        JLabel slogan = new JLabel();
-        slogan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/slogan.png")));
-        
-        top.add(slogan);
+        // JLabel slogan = new JLabel();
+        // slogan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sloganMarket.png")));
+        ImageIcon iconOrgin = new ImageIcon("./src/img/sloganMarket.png");
+        Image imageOrgin = iconOrgin.getImage();
+
+        int width = top.getPreferredSize().width;
+        int height = top.getPreferredSize().height;
+        Image scaleImage = imageOrgin.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+        ImageIcon scaledIcon = new ImageIcon(scaleImage);
+        JLabel slogan = new JLabel(scaledIcon);
+        top.add(slogan, BorderLayout.CENTER);
 
         this.add(top, BorderLayout.NORTH);
 

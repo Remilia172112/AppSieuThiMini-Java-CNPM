@@ -1,6 +1,5 @@
 package GUI.Dialog;
 
-import DAO.NhaCungCapDAO;
 import DTO.NhaCungCapDTO;
 import GUI.Panel.NhaCungCap;
 import GUI.Component.ButtonCustom;
@@ -126,7 +125,7 @@ public class NhaCungCapDialog extends JDialog implements ActionListener {
             JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
          }
-         else if (Validation.isEmpty(sodienthoai.getText()) || !Validation.isNumber(sodienthoai.getText()) && sodienthoai.getText().length()!=10) {
+         else if (Validation.isEmpty(sodienthoai.getText()) || !Validation.isNumber(sodienthoai.getText()) || sodienthoai.getText().length()!=10) {
             JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải là 10 ký tự số", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
          }
@@ -136,7 +135,7 @@ public class NhaCungCapDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnThem && Validation()) {
-            int mancc = NhaCungCapDAO.getInstance().getAutoIncrement();  
+            int mancc = jpNcc.nccBUS.getAll().size() + 1;  
             jpNcc.nccBUS.add(new NhaCungCapDTO(mancc, tenNcc.getText(), diachi.getText(), email.getText(), sodienthoai.getText()));
             jpNcc.loadDataTable(jpNcc.listncc);
             dispose();
