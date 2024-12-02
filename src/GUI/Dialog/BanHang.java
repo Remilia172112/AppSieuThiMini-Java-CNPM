@@ -785,24 +785,16 @@ public final class BanHang extends JFrame {
                             Integer.parseInt(khachtra), 1,
                             Integer.parseInt(lbldiemtamtinh.getText().replaceAll("[^0-9]", "")));
 
-                    ArrayList<SanPhamDTO> lstSpDTO = new ArrayList<>();
-                    for (SanPhamDTO sp : spBUS.listSP) {
-                        lstSpDTO.add(new SanPhamDTO(sp.getMSP(), sp.getTEN(), sp.getHINHANH(), sp.getML(),
-                                sp.getTIENX(), sp.getSL(), sp.getMDV(), sp.getMV())); // Tạo bản sao mới
-                    }
-
                     for (ChiTietHoaDonDTO ct : chitietphieu) {
                         if ("Chọn".equals(ct.getMKM())) {
                             ct.setMKM(null);
                         }
-
-                        for (SanPhamDTO sp : lstSpDTO) {
+                        for (SanPhamDTO sp : listSP) {
                             if (ct.getMSP() == sp.getMSP()) {
-                                int solSPT = sp.getSL(); // Số lượng tồn kho
-                                int soLMua = ct.getSL(); // Số lượng mua
-                                System.out.println("so luong mua sp la: " + (solSPT - soLMua));
-                                sp.setSL(solSPT - soLMua); // Cập nhật số lượng
-                                spBUS.update(sp); // Cập nhật vào database
+                                int solSPT = sp.getSL();
+                                int soLMua = ct.getSL();
+                                sp.setSL(solSPT - soLMua);
+                                break;
                             }
                         }
                     }
@@ -812,17 +804,16 @@ public final class BanHang extends JFrame {
                     // SanPhamBUS.updateXuat(chitietsanpham);
                     JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
                     khachHangBUS.update(makh, (dtl - Integer.parseInt(txtDTLG.getText())) + diemtamtinh);
+
                     chitietphieu.clear();
-                    System.out.println("ebrfeuorvbfeguf:  " + chitietphieu.size());
                     tblModel.setRowCount(0);
-                    listSP = spBUS.getAll(); // Lấy dữ liệu mới nhất
+                    
                     loadDataTalbeSanPham(listSP); // Hiển thị lại bảng
                     resetForm();
                     resetFormRight();
                     maphieu = phieuXuatBUS.getMPMAX() + 1;
                     new ChiTietPhieuDialog(this, "Thông tin phiếu xuất", true, phieuXuat);
                     // this.setPanel(new HoaDon(this, tk));
-                    System.out.println("có bị gọi lại không vậy??");
                     // this.dispose();
                 }
             }
