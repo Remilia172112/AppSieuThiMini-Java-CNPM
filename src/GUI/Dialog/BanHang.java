@@ -60,9 +60,10 @@ import helper.writePDF;
 public final class BanHang extends JFrame {
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     // gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
-    // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của listkhachhang
+    // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của
+    // listkhachhang
     PanelBorderRadius right, left;
-    JPanel contentCenter; 
+    JPanel contentCenter;
     JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
     DefaultTableModel tblModel, tblModelSP; // table co san
@@ -172,23 +173,23 @@ public final class BanHang extends JFrame {
                 }
             }
         });
-        
-        // Table sản phẩm 
+
+        // Table sản phẩm
         tableSanPham = new JTable();
         tableSanPham.setBackground(new Color(0xA1D6E2));
         tblModelSP = new DefaultTableModel();
         String[] headerSP = new String[] { "Mã SP", "Tên sản phẩm", "Số lượng tồn" };
         tblModelSP.setColumnIdentifiers(headerSP);
         tableSanPham.setModel(tblModelSP);
-        tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer()); 
-            // kết hợp giữa ImageCellRenderer() và MultiLineCellRenderer()
+        tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer());
+        // kết hợp giữa ImageCellRenderer() và MultiLineCellRenderer()
         tableSanPham.setRowHeight(150);
         tableSanPham.getColumnModel().getColumn(0).setPreferredWidth(200);
         tableSanPham.getColumnModel().getColumn(1).setPreferredWidth(300);
         tableSanPham.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tableSanPham.setFocusable(false);
         scrollTableSanPham = new JScrollPane();
-        
+
         JScrollBar verticalScrollBar = scrollTableSanPham.getVerticalScrollBar();
         verticalScrollBar.setUnitIncrement(16); // Giảm tốc độ cuộn xuống còn 16 pixel mỗi lần nhấn
 
@@ -238,32 +239,30 @@ public final class BanHang extends JFrame {
         left.add(txtTimKiem, BorderLayout.NORTH);
         left.add(scrollTableSanPham, BorderLayout.CENTER);
 
-
         ///// RIGHT
         right = new PanelBorderRadius();
         right.setPreferredSize(new Dimension(400, 0));
         right.setBorder(new EmptyBorder(5, 5, 5, 5));
         right.setLayout(new BorderLayout());
 
-        JPanel  right_top, right_bottom; //right_bottom=content_left+content_right; 
+        JPanel right_top, right_bottom; // right_bottom=content_left+content_right;
 
-        // right_top này là danh sách xuất ở    RIGHT phía bắc, chứa tablelistnhap
-        right_top = new JPanel(); //DOI THANH CONTENT_TOP BEN RIGHT
+        // right_top này là danh sách xuất ở RIGHT phía bắc, chứa tablelistnhap
+        right_top = new JPanel(); // DOI THANH CONTENT_TOP BEN RIGHT
         right_top.setOpaque(false);
         right_top.setPreferredSize(new Dimension(0, 300));
         right_top.setBorder(new EmptyBorder(0, 5, 10, 10));
         BoxLayout boxly = new BoxLayout(right_top, BoxLayout.Y_AXIS);
         right_top.setLayout(boxly);
-        right_top.add(scrollTablePhieuNhap); 
+        right_top.add(scrollTablePhieuNhap);
 
-        
-        JPanel content_left,content_right, content_right_top, content_right_bottom;
-        
+        JPanel content_left, content_right, content_right_top, content_right_bottom;
+
         content_right = new JPanel(new BorderLayout());
         content_right.setPreferredSize(new Dimension(1000, 300));
         content_right.setBorder(new EmptyBorder(0, 10, 30, 5));
         content_right.setOpaque(false);
-        
+
         content_left = new JPanel(new BorderLayout());
         content_left.setPreferredSize(new Dimension(1000, 300));
         content_left.setBorder(new EmptyBorder(0, 10, 30, 5));
@@ -406,15 +405,18 @@ public final class BanHang extends JFrame {
             public void insertUpdate(DocumentEvent e) {
                 updateLabels();
             }
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 lblkhachcantra.setText("0đ");
                 lbldiemtamtinh.setText("0đ");
             }
+
             @Override
             public void changedUpdate(DocumentEvent e) {
                 updateLabels();
             }
+
             private void updateLabels() {
                 String text = txtDTLG.getText();
                 lbldungdiem.setText(Formater.FormatVND(Integer.parseInt(text)));
@@ -447,7 +449,6 @@ public final class BanHang extends JFrame {
         dtlPanel.add(txtDTL);
         dtlPanel.add(lbDTLG);
         dtlPanel.add(txtDTLG);
-
 
         content_left.add(khPanel, BorderLayout.CENTER);
         content_left.add(dtlPanel, BorderLayout.SOUTH);
@@ -496,13 +497,16 @@ public final class BanHang extends JFrame {
             public void insertUpdate(DocumentEvent e) {
                 updateLabels();
             }
+
             @Override
             public void removeUpdate(DocumentEvent e) {
             }
+
             @Override
             public void changedUpdate(DocumentEvent e) {
                 updateLabels();
             }
+
             private void updateLabels() {
                 Double text = Double.parseDouble(txtDaThu.getText());
                 lbltienthua.setText(Formater.FormatVND(text - khachcantra));
@@ -658,11 +662,11 @@ public final class BanHang extends JFrame {
         cbxMaKM.setSelectedItem(phieu.getMKM());
     }
 
-    // public void loadDataTalbeSanPham(ArrayList<DTO.SanPhamDTO> result) {  //CŨ
-    //     tblModelSP.setRowCount(0);
-    //     for (SanPhamDTO sp : result) {
-    //         tblModelSP.addRow(new Object[] { sp.getMSP(), sp.getTEN(), sp.getSL() });
-    //     }
+    // public void loadDataTalbeSanPham(ArrayList<DTO.SanPhamDTO> result) { //CŨ
+    // tblModelSP.setRowCount(0);
+    // for (SanPhamDTO sp : result) {
+    // tblModelSP.addRow(new Object[] { sp.getMSP(), sp.getTEN(), sp.getSL() });
+    // }
     // }
     public void loadDataTalbeSanPham(ArrayList<DTO.SanPhamDTO> result) {
         tblModelSP.setRowCount(0);
@@ -672,12 +676,11 @@ public final class BanHang extends JFrame {
             dataImage = new ImageIcon("./src/img_product/" + sp.getHINHANH());
             dataString = new MultiLineData(sp.getTEN(), " ", sp.getTIENX() + "VND");
             // dataString.setLine1(sp.getTEN());
-            // dataString.setLine2("  ");
+            // dataString.setLine2(" ");
             // dataString.setLine3(sp.getTIENX() + "VND");
             tblModelSP.addRow(new Object[] { dataImage, dataString, sp.getSL() });
         }
     }
-
 
     public void loadDataTableChiTietPhieu(ArrayList<ChiTietHoaDonDTO> ctPhieu) {
         tblModel.setRowCount(0);
@@ -777,38 +780,40 @@ public final class BanHang extends JFrame {
                 } else {
                     long now = System.currentTimeMillis();
                     Timestamp currenTime = new Timestamp(now);
-                    String khachtra = lblkhachcantra.getText().replaceAll("[^0-9]", ""); 
-                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, Integer.parseInt(khachtra), 1, Integer.parseInt(lbldiemtamtinh.getText().replaceAll("[^0-9]", "")));
-                    
-                    ArrayList<SanPhamDTO> lstSpDTO = new ArrayList<>();
-                    lstSpDTO = spBUS.listSP;
-                    
-                    for (int i = 0; i < chitietphieu.size(); i++) {
-                        if(chitietphieu.get(i).getMKM().equals("Chọn")) {
-                            chitietphieu.get(i).setMKM(null);
+                    String khachtra = lblkhachcantra.getText().replaceAll("[^0-9]", "");
+                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime,
+                            Integer.parseInt(khachtra), 1,
+                            Integer.parseInt(lbldiemtamtinh.getText().replaceAll("[^0-9]", "")));
+
+                    for (ChiTietHoaDonDTO ct : chitietphieu) {
+                        if ("Chọn".equals(ct.getMKM())) {
+                            ct.setMKM(null);
                         }
-                        if (chitietphieu.get(i).getMSP() == lstSpDTO.get(i).getMSP()) {
-                            int solSPT = lstSpDTO.get(i).getSL();
-                            int soLMua = chitietphieu.get(i).getSL();
-                            lstSpDTO.get(i).setSL(solSPT - soLMua);
-                            spBUS.update(lstSpDTO.get(i));
-                            listSP.get(i).setSL(solSPT - soLMua);
+                        for (SanPhamDTO sp : listSP) {
+                            if (ct.getMSP() == sp.getMSP()) {
+                                int solSPT = sp.getSL();
+                                int soLMua = ct.getSL();
+                                sp.setSL(solSPT - soLMua);
+                                break;
+                            }
                         }
                     }
+
                     phieuXuatBUS.insert(phieuXuat, chitietphieu); // update số lượng trong kho
                     /// gọi BUS, BUS gọi DAO, DAO chỉnh trong sql
                     // SanPhamBUS.updateXuat(chitietsanpham);
                     JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
                     khachHangBUS.update(makh, (dtl - Integer.parseInt(txtDTLG.getText())) + diemtamtinh);
+
                     chitietphieu.clear();
                     tblModel.setRowCount(0);
-                    loadDataTalbeSanPham(listSP);
+                    
+                    loadDataTalbeSanPham(listSP); // Hiển thị lại bảng
                     resetForm();
                     resetFormRight();
                     maphieu = phieuXuatBUS.getMPMAX() + 1;
                     new ChiTietPhieuDialog(this, "Thông tin phiếu xuất", true, phieuXuat);
                     // this.setPanel(new HoaDon(this, tk));
-                    
                     // this.dispose();
                 }
             }
@@ -866,10 +871,10 @@ public final class BanHang extends JFrame {
         lbltongtien.setText("0đ");
         lblgiamgia.setText("0đ");
         lbldungdiem.setText("0đ");
-        lblkhachcantra.setText(khachcantra+"");
+        lblkhachcantra.setText(khachcantra + "");
         txtDaThu.setText("");
         lbltienthua.setText("0đ");
-        lbldiemtamtinh.setText(diemtamtinh+"");
+        lbldiemtamtinh.setText(diemtamtinh + "");
         txtDTLG.setText("0");
         txtDTL.setText("");
         txtKh.setText("Chọn khách hàng");
