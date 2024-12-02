@@ -102,7 +102,7 @@ public class ThongKeKhachHang extends JPanel implements ActionListener, KeyListe
 
         scrollTblTonKho = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"STT", "Mã khách hàng", "Tên khách hàng", "Số lượng phiếu", "Tổng số tiền"};
+        String[] header = new String[]{"STT", "Mã khách hàng", "Tên khách hàng", "Số lượng hóa đơn", "Tổng số tiền"};
         tblModel.setColumnIdentifiers(header);
         tblKH.setModel(tblModel);
         tblKH.setAutoCreateRowSorter(true);
