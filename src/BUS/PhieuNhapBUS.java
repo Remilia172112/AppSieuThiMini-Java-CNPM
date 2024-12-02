@@ -55,6 +55,14 @@ public class PhieuNhapBUS {
         }
         return result;
     }
+    
+    public ArrayList<ChiTietPhieuNhapDTO> selectCtpnByMaSanPham(String t) {
+        return ctPhieuNhapDAO.selectCtpnByMaSanPham(t);
+    }
+    
+    public int getGiaSanPhamByMaxMPN(String msp) {
+        return ctPhieuNhapDAO.getGiaSanPhamByMaxMPN(msp);
+    }
 
     public int getMPMAX() {
         ArrayList<PhieuNhapDTO> listPhieuNhap = phieunhapDAO.selectAll();
@@ -155,5 +163,8 @@ public class PhieuNhapBUS {
     public int cancelPhieuNhap(int maphieu) {
         return phieunhapDAO.cancelPhieuNhap(maphieu);
     }
-
+    
+    public ArrayList<ChiTietPhieuNhapDTO> searchByMSP(int msp) {
+        return ctPhieuNhapDAO.searchByMSP(msp);
+    }
 }

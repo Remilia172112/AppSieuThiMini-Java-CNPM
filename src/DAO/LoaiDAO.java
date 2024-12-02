@@ -123,6 +123,25 @@ public class LoaiDAO implements DAOinterface<LoaiDTO> {
         }
         return result;
     }
+    
+    public LoaiDTO getByName(String t) {
+        LoaiDTO result = null;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM LOAI WHERE TENL=?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, t);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int ML = rs.getInt("ML");
+                String TENL = rs.getString("TENL");
+                result = new LoaiDTO(ML, TENL);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+        }
+        return result;
+    }
 
     @Override
     public int getAutoIncrement() {

@@ -32,6 +32,14 @@ public class LoaiBUS {
     public LoaiDTO getByIndex(int index) {
         return this.listLoai.get(index);
     }
+    
+    public LoaiDTO getById(String id) {
+        return mausacDAO.selectById(id);
+    }
+    
+    public LoaiDTO getByName(String name) {
+        return mausacDAO.getByName(name);
+    }
 
     public boolean add(LoaiDTO msac) {
         boolean check = mausacDAO.insert(msac) != 0;
