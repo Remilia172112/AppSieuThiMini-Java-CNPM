@@ -26,12 +26,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.util.List;
+import java.util.ArrayList;
 
 public class KhachHang extends JPanel implements ActionListener, ItemListener {
 
@@ -57,7 +61,7 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
         tableKhachHang = new JTable();
         scrollTableKhachHang = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"Mã khách hàng", "Tên khách hàng", "Địa chỉ", "Số điện thoại", "Ngày tham gia", "Điểm tích lũy"};
+        String[] header = new String[]{"Mã khách hàng", "Tên khách hàng", "Địa chỉ", "Email", "Số điện thoại", "Ngày tham gia", "Điểm tích lũy"};
         tblModel.setColumnIdentifiers(header);
         tableKhachHang.setModel(tblModel);
         tableKhachHang.setFocusable(false);
@@ -152,13 +156,18 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
     }
 
     public void loadDataTable(ArrayList<KhachHangDTO> result) {
-        tblModel.setRowCount(0);
-        result.remove(0);
-        for (DTO.KhachHangDTO khachHang : result) {
-            tblModel.addRow(new Object[]{
-                khachHang.getMKH(), khachHang.getHOTEN(), khachHang.getDIACHI(), khachHang.getSDT(), khachHang.getNGAYTHAMGIA(), khachHang.getDIEMTICHLUY()
-            });
-        }
+        tblModel.setRowCount(0); // Clear existing rows
+    for (DTO.KhachHangDTO khachHang : result) {
+        tblModel.addRow(new Object[]{
+            khachHang.getMKH(), 
+            khachHang.getHOTEN(), 
+            khachHang.getDIACHI(), 
+            khachHang.getEMAIL(), // Move email to position 4
+            khachHang.getSDT(), 
+            khachHang.getNGAYTHAMGIA(), 
+            khachHang.getDIEMTICHLUY()
+        });
+    }
     }
 
     public int getRowSelected() {
@@ -169,52 +178,75 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
         return index;
     }
 
-    public void importExcel() {
-        File excelFile;
-        FileInputStream excelFIS = null;
-        BufferedInputStream excelBIS = null;
-        XSSFWorkbook excelJTableImport = null;
-        JFileChooser jf = new JFileChooser();
-        int result = jf.showOpenDialog(null);
-        jf.setDialogTitle("Open file");
-        int k = 0;
-        if (result == JFileChooser.APPROVE_OPTION) {
-            try {
-                excelFile = jf.getSelectedFile();
-                excelFIS = new FileInputStream(excelFile);
-                excelBIS = new BufferedInputStream(excelFIS);
-                excelJTableImport = new XSSFWorkbook(excelBIS);
-                XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
-                for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
-                    int check = 1;
-                    XSSFRow excelRow = excelSheet.getRow(row);
-                    int id = khachhangBUS.getAll().size() + 1;
-                    String tenkh = excelRow.getCell(0).getStringCellValue();
-                    String sdt = excelRow.getCell(1).getStringCellValue();
-                    String diachi = excelRow.getCell(2).getStringCellValue();
-                    String email = excelRow.getCell(3).getStringCellValue();
-                    if (Validation.isEmpty(tenkh) || Validation.isEmpty(sdt)
-                            || !isPhoneNumber(sdt) || sdt.length() != 10 || Validation.isEmpty(diachi)) {
-                        check = 0;
-                    }
-                    if (check == 1) {
-                        khachhangBUS.add(new KhachHangDTO(id, tenkh, sdt, diachi, email,0));
-                    } else {
-                        k += 1;
-                    }
+   public void importExcel() {
+    File excelFile;
+    FileInputStream excelFIS = null;
+    BufferedInputStream excelBIS = null;
+    XSSFWorkbook excelJTableImport = null;
+    JFileChooser jf = new JFileChooser();
+    int result = jf.showOpenDialog(null);
+    jf.setDialogTitle("Open file");
+    List<String[]> invalidRows = new ArrayList<>(); 
+
+    if (result == JFileChooser.APPROVE_OPTION) {
+        try {
+            excelFile = jf.getSelectedFile();
+            excelFIS = new FileInputStream(excelFile);
+            excelBIS = new BufferedInputStream(excelFIS);
+            excelJTableImport = new XSSFWorkbook(excelBIS);
+            XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
+            for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
+                int check = 1;
+                XSSFRow excelRow = excelSheet.getRow(row);
+                long now = System.currentTimeMillis();
+                Timestamp currenTime = new Timestamp(now);
+                int id = khachhangBUS.getAll().size() + 1;
+                String tenkh = excelRow.getCell(1).getStringCellValue();
+                String sdt = excelRow.getCell(4).getStringCellValue();
+                String diachi = excelRow.getCell(2).getStringCellValue();
+                String email = excelRow.getCell(3).getStringCellValue();
+                
+                // Kiểm tra kiểu dữ liệu của ô trước khi đọc
+                int diemTichLuy = 0;
+                if (excelRow.getCell(6).getCellType() == CellType.NUMERIC) {
+                    diemTichLuy = (int) excelRow.getCell(6).getNumericCellValue();
+                } else if (excelRow.getCell(6).getCellType() == CellType.STRING) {
+                    diemTichLuy = Integer.parseInt(excelRow.getCell(6).getStringCellValue());
                 }
-                JOptionPane.showMessageDialog(this, "Nhập thành công");
-            } catch (FileNotFoundException ex) {
-                System.out.println("Lỗi đọc file");
-            } catch (IOException ex) {
-                System.out.println("Lỗi đọc file");
+                
+                // Kiểm tra hợp lệ
+                if (Validation.isEmpty(tenkh) || Validation.isEmpty(sdt)
+                        || !isPhoneNumber(sdt) || sdt.length() != 10 || Validation.isEmpty(diachi)) {
+                    check = 0;
+                }
+                
+                if (check == 1) {
+                    khachhangBUS.add(new KhachHangDTO(id, tenkh, sdt, diachi, email, currenTime, diemTichLuy));
+                } else {
+                    // Thêm thông tin dòng không hợp lệ vào danh sách
+                    invalidRows.add(new String[]{String.valueOf(row + 1), tenkh, sdt, diachi, email});
+                }
             }
+            JOptionPane.showMessageDialog(this, "Nhập thành công");
+        } catch (FileNotFoundException ex) {
+            System.out.println("Lỗi đọc file");
+        } catch (IOException ex) {
+            System.out.println("Lỗi đọc file");
         }
-        if (k != 0) {
-            JOptionPane.showMessageDialog(this, "Những dữ liệu không hợp lệ không được thêm vào");
-        }
-        loadDataTable(listkh);
     }
+    
+    if (!invalidRows.isEmpty()) {
+        // Tạo bảng thông báo các dòng không hợp lệ
+        String[] columnNames = {"Row", "Tên KH", "SĐT", "Địa chỉ", "Email"};
+        JTable table = new JTable(invalidRows.toArray(new String[0][]), columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+        JOptionPane.showMessageDialog(null, scrollPane, "Dữ liệu không hợp lệ", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Những hàng có dữ liệu không hợp lệ sẽ không được thêm");
+    }
+    
+    ArrayList<KhachHangDTO> list = khachhangBUS.getAll();
+    loadDataTable(list);
+}
 
     public static boolean isPhoneNumber(String str) {
         // Loại bỏ khoảng trắng và dấu ngoặc đơn nếu có
