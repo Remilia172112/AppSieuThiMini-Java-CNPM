@@ -88,6 +88,27 @@ public class ChucVuDAO implements DAOinterface<ChucVuDTO>{
         return result;
     }
     
+    public ArrayList<ChucVuDTO> getAll() {
+        ArrayList<ChucVuDTO> result = new ArrayList<ChucVuDTO>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM CHUCVU";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while(rs.next()) {
+                int MCV = rs.getInt("MCV");
+                String TEN = rs.getString("TEN");
+                int MUCLUONG = rs.getInt("MUCLUONG");
+                ChucVuDTO nv = new ChucVuDTO(MCV, TEN, MUCLUONG);
+                result.add(nv);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
     
 
     @Override
