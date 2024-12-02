@@ -176,6 +176,7 @@ public final class BanHang extends JFrame {
 
         // Table sản phẩm
         tableSanPham = new JTable();
+        tableSanPham.setGridColor(Color.BLACK);
         tableSanPham.setBackground(new Color(0xA1D6E2));
         tblModelSP = new DefaultTableModel();
         String[] headerSP = new String[] { "Mã SP", "Tên sản phẩm", "Số lượng tồn" };
@@ -183,8 +184,8 @@ public final class BanHang extends JFrame {
         tableSanPham.setModel(tblModelSP);
         tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer());
         // kết hợp giữa ImageCellRenderer() và MultiLineCellRenderer()
-        tableSanPham.setRowHeight(150);
-        tableSanPham.getColumnModel().getColumn(0).setPreferredWidth(200);
+        tableSanPham.setRowHeight(125);
+        tableSanPham.getColumnModel().getColumn(0).setPreferredWidth(160);
         tableSanPham.getColumnModel().getColumn(1).setPreferredWidth(300);
         tableSanPham.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tableSanPham.setFocusable(false);
@@ -371,18 +372,20 @@ public final class BanHang extends JFrame {
 
         JPanel merge1 = new JPanel();
         merge1.setPreferredSize(new Dimension(0, 40));
-        merge1.setOpaque(false);
+        // merge1.setOpaque(false);
         merge1.add(btnAddSp);
         merge1.add(btnEditSP);
         JPanel merge2 = new JPanel(new GridLayout(1, 2));
         merge2.setPreferredSize(new Dimension(0, 80));
+        txtSoLuongSPxuat.setOpaque(false);
+        cbxMaKM.setOpaque(false);
         merge2.add(txtSoLuongSPxuat);
         merge2.add(cbxMaKM);
 
         JPanel khachJPanel = new JPanel(new BorderLayout());
         khachJPanel.setPreferredSize(new Dimension(0, 60));
         khachJPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
-        khachJPanel.setOpaque(false);
+        // khachJPanel.setOpaque(false);
         JPanel kJPanelLeft = new JPanel(new GridLayout(1, 1));
         kJPanelLeft.setPreferredSize(new Dimension(40, 0));
         ButtonCustom btnKh = new ButtonCustom("Chọn khách hàng", "success", 14);
@@ -431,7 +434,7 @@ public final class BanHang extends JFrame {
         khachJPanel.add(txtKh, BorderLayout.CENTER);
         khachJPanel.add(kJPanelLeft, BorderLayout.EAST);
         JPanel khPanel = new JPanel(new GridLayout(4, 1, 5, 0));
-        khPanel.setBackground(Color.WHITE);
+        // khPanel.setBackground(Color.WHITE);
         khPanel.setPreferredSize(new Dimension(0, 120));
         JLabel khachKhangJLabel = new JLabel("Khách hàng");
         khachKhangJLabel.setPreferredSize(new Dimension(0, 40));
@@ -455,7 +458,7 @@ public final class BanHang extends JFrame {
 
         content_right_top = new JPanel(new GridLayout(8, 2, 10, 0));
         content_right_top.setBorder(new EmptyBorder(5, 20, 5, 20));
-        content_right_top.setOpaque(false);
+        // content_right_top.setOpaque(false);
 
         JLabel lbl1 = new JLabel("Tổng tiền: ");
         lbl1.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
@@ -763,7 +766,7 @@ public final class BanHang extends JFrame {
     }
 
     public void eventBtnNhapHang() {
-        String tiemThua = lbltienthua.getText().replaceAll("[^0-9]", "");
+        String tiemThua = lbltienthua.getText().replaceAll("[^0-9-]", "");
         if (chitietphieu.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu!", "Cảnh báo !",
                     JOptionPane.ERROR_MESSAGE);
@@ -772,7 +775,7 @@ public final class BanHang extends JFrame {
         } else if (Integer.parseInt(txtDTLG.getText()) > dtl || Integer.parseInt(txtDTLG.getText()) > sum) {
             JOptionPane.showMessageDialog(null, "Điểm tích lũy không lớn hơn điểm đang có và giá đang bán!",
                     "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
-        } else if(txtDaThu.getText().equals("") || Integer.parseInt(tiemThua) < 0) {
+        } else if(txtDaThu.getText().equals("") || Integer.parseInt(tiemThua) < 0 ) {
             JOptionPane.showMessageDialog(null, "Phải lớn hơn hoặc bằng số tiền khách hàng cần trả",
                     "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -872,6 +875,7 @@ public final class BanHang extends JFrame {
         giagiam = 0;
         dungdiem = 0;
         sum = 0;
+        makh = -1;
         lbltongtien.setText("0đ");
         lblgiamgia.setText("0đ");
         lbldungdiem.setText("0đ");
