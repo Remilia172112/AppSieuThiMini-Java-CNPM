@@ -194,4 +194,7 @@ public class HoaDonBUS {
         return phieuXuatDAO.cancelHOADON(maphieu);
     }
 
+    public ArrayList<ChiTietHoaDonDTO> searchByMSP(int msp) {
+        return chiTietPhieuXuatDAO.searchByMSP(msp);
+    }
 }

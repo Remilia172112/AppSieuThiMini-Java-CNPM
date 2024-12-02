@@ -2,7 +2,7 @@ package DTO;
 
 public class SanPhamDTO {
 
-    private int MSP;
+    private Integer MSP;
     private String TEN;
     private String HINHANH;
     private int ML;
@@ -15,7 +15,7 @@ public class SanPhamDTO {
 
     }
 
-    public SanPhamDTO(int mSP, String tEN, String hINHANH, int mL, int tIENX, int sL, int mDV, String mV) {
+    public SanPhamDTO(Integer mSP, String tEN, String hINHANH, int mL, int tIENX, int sL, int mDV, String mV) {
         MSP = mSP;
         TEN = tEN;
         HINHANH = hINHANH;
@@ -26,11 +26,11 @@ public class SanPhamDTO {
         MV = mV;
     }
 
-    public int getMSP() {
+    public Integer getMSP() {
         return MSP;
     }
 
-    public void setMSP(int mSP) {
+    public void setMSP(Integer mSP) {
         MSP = mSP;
     }
 

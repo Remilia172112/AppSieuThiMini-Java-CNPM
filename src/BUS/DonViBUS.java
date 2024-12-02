@@ -32,7 +32,15 @@ public class DonViBUS {
     public DonViDTO getByIndex(int index) {
         return this.listDonVi.get(index);
     }
+    
+    public DonViDTO getById(String id) {
+        return mausacDAO.selectById(id);
+    }
 
+    public DonViDTO getByName(String name) {
+        return mausacDAO.getByName(name);
+    }
+    
     public boolean add(DonViDTO msac) {
         boolean check = mausacDAO.insert(msac) != 0;
         if (check) {

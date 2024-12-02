@@ -8,6 +8,8 @@ public class SanPhamBUS {
 
     public final SanPhamDAO spDAO = new SanPhamDAO();
     public ArrayList<SanPhamDTO> listSP = new ArrayList<>();
+    DonViBUS dvbus = new DonViBUS();
+    LoaiBUS lbus = new LoaiBUS();
 
     public SanPhamBUS() {
         listSP = spDAO.selectAll();
@@ -34,6 +36,14 @@ public class SanPhamBUS {
         }
         return this.listSP.get(vitri);
     }
+    
+    public int getMaxMSP() {
+        return spDAO.getMaxMSP();
+    }
+    
+    public SanPhamDTO getMaSP(String maSP) {
+        return spDAO.selectById(maSP);
+    }
 
     public int getIndexByMaSP(int masanpham) {
         int i = 0;
@@ -50,7 +60,7 @@ public class SanPhamBUS {
 
     public Boolean add(SanPhamDTO lh) {
         boolean check = spDAO.insert(lh) != 0;
-        if (check) {
+        if (check) {       
             this.listSP.add(lh);
         }
         return check;
@@ -173,6 +183,17 @@ public class SanPhamBUS {
             if(i.getMV().equals(ISBN)) return false;
         }
         System.out.println(ISBN);
+        return true;
+    }
+    
+    public boolean checkDuplicate(String tenSP, String donVi, String loai) {
+        for(SanPhamDTO i : this.listSP) {
+            String maDonVi = String.valueOf(i.getMDV());
+            String maLoai = String.valueOf(i.getML());
+            if(i.getTEN().equalsIgnoreCase(tenSP) && dvbus.getById(maDonVi).getTENDV().equals(donVi) && lbus.getById(maLoai).getTENL().equals(loai)){
+                return false;
+            }
+        }
         return true;
     }
 

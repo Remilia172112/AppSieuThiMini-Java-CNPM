@@ -169,17 +169,26 @@ public class KhachHangDialog extends JDialog implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         if (e.getSource() == btnThem && Validation()) {
-                int id= jpKH.khachhangBUS.getAll().size() + 1;
+                int id= jpKH.khachhangBUS.total()+1;
                 long now = System.currentTimeMillis();
                 Timestamp currenTime = new Timestamp(now);
-                jpKH.khachhangBUS.add(new DTO.KhachHangDTO(id, tenKH.getText(),sdtKH.getText(), diachiKH.getText(), emailKH.getText(), currenTime,0));
-                jpKH.loadDataTable(jpKH.listkh);
+                boolean flag=jpKH.khachhangBUS.add(new DTO.KhachHangDTO(id, tenKH.getText(),sdtKH.getText(), diachiKH.getText(), emailKH.getText(), currenTime,0));
+                jpKH.loadDataTable(jpKH.khachhangBUS.getAll());
+                if(flag){
+                    JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }else{
+                     JOptionPane.showMessageDialog(this, "Thêm khách hàng thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                }
                 dispose();
-
         } else if (e.getSource() == btnHuyBo) {
             dispose();
         } else if (e.getSource() == btnCapNhat && Validation()) {
-            jpKH.khachhangBUS.update(new KhachHangDTO(kh.getMKH(), tenKH.getText(), sdtKH.getText(), diachiKH.getText(), emailKH.getText(), kh.getNGAYTHAMGIA(), kh.getDIEMTICHLUY()));
+           boolean flag= jpKH.khachhangBUS.update(new KhachHangDTO(kh.getMKH(), tenKH.getText(), sdtKH.getText(), diachiKH.getText(), emailKH.getText(), kh.getNGAYTHAMGIA(), kh.getDIEMTICHLUY()));
+            if(flag){
+                    JOptionPane.showMessageDialog(this, "Sửa khách hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }else{
+                     JOptionPane.showMessageDialog(this, "Sửa khách hàng thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                }
             jpKH.loadDataTable(jpKH.listkh);
             dispose();
         }

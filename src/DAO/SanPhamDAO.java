@@ -129,7 +129,7 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         }
         return result;
     }
-    
+
     public SanPhamDTO selectByDanhMuc(String t) {
         SanPhamDTO result = null;
         try {
@@ -198,8 +198,11 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
 
     public int updateSoLuongTon(int MSP, int soluong, int tiennhap) {
         SanPhamDTO tmp = this.selectById(Integer.toString(MSP));
-        if(tmp.getTIENX() < tiennhap*(120/100)) tiennhap = tiennhap*(120/100);
-        else tiennhap = tmp.getTIENX();
+        if (tmp.getTIENX() < tiennhap * (120 / 100)) {
+            tiennhap = tiennhap * (120 / 100);
+        } else {
+            tiennhap = tmp.getTIENX();
+        }
         int quantity_current = tmp.getSL();
         int result = 0;
         int quantity_change = quantity_current + soluong;
@@ -233,4 +236,22 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         }
         return result;
     }
+
+    public int getMaxMSP() {
+        int maxMSP = -1;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT MAX(MSP) AS maxMSP FROM SANPHAM";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                maxMSP = rs.getInt("maxMSP");
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException ex) {
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return maxMSP;
+    }
+
 }
