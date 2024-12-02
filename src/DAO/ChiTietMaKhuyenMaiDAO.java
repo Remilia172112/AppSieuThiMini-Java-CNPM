@@ -10,8 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import DTO.ChiTietMaKhuyenMaiDTO;
 
-
 public class ChiTietMaKhuyenMaiDAO implements DAOinterface<ChiTietMaKhuyenMaiDTO> {
+
     public static ChiTietMaKhuyenMaiDAO getInstance() {
         return new ChiTietMaKhuyenMaiDAO();
     }
@@ -96,7 +96,7 @@ public class ChiTietMaKhuyenMaiDAO implements DAOinterface<ChiTietMaKhuyenMaiDTO
             String sql = "SELECT * FROM CTMAKHUYENMAI";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 String MKM = rs.getString("MKM");
                 int MSP = rs.getInt("MSP");
                 int PTG = rs.getInt("PTG");
@@ -131,6 +131,7 @@ public class ChiTietMaKhuyenMaiDAO implements DAOinterface<ChiTietMaKhuyenMaiDTO
         }
         return result;
     }
+
     @Override
     public ChiTietMaKhuyenMaiDTO selectById(String t) {
         ChiTietMaKhuyenMaiDTO result = null;
@@ -140,7 +141,7 @@ public class ChiTietMaKhuyenMaiDAO implements DAOinterface<ChiTietMaKhuyenMaiDTO
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 String MKM = rs.getString("MKM");
                 int MSP = rs.getInt("MSP");
                 int PTG = rs.getInt("PTG");
@@ -161,12 +162,12 @@ public class ChiTietMaKhuyenMaiDAO implements DAOinterface<ChiTietMaKhuyenMaiDTO
             String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlysieuthimini' AND   TABLE_NAME   = 'CTMAKHUYENMAI'";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs2 = pst.executeQuery(sql);
-            if (!rs2.isBeforeFirst() ) {
+            if (!rs2.isBeforeFirst()) {
                 System.out.println("No data");
             } else {
-                while ( rs2.next() ) {
+                while (rs2.next()) {
                     result = rs2.getInt("AUTO_INCREMENT");
-                    
+
                 }
             }
         } catch (SQLException ex) {
@@ -174,4 +175,28 @@ public class ChiTietMaKhuyenMaiDAO implements DAOinterface<ChiTietMaKhuyenMaiDTO
         }
         return result;
     }
+
+    public ArrayList<ChiTietMaKhuyenMaiDTO> searchByMSP(int msp) {
+        ArrayList<ChiTietMaKhuyenMaiDTO> result = new ArrayList<>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM CTMAKHUYENMAI WHERE MSP = ?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setInt(1, msp);  // Thiết lập mã sản phẩm cần tìm kiếm
+            ResultSet rs = (ResultSet) pst.executeQuery();
+
+            while (rs.next()) {
+                String MKM = rs.getString("MKM");
+                int MSPValue = rs.getInt("MSP");
+                int PTG = rs.getInt("PTG");
+                ChiTietMaKhuyenMaiDTO kh = new ChiTietMaKhuyenMaiDTO(MKM, MSPValue, PTG);
+                result.add(kh);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+
 }

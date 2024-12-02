@@ -1,10 +1,14 @@
 package GUI.Panel;
 
 import BUS.DonViBUS;
+import BUS.HoaDonBUS;
 import BUS.LoaiBUS;
+import BUS.MaKhuyenMaiBUS;
+import BUS.PhieuNhapBUS;
 import BUS.SanPhamBUS;
 import DTO.DonViDTO;
 import DTO.LoaiDTO;
+import DTO.SanPhamDTO;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Main;
@@ -29,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 public final class SanPham extends JPanel implements ActionListener {
+
     PanelBorderRadius main, functionBar;
     JPanel pnlBorder1, pnlBorder2, pnlBorder3, pnlBorder4, contentCenter;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -41,10 +46,13 @@ public final class SanPham extends JPanel implements ActionListener {
     public SanPhamBUS spBUS = new SanPhamBUS();
     public DonViBUS dvbus = new DonViBUS();
     public LoaiBUS loaibus = new LoaiBUS();
-    
+    public HoaDonBUS hdBus = new HoaDonBUS();
+    public PhieuNhapBUS pnBus = new PhieuNhapBUS();
+    public MaKhuyenMaiBUS mkmBus = new MaKhuyenMaiBUS();
+
     public ArrayList<DTO.SanPhamDTO> listSP = spBUS.getAll();
 
-    Color BackgroundColor = new Color(193 ,237 ,220);
+    Color BackgroundColor = new Color(193, 237, 220);
 
     private void initComponent() {
         this.setBackground(BackgroundColor);
@@ -132,8 +140,8 @@ public final class SanPham extends JPanel implements ActionListener {
         ArrayList<LoaiDTO> listloai = loaibus.getAlll();
 
         for (DTO.SanPhamDTO sp : result) {
-            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), listdv.get(sp.getMDV() - 1).getTENDV(), 
-                listloai.get(sp.getML() - 1).getTENL(), 
+            tblModel.addRow(new Object[]{sp.getMSP(), sp.getTEN(), sp.getSL(), listdv.get(sp.getMDV() - 1).getTENDV(),
+                listloai.get(sp.getML() - 1).getTENL(),
                 Formater.FormatVND(sp.getTIENX())
             });
         }
@@ -146,14 +154,27 @@ public final class SanPham extends JPanel implements ActionListener {
         } else if (e.getSource() == mainFunction.btn.get("update")) {
             int index = getRowSelected();
             if (index != -1) {
-            new SanPhamDialog(this, owner, "Chỉnh sửa sản phẩm", true, "update", listSP.get(index));
+                new SanPhamDialog(this, owner, "Chỉnh sửa sản phẩm", true, "update", listSP.get(index));
             }
         } else if (e.getSource() == mainFunction.btn.get("delete")) {
             int index = getRowSelected();
             if (index != -1) {
+                String maSanPham = tblModel.getValueAt(index, 0).toString();
                 int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa Sản phẩm :)!", "Xóa sản phẩm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
                 if (input == 0) {
-                    spBUS.delete(listSP.get(index));
+                    SanPhamDTO sp = spBUS.getMaSP(maSanPham);
+                    if (sp.getSL() > 0) {
+                        JOptionPane.showMessageDialog(this, "Xoá sản phẩm thất bại, sản phẩm còn tồn tại trong kho!");
+                        return;
+                    }
+                    int maSanPhamInt = Integer.parseInt(maSanPham);
+                    if (!hdBus.searchByMSP(maSanPhamInt).isEmpty() || !pnBus.searchByMSP(maSanPhamInt).isEmpty() || !mkmBus.searchByMSP(maSanPhamInt).isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Xoá sản phẩm thất bại, sản phẩm tồn tại trong hoá đơn/ phiếu nhập/ khuyến mãi!");
+                        return;
+                    }
+
+                    spBUS.delete(sp);
+                    JOptionPane.showMessageDialog(this, "Xoá sản phẩm thành công!");
                     loadDataTalbe(listSP);
                 }
             }
@@ -168,7 +189,7 @@ public final class SanPham extends JPanel implements ActionListener {
             } catch (IOException ex) {
                 Logger.getLogger(SanPham.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if(e.getSource() == mainFunction.btn.get("import")) {
+        } else if (e.getSource() == mainFunction.btn.get("import")) {
             JOptionPane.showMessageDialog(null, "Chức năng không khả dụng");
         }
     }

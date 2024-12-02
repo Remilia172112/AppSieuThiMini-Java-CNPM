@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import java.sql.ResultSet;
 
-
 public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietHoaDonDTO> {
 
     public static ChiTietHoaDonDAO getInstance() {
@@ -42,11 +41,11 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietHoaDonDTO> {
         return result;
     }
 
-    public int reset(ArrayList<ChiTietHoaDonDTO> t){
+    public int reset(ArrayList<ChiTietHoaDonDTO> t) {
         int result = 0;
         for (int i = 0; i < t.size(); i++) {
-        SanPhamDAO.getInstance().updateSoLuongTon(t.get(i).getMSP(), +(t.get(i).getSL()));
-        delete(t.get(i).getMP()+"");
+            SanPhamDAO.getInstance().updateSoLuongTon(t.get(i).getMSP(), +(t.get(i).getSL()));
+            delete(t.get(i).getMP() + "");
         }
         return result;
     }
@@ -122,6 +121,37 @@ public class ChiTietHoaDonDAO implements ChiTietInterface<ChiTietHoaDonDTO> {
         } catch (SQLException e) {
             System.out.println(e);
         }
+    }
+
+    public ArrayList<ChiTietHoaDonDTO> searchByMSP(int msp) {
+        ArrayList<ChiTietHoaDonDTO> result = new ArrayList<>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+
+            String sql = "SELECT * FROM CTHOADON WHERE MSP = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            pst.setInt(1, msp);
+
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                int mhd = rs.getInt("MHD");
+                int msP = rs.getInt("MSP");
+                int sl = rs.getInt("SL");
+                int tienXuat = rs.getInt("TIENXUAT");
+                String mkm = rs.getString("MKM");
+
+                ChiTietHoaDonDTO chiTiet = new ChiTietHoaDonDTO(mhd, msP, sl, tienXuat, mkm);
+                result.add(chiTiet);
+            }
+
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return result;
     }
 
 }

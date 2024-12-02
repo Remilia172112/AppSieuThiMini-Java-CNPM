@@ -141,4 +141,8 @@ public class MaKhuyenMaiBUS {
     public int cancelMKM(String makm) {
         return mkmDAO.cancelMKM(makm);
     }
+    
+    public ArrayList<ChiTietMaKhuyenMaiDTO> searchByMSP(int msp) {
+        return ctmkmDAO.searchByMSP(msp);
+    }
 }

@@ -124,6 +124,25 @@ public class DonViDAO implements DAOinterface<DonViDTO> {
         return result;
     }
 
+    public DonViDTO getByName(String t) {
+        DonViDTO result = null;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM DONVI WHERE TENDV=?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, t);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int MDV = rs.getInt("MDV");
+                String TENDV = rs.getString("TENDV");
+                result = new DonViDTO(MDV, TENDV);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+        }
+        return result;
+    }
+    
     @Override
     public int getAutoIncrement() {
         int result = -1;
