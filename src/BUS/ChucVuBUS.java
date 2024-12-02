@@ -20,12 +20,16 @@ import javax.swing.JTextField;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -144,7 +148,7 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
                 importExcel();
             }
             case "XUẤT EXCEL" -> {
-                String[] header = new String[]{"MãNV", "Tên chức vụ", "Email chức vụ", "Số điên thoại", "Giới tính", "Ngày sinh"};
+                String[] header = new String[]{"MãNV", "Tên chức vụ","Mức lương"};
                 exportExcel(listChucVu, header);
             }
         }
@@ -214,6 +218,7 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
     }
 
     public void exportExcel(ArrayList<ChucVuDTO> list, String[] header) {
+        
         try {
             if (!list.isEmpty()) {
                 JFileChooser jFileChooser = new JFileChooser();
@@ -327,50 +332,75 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
         cell.setCellValue(cv.getMUCLUONG());
     }
 
-    public void importExcel() {
-        File excelFile;
-        FileInputStream excelFIS = null;
-        BufferedInputStream excelBIS = null;
-        XSSFWorkbook excelJTableImport = null;
-        JFileChooser jf = new JFileChooser();
-        int result = jf.showOpenDialog(null);
-        jf.setDialogTitle("Open file");
-        int k = 0;
-        if (result == JFileChooser.APPROVE_OPTION) {
-            try {
-                excelFile = jf.getSelectedFile();
-                excelFIS = new FileInputStream(excelFile);
-                excelBIS = new BufferedInputStream(excelFIS);
-                excelJTableImport = new XSSFWorkbook(excelBIS);
-                XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
+  public void importExcel() {
+    File excelFile;
+    FileInputStream excelFIS = null;
+    BufferedInputStream excelBIS = null;
+    XSSFWorkbook excelJTableImport = null;
+    JFileChooser jf = new JFileChooser();
+    int result = jf.showOpenDialog(null);
+    jf.setDialogTitle("Open file");
+    List<String[]> invalidRows = new ArrayList<>(); // Danh sách các dòng không hợp lệ
 
-                for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
-                    int check = 1;
-                    XSSFRow excelRow = excelSheet.getRow(row);
-                    int id = ChucVuDAO.getAutoIncrement();
-                    String tencv = excelRow.getCell(0).getStringCellValue();
-                    int ml = Integer.parseInt(excelRow.getCell(1).getStringCellValue());
-                    if (Validation.isEmpty(tencv)) {
-                        check = 0;
+    if (result == JFileChooser.APPROVE_OPTION) {
+        try {
+            excelFile = jf.getSelectedFile();
+            excelFIS = new FileInputStream(excelFile);
+            excelBIS = new BufferedInputStream(excelFIS);
+            excelJTableImport = new XSSFWorkbook(excelBIS);
+            XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
+
+            for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
+                int check = 1;
+                XSSFRow excelRow = excelSheet.getRow(row);
+                int id = ChucVuDAO.getAutoIncrement();
+                String tencv = excelRow.getCell(1).getStringCellValue();
+                int ml = 0;
+
+                // Kiểm tra và chuyển đổi dữ liệu mức lương
+                if (excelRow.getCell(2).getCellType() == CellType.NUMERIC) {
+                    ml = (int) excelRow.getCell(2).getNumericCellValue();
+                } else if (excelRow.getCell(2).getCellType() == CellType.STRING) {
+                    try {
+                        ml = Integer.parseInt(excelRow.getCell(1).getStringCellValue());
+                    } catch (NumberFormatException e) {
+                        check = 0; // Đánh dấu dòng không hợp lệ nếu không thể chuyển đổi
                     }
-                    if (check == 0) {
-                        k += 1;
-                    } else {
-                        ChucVuDTO nvdto = new ChucVuDTO(id, tencv, ml);
-                        ChucVuDAO.insert(nvdto);
-                    }
-                    JOptionPane.showMessageDialog(null, "Nhập thành công");
                 }
 
-            } catch (FileNotFoundException ex) {
-                System.out.println("Lỗi đọc file");
-            } catch (IOException ex) {
-                System.out.println("Lỗi đọc file");
+                // Kiểm tra tính hợp lệ của tên chức vụ
+                if (Validation.isEmpty(tencv)) {
+                    check = 0;
+                }
+
+                if (check == 0) {
+                    // Thêm thông tin dòng không hợp lệ vào danh sách
+                    invalidRows.add(new String[]{String.valueOf(row + 1), tencv, String.valueOf(ml)});
+                } else {
+                    ChucVuDTO nvdto = new ChucVuDTO(id, tencv, ml);
+                    ChucVuDAO.insert(nvdto);
+                    listChucVu.add(nvdto);
+                }
             }
-        }
-        if (k != 0) {
-            JOptionPane.showMessageDialog(null, "Những dữ liệu không chuẩn không được thêm vào");
+
+            JOptionPane.showMessageDialog(null, "Nhập thành công");
+
+        } catch (FileNotFoundException ex) {
+            System.out.println("Lỗi đọc file");
+        } catch (IOException ex) {
+            System.out.println("Lỗi đọc file");
         }
     }
+
+    if (!invalidRows.isEmpty()) {
+        // Tạo bảng thông báo các dòng không hợp lệ
+        String[] columnNames = {"Row", "Tên chức vụ", "Mức Lương"};
+        JTable table = new JTable(invalidRows.toArray(new String[0][]), columnNames);
+        JScrollPane scrollPane = new JScrollPane(table);
+        JOptionPane.showMessageDialog(null, scrollPane, "Dữ liệu không hợp lệ", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Những dữ liệu không chuẩn không được thêm vào");
+    }
+    cv.loadDataTalbe(listChucVu);
+}
 
 }
