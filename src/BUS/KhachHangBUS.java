@@ -15,7 +15,7 @@ public class KhachHangBUS {
     }
 
     public ArrayList<KhachHangDTO> getAll() {
-        return this.listKhachHang;
+        return this.khDAO.selectAll();
     }
 
     public KhachHangDTO getByIndex(int index) {
@@ -150,6 +150,9 @@ public class KhachHangBUS {
             if(i.getMKH() > s) s = i.getMKH();
         }
         return s;
+    }
+    public int total(){
+        return khDAO.countAllRecords();
     }
 
 }

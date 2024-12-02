@@ -23,7 +23,7 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `KHACHHANG`(`MKH`, `HOTEN`, `DIACHI`,`SDT`, `EMAIL`,`NGAYTHAMGIA`, `DIEMTICHLUY`, `TT`) VALUES (?,?,?,?,?,0,1)";
+            String sql = "INSERT INTO `KHACHHANG`(`MKH`, `HOTEN`, `DIACHI`,`SDT`, `EMAIL`,`NGAYTHAMGIA`, `DIEMTICHLUY`, `TT`) VALUES (?,?,?,?,?,?,0,1)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t.getMKH());
             pst.setString(2, t.getHOTEN());
@@ -46,7 +46,7 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `KHACHHANG` SET HOTEN`=?,`DIACHI`=?,`SDT`=?, `EMAIL`=?, `DIEMTICHLUY` = ? WHERE MKH=?";
+            String sql = "UPDATE `KHACHHANG` SET `HOTEN`=?, `DIACHI`=?, `SDT`=?, `EMAIL`=?, `DIEMTICHLUY`=? WHERE `MKH`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t.getHOTEN());
             pst.setString(2, t.getDIACHI());
@@ -193,4 +193,20 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         }
         return result;
     }
+    public int countAllRecords() {
+    int count = 0;
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "SELECT COUNT(*) AS total FROM KHACHHANG";
+        PreparedStatement pst = con.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            count = rs.getInt("total");
+        }
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return count;
+}
 }
