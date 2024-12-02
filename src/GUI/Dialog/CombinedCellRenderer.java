@@ -1,6 +1,7 @@
 package GUI.Dialog;
+
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 class CombinedCellRenderer extends DefaultTableCellRenderer {
@@ -8,6 +9,7 @@ class CombinedCellRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JPanel panel = new JPanel(new BorderLayout());
 
+        // Xử lý dữ liệu
         if (value instanceof ImageIcon) { // Nếu là hình ảnh
             JLabel label = new JLabel();
             ImageIcon originalIcon = (ImageIcon) value;
@@ -16,18 +18,21 @@ class CombinedCellRenderer extends DefaultTableCellRenderer {
             label.setIcon(scaledIcon);
             label.setPreferredSize(new Dimension(200, 150));
             panel.add(label, BorderLayout.CENTER);
-            
-        } else if (value instanceof MultiLineData) { // Nếu là kiểu MultiLineData chứa 2 string
-
+        } else if (value instanceof MultiLineData) { // Nếu là kiểu MultiLineData
             MultiLineData data = (MultiLineData) value;
             JLabel label = new JLabel("<html>" + data.getLine1() + "<br>" + data.getLine2() + "<br><b>&nbsp;&nbsp;&nbsp;&nbsp;" + data.getLine3() + "</b></html>");
             label.setVerticalAlignment(JLabel.CENTER);
-            // label.setHorizontalAlignment(JLabel.CENTER);
-            panel.add(label,BorderLayout.CENTER);
-            // Color bgcolor = new Color(0xA1D6E2);
-            // Color bgcolor = new Color(193, 237, 220);
-            // panel.setBackground(bgcolor);
+            panel.add(label, BorderLayout.CENTER);
             panel.setOpaque(false);
+        }
+
+        // Xử lý trạng thái được chọn
+        if (isSelected) {
+            panel.setBackground(table.getSelectionBackground());
+            panel.setOpaque(true); // Đảm bảo hiển thị màu nền khi được chọn
+        } else {
+            panel.setBackground(table.getBackground());
+            panel.setOpaque(true); // Đảm bảo hiển thị màu nền mặc định
         }
 
         return panel;
