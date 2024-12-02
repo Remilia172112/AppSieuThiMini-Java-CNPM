@@ -50,6 +50,10 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
         return this.listChucVu;
     }
 
+    public ArrayList<ChucVuDTO> selectAll() {
+        return ChucVuDAO.getAll();
+    }
+
     public ChucVuBUS(ChucVu cv) {
         this.cv = cv;
         this.listChucVu = ChucVuDAO.selectAll();
