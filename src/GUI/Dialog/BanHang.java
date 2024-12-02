@@ -763,7 +763,7 @@ public final class BanHang extends JFrame {
     }
 
     public void eventBtnNhapHang() {
-        String tiemThua = lbltienthua.getText().replaceAll("[^0-9]", "");
+        String tiemThua = lbltienthua.getText().replaceAll("[^0-9-]", "");
         if (chitietphieu.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu!", "Cảnh báo !",
                     JOptionPane.ERROR_MESSAGE);
@@ -872,6 +872,7 @@ public final class BanHang extends JFrame {
         giagiam = 0;
         dungdiem = 0;
         sum = 0;
+        makh = -1;
         lbltongtien.setText("0đ");
         lblgiamgia.setText("0đ");
         lbldungdiem.setText("0đ");
