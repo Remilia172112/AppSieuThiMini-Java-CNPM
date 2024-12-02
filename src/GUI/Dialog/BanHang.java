@@ -60,10 +60,9 @@ import helper.writePDF;
 public final class BanHang extends JFrame {
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     // gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
-    // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của
-    // listkhachhang
+    // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của listkhachhang
     PanelBorderRadius right, left;
-    JPanel contentCenter, left_top, left_bottom; // , content_btn
+    JPanel contentCenter; 
     JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
     DefaultTableModel tblModel, tblModelSP; // table co san
@@ -125,8 +124,6 @@ public final class BanHang extends JFrame {
         tablePhieuXuat = new JTable();
         scrollTablePhieuNhap = new JScrollPane();
         tblModel = new DefaultTableModel();
-        // String[] header = new String[]{"STT", "Mã SP", "Tên sản phẩm", "Đơn giá", "Số
-        // lượng"};
         String[] header = new String[] { "Mã SP", "Tên sản phẩm", "Đơn giá", "Số lượng", "Đơn vị", "Giảm", "Số tiền",
                 "Xóa" };
         tblModel.setColumnIdentifiers(header);
@@ -155,11 +152,9 @@ public final class BanHang extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int row = tablePhieuXuat.rowAtPoint(e.getPoint());
                 int column = tablePhieuXuat.columnAtPoint(e.getPoint());
-        
                 if (row == -1 || column == -1) {
                     return; // Không có hàng hoặc cột nào được nhấp
                 }
-        
                 // Kiểm tra nếu cột "Delete" được nhấp
                 if (column == 7) {
                     tblModel.removeRow(row);
@@ -169,7 +164,6 @@ public final class BanHang extends JFrame {
                     resetFormRight();
                     return;
                 }
-        
                 int index = tablePhieuXuat.getSelectedRow();
                 if (index >= 0 && index < chitietphieu.size()) {
                     actionbtn("update");
@@ -179,22 +173,26 @@ public final class BanHang extends JFrame {
             }
         });
         
-
-        // Table sản phẩm // THAY ĐỔI
+        // Table sản phẩm 
         tableSanPham = new JTable();
         tableSanPham.setBackground(new Color(0xA1D6E2));
-        scrollTableSanPham = new JScrollPane();
         tblModelSP = new DefaultTableModel();
         String[] headerSP = new String[] { "Mã SP", "Tên sản phẩm", "Số lượng tồn" };
         tblModelSP.setColumnIdentifiers(headerSP);
         tableSanPham.setModel(tblModelSP);
-        scrollTableSanPham.setViewportView(tableSanPham);
-        tableSanPham.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer()); 
+            // kết hợp giữa ImageCellRenderer() và MultiLineCellRenderer()
+        tableSanPham.setRowHeight(150);
+        tableSanPham.getColumnModel().getColumn(0).setPreferredWidth(200);
         tableSanPham.getColumnModel().getColumn(1).setPreferredWidth(300);
         tableSanPham.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tableSanPham.setFocusable(false);
-        scrollTableSanPham.setViewportView(tableSanPham);
+        scrollTableSanPham = new JScrollPane();
+        
+        JScrollBar verticalScrollBar = scrollTableSanPham.getVerticalScrollBar();
+        verticalScrollBar.setUnitIncrement(16); // Giảm tốc độ cuộn xuống còn 16 pixel mỗi lần nhấn
 
+        scrollTableSanPham.setViewportView(tableSanPham);
         tableSanPham.addMouseListener((MouseListener) new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -211,39 +209,24 @@ public final class BanHang extends JFrame {
             }
         });
 
-        // content_CENTER (chứa hết tất cả left+right)
+        ///// content_CENTER (chứa hết tất cả left+right)
         contentCenter = new JPanel();
         contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(BackgroundColor);
         contentCenter.setLayout(new BorderLayout(5, 5));
-        // this.add(contentCenter, BorderLayout.CENTER);
+        // this.add(contentCenter, BorderLayout.CENTER); //MainChinh thì để vào center
         this.add(contentCenter);
 
-        // LEFT
+        ///// LEFT
         left = new PanelBorderRadius();
         left.setLayout(new BorderLayout(0, 5));
         left.setBackground(Color.white);
-
-        left_top = new JPanel(); // Chứa tất cả phần ở phía trái trên cùng, chứa {content_top, content_btn}
-        left_top.setLayout(new BorderLayout());
-        left_top.setBorder(new EmptyBorder(5, 5, 10, 10));
-        left_top.setOpaque(false);
-
-        JPanel content_top, content_left, content_right, content_right_top; // content_top {content_left +
-                                                                            // content_right} -> trong left_top
-        content_top = new JPanel(new GridLayout(1, 2, 5, 5));
-        content_top.setOpaque(false);
-
-        content_left = new JPanel(new BorderLayout(5, 5));
-        content_left.setOpaque(false);
-        content_left.setPreferredSize(new Dimension(0, 300));
 
         txtTimKiem = new JTextField();
         txtTimKiem.setPreferredSize(new Dimension(100, 40));
         txtTimKiem.putClientProperty("JTextField.placeholderText", "Tên sản phẩm, mã sản phẩm, ...");
         txtTimKiem.putClientProperty("JTextField.showClearButton", true);
         txtTimKiem.putClientProperty("JTextField.leadingIcon", new FlatSVGIcon("./icon/search.svg"));
-
         txtTimKiem.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent event) { // chạy khi nhả phím trong tìm kiếm
@@ -252,15 +235,42 @@ public final class BanHang extends JFrame {
             }
         });
 
-        content_left.add(txtTimKiem, BorderLayout.NORTH);
-        content_left.add(scrollTableSanPham, BorderLayout.CENTER);
+        left.add(txtTimKiem, BorderLayout.NORTH);
+        left.add(scrollTableSanPham, BorderLayout.CENTER);
 
-        // content_right = new JPanel(new BorderLayout(5, 5));
-        // content_right.setOpaque(false);
-        // content_right.setBackground(Color.WHITE);
 
-        // content_right_top = new JPanel(new BorderLayout());
-        // content_right_top.setPreferredSize(new Dimension(100, 335));
+        ///// RIGHT
+        right = new PanelBorderRadius();
+        right.setPreferredSize(new Dimension(400, 0));
+        right.setBorder(new EmptyBorder(5, 5, 5, 5));
+        right.setLayout(new BorderLayout());
+
+        JPanel  right_top, right_bottom; //right_bottom=content_left+content_right; 
+
+        // right_top này là danh sách xuất ở    RIGHT phía bắc, chứa tablelistnhap
+        right_top = new JPanel(); //DOI THANH CONTENT_TOP BEN RIGHT
+        right_top.setOpaque(false);
+        right_top.setPreferredSize(new Dimension(0, 300));
+        right_top.setBorder(new EmptyBorder(0, 5, 10, 10));
+        BoxLayout boxly = new BoxLayout(right_top, BoxLayout.Y_AXIS);
+        right_top.setLayout(boxly);
+        right_top.add(scrollTablePhieuNhap); 
+
+        
+        JPanel content_left,content_right, content_right_top, content_right_bottom;
+        
+        content_right = new JPanel(new BorderLayout());
+        content_right.setPreferredSize(new Dimension(1000, 300));
+        content_right.setBorder(new EmptyBorder(0, 10, 30, 5));
+        content_right.setOpaque(false);
+        
+        content_left = new JPanel(new BorderLayout());
+        content_left.setPreferredSize(new Dimension(1000, 300));
+        content_left.setBorder(new EmptyBorder(0, 10, 30, 5));
+        content_left.setOpaque(false);
+        right_bottom = new JPanel(new GridLayout(1, 2, 0, 0));
+        right_bottom.setPreferredSize(new Dimension(0, 300));
+
         txtTenSp = new InputForm("Tên sản phẩm");
         txtTenSp.setEditable(false);
         txtTenSp.setPreferredSize(new Dimension(100, 90));
@@ -295,9 +305,6 @@ public final class BanHang extends JFrame {
             }
 
         });
-
-        content_top.add(content_left);
-        left_top.add(content_top, BorderLayout.CENTER);
 
         // btnTaoSp = new ButtonCustom("Tạo sản phẩm", "success", 14);
         btnAddSp = new ButtonCustom("Thêm sản phẩm", "success", 14);
@@ -373,29 +380,6 @@ public final class BanHang extends JFrame {
         merge2.add(txtSoLuongSPxuat);
         merge2.add(cbxMaKM);
 
-        // left_bottom này là danh sách xuất ở left phía nam, chứa tablelistnhap
-        left_bottom = new JPanel();
-        left_bottom.setOpaque(false);
-        left_bottom.setPreferredSize(new Dimension(0, 250));
-        left_bottom.setBorder(new EmptyBorder(0, 5, 10, 10));
-        BoxLayout boxly = new BoxLayout(left_bottom, BoxLayout.Y_AXIS);
-        left_bottom.setLayout(boxly);
-        left_bottom.add(scrollTablePhieuNhap);
-        left.add(left_top, BorderLayout.CENTER);
-        left.add(left_bottom, BorderLayout.SOUTH);
-
-        // RIGHT
-        right = new PanelBorderRadius();
-        right.setPreferredSize(new Dimension(400, 0));
-        right.setBorder(new EmptyBorder(5, 5, 5, 5));
-        right.setLayout(new BorderLayout());
-
-        JPanel right_top, right_center, right_bottom, pn_button;
-        right_top = new JPanel(new BorderLayout());
-        right_top.setPreferredSize(new Dimension(0, 300));
-        right_top.setBorder(new EmptyBorder(0, 10, 30, 5));
-        right_top.setOpaque(false);
-
         JPanel khachJPanel = new JPanel(new BorderLayout());
         khachJPanel.setPreferredSize(new Dimension(0, 60));
         khachJPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
@@ -406,10 +390,9 @@ public final class BanHang extends JFrame {
         kJPanelLeft.add(btnKh);
         btnKh.addActionListener((ActionEvent e) -> {
             new ListKhachHang(BanHang.this, owner, "Chọn khách hàng", true);
-
         });
 
-        txtKh = new JTextField("Chon khach hang");
+        txtKh = new JTextField("Họ và tên khách hàng");
         txtKh.setEditable(false);
         JLabel lbDTL = new JLabel("Điểm: ");
         txtDTL = new JTextField();
@@ -423,17 +406,14 @@ public final class BanHang extends JFrame {
             public void insertUpdate(DocumentEvent e) {
                 updateLabels();
             }
-
             @Override
             public void removeUpdate(DocumentEvent e) {
                 updateLabels();
             }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
                 updateLabels();
             }
-
             private void updateLabels() {
                 String text = txtDTLG.getText();
                 lbldungdiem.setText(Formater.FormatVND(Integer.parseInt(text)));
@@ -466,13 +446,14 @@ public final class BanHang extends JFrame {
         dtlPanel.add(txtDTL);
         dtlPanel.add(lbDTLG);
         dtlPanel.add(txtDTLG);
-        // right_top.add(content_btn, BorderLayout.NORTH);
-        right_top.add(khPanel, BorderLayout.CENTER);
-        right_top.add(dtlPanel, BorderLayout.SOUTH);
 
-        right_center = new JPanel(new GridLayout(8, 2, 10, 0));
-        right_center.setBorder(new EmptyBorder(5, 20, 5, 20));
-        right_center.setOpaque(false);
+
+        content_left.add(khPanel, BorderLayout.CENTER);
+        content_left.add(dtlPanel, BorderLayout.SOUTH);
+
+        content_right_top = new JPanel(new GridLayout(8, 2, 10, 0));
+        content_right_top.setBorder(new EmptyBorder(5, 20, 5, 20));
+        content_right_top.setOpaque(false);
 
         JLabel lbl1 = new JLabel("Tổng tiền: ");
         lbl1.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
@@ -514,25 +495,19 @@ public final class BanHang extends JFrame {
             public void insertUpdate(DocumentEvent e) {
                 updateLabels();
             }
-
             @Override
             public void removeUpdate(DocumentEvent e) {
                 updateLabels();
             }
-
             @Override
             public void changedUpdate(DocumentEvent e) {
                 updateLabels();
             }
-
             private void updateLabels() {
                 Double text = Double.parseDouble(txtDaThu.getText());
                 lbltienthua.setText(Formater.FormatVND(text - khachcantra));
             }
         });
-        // lbldathu = new JLabel("0đ");
-        // lbldathu.setHorizontalAlignment(JLabel.RIGHT);
-        // lbldathu.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
 
         JLabel lbl7 = new JLabel("Tiền thừa: ");
         lbl7.setFont(new Font(FlatRobotoFont.FAMILY, 1, 16));
@@ -546,27 +521,27 @@ public final class BanHang extends JFrame {
         lbldiemtamtinh.setHorizontalAlignment(JLabel.RIGHT);
         lbldiemtamtinh.setFont(new Font(FlatRobotoFont.FAMILY, 4, 16));
 
-        right_center.add(lbl1);
-        right_center.add(lbltongtien);
-        right_center.add(lbl2);
-        right_center.add(lblgiamgia);
-        right_center.add(lbl3);
-        right_center.add(lbldungdiem);
-        right_center.add(lbl4);
-        right_center.add(lblkhachcantra);
-        right_center.add(lbl5);
-        right_center.add(lblhinhthuc);
-        right_center.add(lbl6);
-        right_center.add(txtDaThu);
-        right_center.add(lbl7);
-        right_center.add(lbltienthua);
-        right_center.add(lbl8);
-        right_center.add(lbldiemtamtinh);
+        content_right_top.add(lbl1);
+        content_right_top.add(lbltongtien);
+        content_right_top.add(lbl2);
+        content_right_top.add(lblgiamgia);
+        content_right_top.add(lbl3);
+        content_right_top.add(lbldungdiem);
+        content_right_top.add(lbl4);
+        content_right_top.add(lblkhachcantra);
+        content_right_top.add(lbl5);
+        content_right_top.add(lblhinhthuc);
+        content_right_top.add(lbl6);
+        content_right_top.add(txtDaThu);
+        content_right_top.add(lbl7);
+        content_right_top.add(lbltienthua);
+        content_right_top.add(lbl8);
+        content_right_top.add(lbldiemtamtinh);
 
-        right_bottom = new JPanel(new FlowLayout(1));
-        right_bottom.setPreferredSize(new Dimension(350, 55));
-        right_bottom.setBorder(new EmptyBorder(5, 10, 5, 10));
-        right_bottom.setOpaque(false);
+        content_right_bottom = new JPanel(new FlowLayout(1));
+        content_right_bottom.setPreferredSize(new Dimension(350, 55));
+        content_right_bottom.setBorder(new EmptyBorder(5, 10, 5, 10));
+        content_right_bottom.setOpaque(false);
 
         btnRefresh = new ButtonCustom("Làm mới", "excel", 16, 100, 45);
         btnRefresh.addActionListener(new ActionListener() {
@@ -587,16 +562,19 @@ public final class BanHang extends JFrame {
                 eventBtnNhapHang();
             }
         });
-        right_bottom.add(btnRefresh);
-        // right_bottom.add(btnIn);
-        right_bottom.add(btnThanhToan);
+        content_right_bottom.add(btnRefresh);
+        // content_right_bottom.add(btnIn);
+        content_right_bottom.add(btnThanhToan);
 
-        right.add(right_top, BorderLayout.NORTH);
-        right.add(right_center, BorderLayout.CENTER);
+        content_right.add(content_right_top, BorderLayout.CENTER);
+        content_right.add(content_right_bottom, BorderLayout.SOUTH);
+        right_bottom.add(content_left);
+        right_bottom.add(content_right);
+        right.add(right_top, BorderLayout.CENTER);
         right.add(right_bottom, BorderLayout.SOUTH);
 
-        contentCenter.add(left, BorderLayout.CENTER);
-        contentCenter.add(right, BorderLayout.EAST);
+        contentCenter.add(left, BorderLayout.WEST);
+        contentCenter.add(right, BorderLayout.CENTER);
         // actionbtn("add");
     }
 
@@ -606,8 +584,6 @@ public final class BanHang extends JFrame {
         btnAddSp.setEnabled(val_1);
         btnEditSP.setEnabled(val_2);
         btnDelete.setEnabled(val_2);
-        // content_btn.revalidate();
-        // content_btn.repaint();
     }
 
     public void resetForm() {
@@ -673,7 +649,7 @@ public final class BanHang extends JFrame {
 
     public void setFormChiTietPhieu(ChiTietHoaDonDTO phieu) { // set info vào inputform khi nhan ben tablephieunhap
         SanPhamDTO ctsp = spBUS.getByMaSP(phieu.getMSP());
-        // ChiTietMaKhuyenMaiDTO ctmkm = mkmBUS.findCT(listctMKM, ctsp.getMSP());
+        // ChiTietMaKhuyenMaiDTO ctmkmi = mkmBUS.findCT(listctMKM, ctsp.getMSP());
         this.txtMaSp.setText(Integer.toString(ctsp.getMSP()));
         this.txtTenSp.setText(spBUS.getByMaSP(ctsp.getMSP()).getTEN());
         this.txtGiaXuat.setText(Integer.toString(phieu.getTIEN()));
@@ -682,12 +658,26 @@ public final class BanHang extends JFrame {
         cbxMaKM.setSelectedItem(phieu.getMKM());
     }
 
+    // public void loadDataTalbeSanPham(ArrayList<DTO.SanPhamDTO> result) {  //CŨ
+    //     tblModelSP.setRowCount(0);
+    //     for (SanPhamDTO sp : result) {
+    //         tblModelSP.addRow(new Object[] { sp.getMSP(), sp.getTEN(), sp.getSL() });
+    //     }
+    // }
     public void loadDataTalbeSanPham(ArrayList<DTO.SanPhamDTO> result) {
         tblModelSP.setRowCount(0);
+        MultiLineData dataString;
+        ImageIcon dataImage;
         for (SanPhamDTO sp : result) {
-            tblModelSP.addRow(new Object[] { sp.getMSP(), sp.getTEN(), sp.getSL() });
+            dataImage = new ImageIcon("./src/img_product/" + sp.getHINHANH());
+            dataString = new MultiLineData(sp.getTEN(), " ", sp.getTIENX() + "VND");
+            // dataString.setLine1(sp.getTEN());
+            // dataString.setLine2("  ");
+            // dataString.setLine3(sp.getTIENX() + "VND");
+            tblModelSP.addRow(new Object[] { dataImage, dataString, sp.getSL() });
         }
     }
+
 
     public void loadDataTableChiTietPhieu(ArrayList<ChiTietHoaDonDTO> ctPhieu) {
         tblModel.setRowCount(0);
@@ -837,31 +827,25 @@ public final class BanHang extends JFrame {
     }
 
     public void loadDataMenuRight() {
-
         if (!txtDTL.getText().equals("")) {
             dungdiem = Integer.parseInt(txtDTLG.getText());
-
             if (dungdiem <= dtl) {
                 // thông báo
                 lbldungdiem.setText(Formater.FormatVND(dungdiem));
                 khachcantra = (double) (sum - giagiam - dungdiem);
                 lbldiemtamtinh.setText(Formater.FormatVND(diemtamtinh));
                 lblkhachcantra.setText(Formater.FormatVND(khachcantra));
-
             } else {
                 lbldungdiem.setText("0đ");
                 khachcantra = (double) (sum - giagiam);
                 lbldiemtamtinh.setText("0đ");
                 lblkhachcantra.setText(Formater.FormatVND(khachcantra));
-
             }
         } else {
             khachcantra = (double) (sum - giagiam);
             lbldiemtamtinh.setText(Formater.FormatVND(khachcantra * 0.01));
             lblkhachcantra.setText(Formater.FormatVND(khachcantra));
-
         }
-
     }
 
     public void resetFormRight() {
