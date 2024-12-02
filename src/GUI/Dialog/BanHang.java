@@ -763,6 +763,7 @@ public final class BanHang extends JFrame {
     }
 
     public void eventBtnNhapHang() {
+        String tiemThua = lbltienthua.getText().replaceAll("[^0-9]", "");
         if (chitietphieu.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu!", "Cảnh báo !",
                     JOptionPane.ERROR_MESSAGE);
@@ -770,6 +771,9 @@ public final class BanHang extends JFrame {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else if (Integer.parseInt(txtDTLG.getText()) > dtl || Integer.parseInt(txtDTLG.getText()) > sum) {
             JOptionPane.showMessageDialog(null, "Điểm tích lũy không lớn hơn điểm đang có và giá đang bán!",
+                    "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+        } else if(txtDaThu.getText().equals("") || Integer.parseInt(tiemThua) < 0) {
+            JOptionPane.showMessageDialog(null, "Phải lớn hơn hoặc bằng số tiền khách hàng cần trả",
                     "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else {
             int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn tạo hóa đơn !",
