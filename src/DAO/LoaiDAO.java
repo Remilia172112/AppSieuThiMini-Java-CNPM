@@ -56,7 +56,7 @@ public class LoaiDAO implements DAOinterface<LoaiDTO> {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "UPDATE `LOAI` SET `TT` = 0 WHERE ML = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setString(1,t);
+            pst.setString(1, t);
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -84,7 +84,7 @@ public class LoaiDAO implements DAOinterface<LoaiDTO> {
         }
         return result;
     }
-    
+
     public ArrayList<LoaiDTO> getAll() {
         ArrayList<LoaiDTO> result = new ArrayList<>();
         try {
@@ -123,7 +123,7 @@ public class LoaiDAO implements DAOinterface<LoaiDTO> {
         }
         return result;
     }
-    
+
     public LoaiDTO getByName(String t) {
         LoaiDTO result = null;
         try {
@@ -164,4 +164,22 @@ public class LoaiDAO implements DAOinterface<LoaiDTO> {
         }
         return result;
     }
+
+    public int getMaxMaLoai() {
+        int maxML = 0;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT MAX(ML) AS maxML FROM LOAI";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            if (rs.next()) {
+                maxML = rs.getInt("maxML");
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException ex) {
+            Logger.getLogger(LoaiDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return maxML;
+    }
+
 }
