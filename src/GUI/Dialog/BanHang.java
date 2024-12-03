@@ -179,7 +179,7 @@ public final class BanHang extends JFrame {
         tableSanPham.setGridColor(Color.BLACK);
         tableSanPham.setBackground(new Color(0xA1D6E2));
         tblModelSP = new DefaultTableModel();
-        String[] headerSP = new String[] { "Mã SP", "Tên sản phẩm", "Số lượng tồn" };
+        String[] headerSP = new String[] { "Ảnh SP", "Tên sản phẩm", "Số lượng tồn" };
         tblModelSP.setColumnIdentifiers(headerSP);
         tableSanPham.setModel(tblModelSP);
         tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer());
@@ -189,6 +189,7 @@ public final class BanHang extends JFrame {
         tableSanPham.getColumnModel().getColumn(1).setPreferredWidth(300);
         tableSanPham.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tableSanPham.setFocusable(false);
+        tableSanPham.setDefaultEditor(Object.class, null);
         scrollTableSanPham = new JScrollPane();
 
         JScrollBar verticalScrollBar = scrollTableSanPham.getVerticalScrollBar();
