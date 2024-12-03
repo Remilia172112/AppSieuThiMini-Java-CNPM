@@ -2,7 +2,9 @@ package GUI.Dialog;
 
 import BUS.DonViBUS;
 import BUS.NhomQuyenBUS;
+import BUS.SanPhamBUS;
 import DTO.DonViDTO;
+import DTO.SanPhamDTO;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputForm;
@@ -40,6 +42,8 @@ public class DonViDialog extends JDialog implements MouseListener {
     DonViBUS msBUS = new DonViBUS();
     ArrayList<DonViDTO> list = msBUS.getAll();
     private final NhomQuyenBUS nhomquyenBus = new NhomQuyenBUS();
+    DonViBUS dvBus = new DonViBUS();
+    SanPhamBUS spBus = new SanPhamBUS();
 
     public DonViDialog(JFrame onwer, ThuocTinhSanPham qltt, String title, boolean modal, int nhomquyen) {
         super(onwer, title, modal);
@@ -135,9 +139,10 @@ public class DonViDialog extends JDialog implements MouseListener {
             } else {
                 String tenmau = ms.getText();
                 if (msBUS.checkDup(tenmau)) {
-                    int id = msBUS.listDonVi.size()+1;
+                    int id = msBUS.getMaxMaDonVi() + 1;
                     msBUS.add(new DonViDTO(id, tenmau));
                     loadDataTable(list);
+                    JOptionPane.showMessageDialog(this, "Thêm đơn vị thành công!");
                     ms.setText("");
                 } else {
                     JOptionPane.showMessageDialog(this, "Đơn vị đã tồn tại !");
@@ -146,9 +151,29 @@ public class DonViDialog extends JDialog implements MouseListener {
         } else if (e.getSource() == del) {
             int index = getRowSelected();
             if (index != -1) {
-                msBUS.delete(list.get(index), index);
-                loadDataTable(list);
-                ms.setText("");
+                String maDonVi = String.valueOf(table.getValueAt(index, 0));
+                int choose = JOptionPane.showConfirmDialog(
+                        this,
+                        "Bạn có chắc chắn muốn xóa đơn vị: " + maDonVi + "?",
+                        "Xác nhận xoá",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                if (choose == JOptionPane.YES_OPTION) {
+                    DonViDTO choosenDonVi = dvBus.getById(maDonVi);
+                    ArrayList<SanPhamDTO> listSPTheoDonVi = spBus.getSPByMaDonVi(choosenDonVi.getMDV());
+                    if (!listSPTheoDonVi.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Đơn vị đã được sử dụng trong danh mục sản phẩm, không thể xoá!");
+                        return;
+                    } else {
+                        msBUS.delete(choosenDonVi, index);
+                        loadDataTable(list);
+                        JOptionPane.showMessageDialog(this, "Xoá đơn vị thành công !");
+                        ms.setText("");
+                    }
+
+                }
             }
         } else if (e.getSource() == update) {
             int index = getRowSelected();
@@ -160,6 +185,7 @@ public class DonViDialog extends JDialog implements MouseListener {
                     if (msBUS.checkDup(tenmau)) {
                         msBUS.update(new DonViDTO(list.get(index).getMDV(), tenmau));
                         loadDataTable(list);
+                        JOptionPane.showMessageDialog(this, "Sửa đơn vị thành công");
                         ms.setText("");
                     } else {
                         JOptionPane.showMessageDialog(this, "Đơn vị đã tồn tại !");

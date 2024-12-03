@@ -97,4 +97,7 @@ public class DonViBUS {
         return check;
     }
 
+    public int getMaxMaDonVi() {
+        return mausacDAO.getMaxMaDonVi();
+    }
 }

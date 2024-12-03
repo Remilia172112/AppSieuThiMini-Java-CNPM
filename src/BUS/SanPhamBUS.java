@@ -203,4 +203,12 @@ public class SanPhamBUS {
         }
         return null;
     }
+    
+    public ArrayList<SanPhamDTO> getSPByMaLoai(int maLoai) {
+        return spDAO.getSPByMaLoai(maLoai);
+    }
+    
+    public ArrayList<SanPhamDTO> getSPByMaDonVi(int maDonVi) {
+        return spDAO.getSPByMaDonVi(maDonVi);
+    }
 }
