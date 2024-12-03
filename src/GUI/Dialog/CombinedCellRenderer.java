@@ -16,12 +16,15 @@ class CombinedCellRenderer extends DefaultTableCellRenderer {
             Image scaledImage = originalIcon.getImage().getScaledInstance(160, 120, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
             label.setIcon(scaledIcon);
-            label.setPreferredSize(new Dimension(200, 150));
+            label.setPreferredSize(new Dimension(160, 120));
+            label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK)); //them gach duoi
             panel.add(label, BorderLayout.CENTER);
         } else if (value instanceof MultiLineData) { // Nếu là kiểu MultiLineData
             MultiLineData data = (MultiLineData) value;
             JLabel label = new JLabel("<html>" + data.getLine1() + "<br>" + data.getLine2() + "<br><b>&nbsp;&nbsp;&nbsp;&nbsp;" + data.getLine3() + "</b></html>");
             label.setVerticalAlignment(JLabel.CENTER);
+            label.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK)); //them gach duoi
+
             panel.add(label, BorderLayout.CENTER);
             panel.setOpaque(false);
         }

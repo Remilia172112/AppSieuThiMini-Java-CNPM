@@ -2,7 +2,9 @@ package GUI.Dialog;
 
 import BUS.LoaiBUS;
 import BUS.NhomQuyenBUS;
+import BUS.SanPhamBUS;
 import DTO.LoaiDTO;
+import DTO.SanPhamDTO;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
 import GUI.Component.InputForm;
@@ -40,6 +42,8 @@ public class LoaiDialog extends JDialog implements MouseListener {
     LoaiBUS msBUS = new LoaiBUS();
     ArrayList<LoaiDTO> list = msBUS.getAll();
     private final NhomQuyenBUS nhomquyenBus = new NhomQuyenBUS();
+    LoaiBUS lBus = new LoaiBUS();
+    SanPhamBUS spBus = new SanPhamBUS();
 
     public LoaiDialog(JFrame onwer, ThuocTinhSanPham qltt, String title, boolean modal, int nhomquyen) {
         super(onwer, title, modal);
@@ -135,9 +139,10 @@ public class LoaiDialog extends JDialog implements MouseListener {
             } else {
                 String tenmau = ms.getText();
                 if (msBUS.checkDup(tenmau)) {
-                    int id = msBUS.listLoai.size()+1;
+                    int id = msBUS.getMaxMaLoai() + 1;
                     msBUS.add(new LoaiDTO(id, tenmau));
                     loadDataTable(list);
+                    JOptionPane.showMessageDialog(this, "Thêm loại thành công!");
                     ms.setText("");
                 } else {
                     JOptionPane.showMessageDialog(this, "Loại đã tồn tại !");
@@ -146,9 +151,27 @@ public class LoaiDialog extends JDialog implements MouseListener {
         } else if (e.getSource() == del) {
             int index = getRowSelected();
             if (index != -1) {
-                msBUS.delete(list.get(index), index);
-                loadDataTable(list);
-                ms.setText("");
+                String maLoai = String.valueOf(table.getValueAt(index, 0));
+                int choose = JOptionPane.showConfirmDialog(
+                        this,
+                        "Bạn có chắc chắn muốn xóa loại: " + maLoai + "?",
+                        "Xác nhận xoá",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+                if (choose == JOptionPane.YES_OPTION) {
+                    LoaiDTO choosenLoai = lBus.getById(maLoai);
+                    ArrayList<SanPhamDTO> listSPTheoLoai = spBus.getSPByMaLoai(choosenLoai.getML());
+                    if (!listSPTheoLoai.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Loại đã được sử dụng trong danh mục sản phẩm, không thể xoá!");
+                        return;
+                    } else {
+                        msBUS.delete(choosenLoai, index);
+                        loadDataTable(list);
+                        JOptionPane.showMessageDialog(this, "Xoá loại thành công !");
+                        ms.setText("");
+                    }
+                }
             }
         } else if (e.getSource() == update) {
             int index = getRowSelected();
@@ -160,6 +183,7 @@ public class LoaiDialog extends JDialog implements MouseListener {
                     if (msBUS.checkDup(tenmau)) {
                         msBUS.update(new LoaiDTO(list.get(index).getML(), tenmau));
                         loadDataTable(list);
+                        JOptionPane.showMessageDialog(this, "Sửa loại thành công");
                         ms.setText("");
                     } else {
                         JOptionPane.showMessageDialog(this, "Loại đã tồn tại !");

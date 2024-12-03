@@ -131,7 +131,7 @@ public final class NhanVien extends JPanel {
 
     public void loadDataTalbe(ArrayList<DTO.NhanVienDTO> list) {
         listnv = list;
-        ArrayList<ChucVuDTO> listcv = cvbus.getAll();
+        ArrayList<ChucVuDTO> listcv = cvbus.selectAll();
         tblModel.setRowCount(0);
         for (DTO.NhanVienDTO nhanVien : listnv) {
             tblModel.addRow(new Object[]{

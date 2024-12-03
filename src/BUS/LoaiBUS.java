@@ -97,4 +97,7 @@ public class LoaiBUS {
         return check;
     }
 
+    public int getMaxMaLoai() {
+        return mausacDAO.getMaxMaLoai();
+    }
 }

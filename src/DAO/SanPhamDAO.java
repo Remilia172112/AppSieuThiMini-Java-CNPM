@@ -254,4 +254,57 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         return maxMSP;
     }
 
+    public ArrayList<SanPhamDTO> getSPByMaLoai(int maLoai) {
+        ArrayList<SanPhamDTO> result = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM SANPHAM WHERE ML = ? AND TT = 1";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, maLoai);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int madm = rs.getInt("MSP");
+                String tendm = rs.getString("TEN");
+                String HINHANH = rs.getString("HINHANH");
+                int loai = rs.getInt("ML");
+                int TIENX = rs.getInt("TIENX");
+                int SL = rs.getInt("SL");
+                int DV = rs.getInt("MDV");
+                String MV = rs.getString("MV");
+                SanPhamDTO sp = new SanPhamDTO(madm, tendm, HINHANH, loai, TIENX, SL, DV, MV);
+                result.add(sp);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return result;
+    }
+
+    public ArrayList<SanPhamDTO> getSPByMaDonVi(int maDonVi) {
+        ArrayList<SanPhamDTO> result = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM SANPHAM WHERE MDV = ? AND TT = 1";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, maDonVi);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int madm = rs.getInt("MSP");
+                String tendm = rs.getString("TEN");
+                String HINHANH = rs.getString("HINHANH");
+                int loai = rs.getInt("ML");
+                int TIENX = rs.getInt("TIENX");
+                int SL = rs.getInt("SL");
+                int DV = rs.getInt("MDV");
+                String MV = rs.getString("MV");
+                SanPhamDTO sp = new SanPhamDTO(madm, tendm, HINHANH, loai, TIENX, SL, DV, MV);
+                result.add(sp);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return result;
+    }
 }
