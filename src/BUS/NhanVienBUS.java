@@ -111,15 +111,22 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
                 }
             }
             case "XÓA" -> {
-                if (nv.getRow() < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xóa");
-                } else {
+            if (nv.getRow() < 0) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xóa");
+            } else {
+                int confirm = JOptionPane.showConfirmDialog(null, 
+                        "Bạn có chắc chắn muốn xóa nhân viên này không?", 
+                        "Xác nhận xóa", 
+                        JOptionPane.YES_NO_OPTION);
+                
+                if (confirm == JOptionPane.YES_OPTION) {
                     deleteNv(nv.getNhanVien());
                 }
             }
+        }
             case "CHI TIẾT" -> {
                 if (nv.getRow() < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xóa");
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần sửa");
                 } else {
                     new NhanVienDialog(this, nv.owner, true, "Xem nhân viên", "detail", nv.getNhanVien());
                 }
@@ -199,67 +206,86 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
     }
 
     public void exportExcel(ArrayList<NhanVienDTO> list, String[] header) {
-        try {
-            if (!list.isEmpty()) {
-                JFileChooser jFileChooser = new JFileChooser();
-                jFileChooser.showSaveDialog(nv.owner);
-                File saveFile = jFileChooser.getSelectedFile();
-                if (saveFile != null) {
-                    saveFile = new File(saveFile.toString() + ".xlsx");
-                    Workbook wb = new XSSFWorkbook();
-                    Sheet sheet = wb.createSheet("Nhân viên");
+    if (!list.isEmpty()) {
+        JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.showSaveDialog(nv.owner);
+        File saveFile = jFileChooser.getSelectedFile();
+        if (saveFile != null) {
+            saveFile = new File(saveFile.toString() + ".xlsx");
 
-                    writeHeader(header, sheet, 0);
-                    int rowIndex = 1;
-                    for (NhanVienDTO nv : list) {
-                        Row row = sheet.createRow(rowIndex++);
-                        writeNhanVien(nv, row);
-                    }
-                    FileOutputStream out = new FileOutputStream(new File(saveFile.toString()));
-                    wb.write(out);
-                    wb.close();
-                    out.close();
-                    openFile(saveFile.toString());
+            if (saveFile.exists()) {
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "Tệp đã tồn tại. Bạn có muốn ghi đè lên tệp cũ không?",
+                        "Xác nhận ghi đè",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (confirm != JOptionPane.YES_OPTION) {
+                    return;
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            try (Workbook wb = new XSSFWorkbook();
+                 FileOutputStream out = new FileOutputStream(saveFile)) {
+
+                Sheet sheet = wb.createSheet("Nhân viên");
+                writeHeader(header, sheet, 0);
+                int rowIndex = 1;
+                for (NhanVienDTO nv : list) {
+                    Row row = sheet.createRow(rowIndex++);
+                    writeNhanVien(nv, row);
+                }
+                wb.write(out);
+                openFile(saveFile.toString());
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(null,
+                        "Không thể ghi đè lên tệp vì tệp đang được mở trong một ứng dụng khác.",
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+}
 
     public ArrayList<NhanVienDTO> search(String text) {
-        String luachon = (String) nv.search.cbxChoose.getSelectedItem();
-        text = text.toLowerCase();
-        ArrayList<NhanVienDTO> result = new ArrayList<>();
-        switch (luachon) {
-            case "Tất cả" -> {
-                for (NhanVienDTO i : this.listNv) {
-                    if (i.getHOTEN().toLowerCase().contains(text) || i.getEMAIL().toLowerCase().contains(text)
-                            || i.getSDT().toLowerCase().contains(text)) {
-                        result.add(i);
-                    }
-                }
-            }
-            case "Họ tên" -> {
-                for (NhanVienDTO i : this.listNv) {
-                    if (i.getHOTEN().toLowerCase().contains(text)) {
-                        result.add(i);
-                    }
-                }
-            }
-            case "Email" -> {
-                for (NhanVienDTO i : this.listNv) {
-                    if (i.getEMAIL().toLowerCase().contains(text)) {
-                        result.add(i);
-                    }
-                }
-            }
-            default ->
-                throw new AssertionError();
+    String luachon = (String) nv.search.cbxChoose.getSelectedItem();
+    text = text.toLowerCase();
+    ArrayList<NhanVienDTO> result = new ArrayList<>();
+    switch (luachon) {
+        case "Tất cả" -> { 
+    for (NhanVienDTO i : this.listNv) {
+        if (i.getHOTEN().toLowerCase().contains(text) || 
+            i.getEMAIL().toLowerCase().contains(text) ||
+            i.getSDT().toLowerCase().contains(text) ||
+            (i.getMNV() + "").contains(text) || // Thêm điều kiện tìm kiếm theo mã nhân viên
+            (i.getGIOITINH() == 1 && "nam".contains(text)) || // Kiểm tra giới tính
+            (i.getGIOITINH() == 0 && "nữ".contains(text)) || // Kiểm tra giới tính
+            (i.getNGAYSINH() != null && i.getNGAYSINH().toString().contains(text))) { // Kiểm tra ngày sinh
+            result.add(i);
         }
-
-        return result;
     }
+}
+        case "Họ tên" -> {
+            for (NhanVienDTO i : this.listNv) {
+                if (i.getHOTEN().toLowerCase().contains(text)) {
+                    result.add(i);
+                }
+            }
+        }
+        case "Email" -> {
+            for (NhanVienDTO i : this.listNv) {
+                if (i.getEMAIL().toLowerCase().contains(text)) {
+                    result.add(i);
+                }
+            }
+        }
+        default ->
+            throw new AssertionError();
+    }
+
+    return result;
+}
 
     private static void writeHeader(String[] list, Sheet sheet, int rowIndex) {
         CellStyle cellStyle = createStyleForHeader(sheet);
@@ -398,4 +424,7 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
         }        // Trả về false nếu chuỗi không phải là số điện thoại hợp lệ
 
     }
+    public int getTotalNhanVien() {
+    return nhanVienDAO.countAll();
+}
 }

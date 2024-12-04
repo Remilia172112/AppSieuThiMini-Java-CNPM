@@ -37,7 +37,7 @@ public class ChucVuDAO implements DAOinterface<ChucVuDTO>{
         int result = 0 ;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `CHUVU` SET `TEN` = ?, `MUCLUONG` = ? WHERE `MCV` = ?";
+            String sql = "UPDATE `CHUCVU` SET `TEN` = ?, `MUCLUONG` = ? WHERE `MCV` = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t.getTENCV());
             pst.setInt(2, t.getMUCLUONG());
@@ -152,4 +152,37 @@ public class ChucVuDAO implements DAOinterface<ChucVuDTO>{
         }
         return result;
     }
+    public String getTenChucVuByMCV(int mcv) {
+    String tenChucVu = null;
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "SELECT TEN FROM CHUCVU WHERE MCV = ?";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setInt(1, mcv);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            tenChucVu = rs.getString("TEN");
+        }
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(ChucVuDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return tenChucVu;
+}
+    public int getRecordCount() {
+    int recordCount = 0;
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "SELECT COUNT(*) AS record_count FROM CHUCVU";
+        PreparedStatement pst = con.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            recordCount = rs.getInt("record_count");
+        }
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(ChucVuDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return recordCount;
+}
 }

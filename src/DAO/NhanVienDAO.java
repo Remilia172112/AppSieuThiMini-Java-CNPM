@@ -229,4 +229,20 @@ public class NhanVienDAO implements DAOinterface<NhanVienDTO>{
         }
         return result;
     }
+    public int countAll() {
+    int count = 0;
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "SELECT COUNT(*) AS total FROM NHANVIEN";
+        PreparedStatement pst = con.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            count = rs.getInt("total");
+        }
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(NhanVienDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return count;
+}
 }

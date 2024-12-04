@@ -101,25 +101,36 @@ public class ChucVuDialog extends JDialog {
             }
         });
 
-        btnAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    if (ValidationInput()) {
-                        int manv = nv.getAll().size() + 1;
-                            String txtName = name.getText();
-                            String txtSdt = mucluong.getText();
-                            ChucVuDTO nV = new ChucVuDTO(manv, txtName, Integer.parseInt(txtSdt));
-                            ChucVuDAO.getInstance().insert(nV);
-                            nv.insertNv(nV);
-                            nv.loadTable();
-                            dispose();
-                    }
-                } catch (ParseException ex) {
-                    Logger.getLogger(ChucVuDialog.class.getName()).log(Level.SEVERE, null, ex);
+    btnAdd.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        try {
+            
+            if (ValidationInput()) {
+                String txtName = name.getText();
+                
+                // Kiểm tra trùng lặp tên chức vụ
+                boolean isDuplicate = nv.getAll().stream()
+                    .anyMatch(cv -> cv.getTENCV().equalsIgnoreCase(txtName));
+                
+                if (isDuplicate) {
+                    JOptionPane.showMessageDialog(null, "Tên chức vụ đã tồn tại!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
+                
+                int manv = nv.getRecordCount() + 1;
+                String txtSdt = mucluong.getText();
+                ChucVuDTO nV = new ChucVuDTO(manv, txtName, Integer.parseInt(txtSdt));
+                ChucVuDAO.getInstance().insert(nV);
+                nv.insertNv(nV);
+                nv.loadTable();
+                dispose();
             }
-        });
+        } catch (ParseException ex) {
+            Logger.getLogger(ChucVuDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+});
 
         btnEdit.addActionListener(new ActionListener() {
             @Override
