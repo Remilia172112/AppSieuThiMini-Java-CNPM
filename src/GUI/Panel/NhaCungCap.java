@@ -2,7 +2,9 @@ package GUI.Panel;
 
 import GUI.Dialog.NhaCungCapDialog;
 import BUS.NhaCungCapBUS;
+import BUS.PhieuNhapBUS;
 import DTO.NhaCungCapDTO;
+import DTO.PhieuNhapDTO;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import java.awt.*;
@@ -42,11 +44,12 @@ public final class NhaCungCap extends JPanel implements ActionListener, ItemList
     MainFunction mainFunction;
     IntegratedSearch search;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-    Color BackgroundColor = new Color(193 ,237 ,220);
+    Color BackgroundColor = new Color(193, 237, 220);
     DefaultTableModel tblModel;
     Main m;
     public NhaCungCapBUS nccBUS = new NhaCungCapBUS();
     public ArrayList<NhaCungCapDTO> listncc = nccBUS.getAll();
+    public PhieuNhapBUS pnBus = new PhieuNhapBUS();
 
     private void initComponent() {
         //Set model table
@@ -229,12 +232,27 @@ public final class NhaCungCap extends JPanel implements ActionListener, ItemList
         } else if (e.getSource() == mainFunction.btn.get("delete")) {
             int index = getRowSelected();
             if (index != -1) {
+                String maNcc = String.valueOf(tblModel.getValueAt(index, 0));
+                NhaCungCapDTO nccSelected = nccBUS.selectById(maNcc);
                 int input = JOptionPane.showConfirmDialog(null,
                         "Bạn có chắc chắn muốn xóa nhà cung cấp!", "Xóa nhà cung cấp",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
                 if (input == 0) {
-                    nccBUS.delete(listncc.get(index), index);
-                    loadDataTable(listncc);
+                    int maNccInteger = Integer.parseInt(maNcc);
+                    ArrayList<PhieuNhapDTO> listPn = pnBus.selectPhieuNhapByMNCC(maNccInteger);
+                    if (!listPn.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Nhà cung cấp tồn tại trong phiếu nhập, không thể xoá!");
+                    } else {
+                        boolean result = nccBUS.delete(nccSelected, index);
+                        if (result) {
+                            JOptionPane.showMessageDialog(this, "Xoá nhà cung cấp thành công!");
+                            loadDataTable(listncc);
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Xoá nhà cung cấp thất bại, lỗi hệ thống!");
+                            loadDataTable(listncc);
+                        }
+                    }
+
                 }
             }
         } else if (e.getSource() == mainFunction.btn.get("detail")) {

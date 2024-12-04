@@ -19,8 +19,7 @@ public class PhieuNhapDAO implements DAOinterface<PhieuNhapDTO> {
     public static PhieuNhapDAO getInstance() {
         return new PhieuNhapDAO();
     }
-    
-    
+
     @Override
     public int insert(PhieuNhapDTO t) {
         int result = 0;
@@ -132,7 +131,7 @@ public class PhieuNhapDAO implements DAOinterface<PhieuNhapDTO> {
             String sql = "SELECT * FROM PHIEUNHAP WHERE TIEN BETWEEN ? AND ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setLong(1, min);
-            pst.setLong(2,max);
+            pst.setLong(2, max);
 
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
@@ -150,7 +149,7 @@ public class PhieuNhapDAO implements DAOinterface<PhieuNhapDTO> {
         }
         return result;
     }
-    
+
     public boolean checkSLPn(int maphieu) {
         SanPhamBUS spBus = new SanPhamBUS();
         ArrayList<SanPhamDTO> SP = new ArrayList<SanPhamDTO>();
@@ -166,7 +165,7 @@ public class PhieuNhapDAO implements DAOinterface<PhieuNhapDTO> {
                 int soluong = rs.getInt("SL");
                 int tiennhap = rs.getInt("TIENNHAP");
                 int hinhthucnhap = rs.getInt("HINHTHUC");
-                ChiTietPhieuNhapDTO ct = new ChiTietPhieuNhapDTO(maphieu, masp,  soluong, tiennhap, hinhthucnhap);
+                ChiTietPhieuNhapDTO ct = new ChiTietPhieuNhapDTO(maphieu, masp, soluong, tiennhap, hinhthucnhap);
                 result.add(ct);
                 SP.add(spBus.spDAO.selectById(ct.getMSP() + ""));
             }
@@ -175,14 +174,14 @@ public class PhieuNhapDAO implements DAOinterface<PhieuNhapDTO> {
             System.out.println(e);
         }
         for (int i = 0; i < SP.size(); i++) {
-            if(result.get(i).getSL() > SP.get(i).getSL()){
+            if (result.get(i).getSL() > SP.get(i).getSL()) {
                 return false;
             }
         }
         return true;
     }
-    
-    public int cancelPhieuNhap(int maphieu){
+
+    public int cancelPhieuNhap(int maphieu) {
         int result = 0;
         ArrayList<ChiTietPhieuNhapDTO> arrCt = ChiTietPhieuNhapDAO.getInstance().selectAll(Integer.toString(maphieu));
         for (ChiTietPhieuNhapDTO chiTietPhieuNhapDTO : arrCt) {
@@ -217,6 +216,31 @@ public class PhieuNhapDAO implements DAOinterface<PhieuNhapDTO> {
                     result = rs2.getInt("AUTO_INCREMENT");
                 }
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(PhieuNhapDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+
+    public ArrayList<PhieuNhapDTO> selectPhieuNhapByMNCC(int mncc) {
+        ArrayList<PhieuNhapDTO> result = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM PHIEUNHAP WHERE MNCC = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, mncc);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int MPN = rs.getInt("MPN");
+                Timestamp TG = rs.getTimestamp("TG");
+                int MNCC = rs.getInt("MNCC");
+                int MNV = rs.getInt("MNV");
+                long TIEN = rs.getLong("TIEN");
+                int TT = rs.getInt("TT");
+                PhieuNhapDTO phieuNhap = new PhieuNhapDTO(MNCC, MPN, MNV, TG, TIEN, TT);
+                result.add(phieuNhap);
+            }
+            JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
             Logger.getLogger(PhieuNhapDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
