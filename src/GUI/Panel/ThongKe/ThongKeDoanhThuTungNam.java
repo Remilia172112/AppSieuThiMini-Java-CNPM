@@ -153,15 +153,14 @@ public final class ThongKeDoanhThuTungNam extends JPanel implements ActionListen
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == btnthongke) {
-            System.out.println(yearchooser_start.getText());
-            if (!Validation.isEmpty(yearchooser_start.getText()) || !Validation.isEmpty(yearchooser_end.getText())) {
+            if (!Validation.isEmpty(yearchooser_start.getText()) && !Validation.isEmpty(yearchooser_end.getText()) && !(yearchooser_start.getText().length() >=5) && !(yearchooser_end.getText().length() >=5)) {
                 int nambd = Integer.parseInt(yearchooser_start.getText());
                 int namkt = Integer.parseInt(yearchooser_end.getText());
                 if (nambd > current_year || namkt > current_year) {
                     JOptionPane.showMessageDialog(this, "Năm không được lớn hơn năm hiện tại");
                 } else {
                     if (namkt < nambd || namkt <= 2015 || nambd <= 2015) {
-                        JOptionPane.showMessageDialog(this, "Năm kết thúc không được bé hơn năm bắt đầu và phải lớn hơn 2015");
+                        JOptionPane.showMessageDialog(this, "Năm kết thúc không được bé hơn năm bắt đầu, phải lớn hơn 2015");
                     } else {
                         this.dataset = this.thongkeBUS.getDoanhThuTheoTungNam(nambd, namkt);
                         loadDataChart(dataset);
@@ -169,7 +168,7 @@ public final class ThongKeDoanhThuTungNam extends JPanel implements ActionListen
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ !");
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ và đúng!");
             }
 
         } else if (source == btnreset) {
