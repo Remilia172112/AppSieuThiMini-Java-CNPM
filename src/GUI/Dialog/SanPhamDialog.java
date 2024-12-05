@@ -5,7 +5,6 @@ import BUS.LoaiBUS;
 import BUS.PhieuNhapBUS;
 import BUS.SanPhamBUS;
 import DAO.SanPhamDAO;
-import DTO.LoaiDTO;
 import DTO.SanPhamDTO;
 import GUI.Component.ButtonCustom;
 import GUI.Component.HeaderTitle;
