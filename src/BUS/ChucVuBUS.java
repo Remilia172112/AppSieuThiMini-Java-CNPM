@@ -134,13 +134,20 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
                     new ChucVuDialog(this, cv.owner, true, "Sửa chức vụ", "update", cv.getChucVu());
                 }
             }
-            case "XÓA" -> {
-                if (cv.getRow() < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn chức vụ cần xóa");
-                } else {
+             case "XÓA" -> {
+            if (cv.getRow() < 0) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn chức vụ cần xóa");
+            } else {
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "Bạn có chắc chắn muốn xóa chức vụ này không?",
+                        "Xác nhận xóa",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
                     deleteNv(cv.getChucVu());
                 }
             }
+        }
             case "CHI TIẾT" -> {
                 if (cv.getRow() < 0) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn chức vụ cần xóa");
@@ -222,67 +229,95 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
     }
 
     public void exportExcel(ArrayList<ChucVuDTO> list, String[] header) {
+    try {
         
-        try {
-            if (!list.isEmpty()) {
-                JFileChooser jFileChooser = new JFileChooser();
-                jFileChooser.showSaveDialog(cv.owner);
+        if (!list.isEmpty()) {
+            JFileChooser jFileChooser = new JFileChooser();
+            int userSelection = jFileChooser.showSaveDialog(cv.owner);
+
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File saveFile = jFileChooser.getSelectedFile();
                 if (saveFile != null) {
-                    saveFile = new File(saveFile.toString() + ".xlsx");
-                    Workbook wb = new XSSFWorkbook();
-                    Sheet sheet = wb.createSheet("Chức vụ");
+                    String filePath = saveFile.toString();
 
-                    writeHeader(header, sheet, 0);
-                    int rowIndex = 1;
-                    for (ChucVuDTO cv : list) {
-                        Row row = sheet.createRow(rowIndex++);
-                        writeChucVu(cv, row);
+                    // Kiểm tra và thêm phần mở rộng nếu cần
+                    if (!filePath.toLowerCase().endsWith(".xlsx")) {
+                        filePath += ".xlsx";
                     }
-                    FileOutputStream out = new FileOutputStream(new File(saveFile.toString()));
-                    wb.write(out);
-                    wb.close();
-                    out.close();
-                    openFile(saveFile.toString());
+
+                    saveFile = new File(filePath);
+
+                    // Kiểm tra xem tệp đã tồn tại chưa
+                    if (saveFile.exists()) {
+                        int confirm = JOptionPane.showConfirmDialog(null,
+                                "Tệp đã tồn tại. Bạn có muốn ghi đè lên tệp cũ không?",
+                                "Xác nhận ghi đè",
+                                JOptionPane.YES_NO_OPTION);
+
+                        if (confirm != JOptionPane.YES_OPTION) {
+                            return; // Nếu người dùng chọn "No", thoát khỏi phương thức
+                        }
+                    }
+
+                    try (Workbook wb = new XSSFWorkbook();
+                         FileOutputStream out = new FileOutputStream(saveFile)) {
+
+                        Sheet sheet = wb.createSheet("Chức vụ");
+                        writeHeader(header, sheet, 0);
+                        int rowIndex = 1;
+                        for (ChucVuDTO cv : list) {
+                            Row row = sheet.createRow(rowIndex++);
+                            writeChucVu(cv, row);
+                        }
+                        wb.write(out);
+                        JOptionPane.showMessageDialog(null, "Xuất tệp thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                        openFile(saveFile.toString());
+                    } catch (FileNotFoundException e) {
+                        JOptionPane.showMessageDialog(null, "Không thể ghi đè lên tệp vì tệp đang được mở trong một ứng dụng khác.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi xuất tệp.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
     }
+}
 
     public ArrayList<ChucVuDTO> search(String text) {
-        String luachon = (String) cv.search.cbxChoose.getSelectedItem();
-        text = text.toLowerCase();
-        ArrayList<ChucVuDTO> result = new ArrayList<>();
-        switch (luachon) {
-            case "Tất cả" -> {
-                for (ChucVuDTO i : this.listChucVu) {
-                    if (i.getTENCV().toLowerCase().contains(text) || (i.getMUCLUONG()+"").contains(text)) {
-                        result.add(i);
-                    }
+    String luachon = (String) cv.search.cbxChoose.getSelectedItem();
+    text = text.toLowerCase();
+    ArrayList<ChucVuDTO> result = new ArrayList<>();
+    switch (luachon) {
+        case "Tất cả" -> {
+            for (ChucVuDTO i : this.listChucVu) {
+                if (i.getTENCV().toLowerCase().contains(text) || 
+                    (i.getMUCLUONG() + "").contains(text) || 
+                    (i.getMCV() + "").contains(text)) { // Thêm điều kiện kiểm tra mã chức vụ
+                    result.add(i);
                 }
             }
-            case "Tên" -> {
-                for (ChucVuDTO i : this.listChucVu) {
-                    if (i.getTENCV().toLowerCase().contains(text)) {
-                        result.add(i);
-                    }
-                }
-            }
-            case "Mức lương" -> {
-                for (ChucVuDTO i : this.listChucVu) {
-                    if ((i.getMUCLUONG()+"").contains(text)) {
-                        result.add(i);
-                    }
-                }
-            }
-            default ->
-                throw new AssertionError();
         }
-
-        return result;
+        case "Tên chức vụ" -> {
+            for (ChucVuDTO i : this.listChucVu) {
+                if (i.getTENCV().toLowerCase().contains(text)) {
+                    result.add(i);
+                }
+            }
+        }
+        case "Mức lương" -> {
+            for (ChucVuDTO i : this.listChucVu) {
+                if ((i.getMUCLUONG() + "").contains(text)) {
+                    result.add(i);
+                }
+            }
+        }
+        default ->
+            throw new AssertionError();
     }
+
+    return result;
+}
 
     private static void writeHeader(String[] list, Sheet sheet, int rowIndex) {
         CellStyle cellStyle = createStyleForHeader(sheet);
@@ -406,5 +441,11 @@ public class ChucVuBUS implements ActionListener, DocumentListener  {
     }
     cv.loadDataTalbe(listChucVu);
 }
+  public String getTenChucVuByMCV(int mcv) {
+    return ChucVuDAO.getInstance().getTenChucVuByMCV(mcv);
+}
+  public int getRecordCount() {
+        return ChucVuDAO.getRecordCount();
+    }
 
 }

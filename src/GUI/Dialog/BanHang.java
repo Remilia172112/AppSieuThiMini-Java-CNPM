@@ -179,7 +179,7 @@ public final class BanHang extends JFrame {
         tableSanPham.setGridColor(Color.BLACK);
         tableSanPham.setBackground(new Color(0xA1D6E2));
         tblModelSP = new DefaultTableModel();
-        String[] headerSP = new String[] { "Mã SP", "Tên sản phẩm", "Số lượng tồn" };
+        String[] headerSP = new String[] { "Ảnh SP", "Tên sản phẩm", "Số lượng tồn" };
         tblModelSP.setColumnIdentifiers(headerSP);
         tableSanPham.setModel(tblModelSP);
         tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer());
@@ -189,6 +189,7 @@ public final class BanHang extends JFrame {
         tableSanPham.getColumnModel().getColumn(1).setPreferredWidth(300);
         tableSanPham.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         tableSanPham.setFocusable(false);
+        tableSanPham.setDefaultEditor(Object.class, null);
         scrollTableSanPham = new JScrollPane();
 
         JScrollBar verticalScrollBar = scrollTableSanPham.getVerticalScrollBar();
@@ -530,8 +531,6 @@ public final class BanHang extends JFrame {
 
         content_right_top.add(lbl1);
         content_right_top.add(lbltongtien);
-        content_right_top.add(lbl2);
-        content_right_top.add(lblgiamgia);
         content_right_top.add(lbl3);
         content_right_top.add(lbldungdiem);
         content_right_top.add(lbl4);
@@ -702,7 +701,6 @@ public final class BanHang extends JFrame {
                     Formater.FormatVND(ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL()), "X"
 
             });
-            giagiam += (double) ((percentCounpoint) / 100.0) * sum;
         }
         lbltongtien.setText(Formater.FormatVND(sum));
         lblgiamgia.setText(Formater.FormatVND(giagiam));

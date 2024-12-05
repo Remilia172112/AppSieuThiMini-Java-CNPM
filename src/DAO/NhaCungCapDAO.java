@@ -10,14 +10,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import DTO.NhaCungCapDTO;
 
-public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO>{
-    public static NhaCungCapDAO getInstance(){
+public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO> {
+
+    public static NhaCungCapDAO getInstance() {
         return new NhaCungCapDAO();
     }
 
     @Override
     public int insert(NhaCungCapDTO t) {
-        int result = 0 ;
+        int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "INSERT INTO `NHACUNGCAP`(`MNCC`, `TEN`, `DIACHI`, `EMAIL`, `SDT`, `TT`) VALUES (?,?,?,?,?,1)";
@@ -37,7 +38,7 @@ public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO>{
 
     @Override
     public int update(NhaCungCapDTO t) {
-        int result = 0 ;
+        int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "UPDATE `NHACUNGCAP` SET `TEN`=?,`DIACHI`=?,`EMAIL`=?,`SDT`=? WHERE `MNCC`= ?";
@@ -57,7 +58,7 @@ public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO>{
 
     @Override
     public int delete(String t) {
-        int result = 0 ;
+        int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "UPDATE NHACUNGCAP SET TT = 0 WHERE MNCC = ?";
@@ -79,7 +80,7 @@ public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO>{
             String sql = "SELECT * FROM NHACUNGCAP WHERE TT = 1";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 int mancc = rs.getInt("MNCC");
                 String tenncc = rs.getString("TEN");
                 String DIACHI = rs.getString("DIACHI");
@@ -103,20 +104,22 @@ public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO>{
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 int mancc = rs.getInt("MNCC");
                 String tenncc = rs.getString("TEN");
                 String DIACHI = rs.getString("DIACHI");
                 String EMAIL = rs.getString("DIACHI");
                 String SDT = rs.getString("SDT");
-                
-                result = new NhaCungCapDTO(mancc,tenncc,DIACHI,EMAIL,SDT);
+
+                result = new NhaCungCapDTO(mancc, tenncc, DIACHI, EMAIL, SDT);
             }
             JDBCUtil.closeConnection(con);
         } catch (Exception e) {
         }
         return result;
     }
+    
+    
 
     @Override
     public int getAutoIncrement() {
@@ -126,10 +129,10 @@ public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO>{
             String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlysieuthimini' AND   TABLE_NAME   = 'NHACUNGCAP'";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs2 = pst.executeQuery(sql);
-            if (!rs2.isBeforeFirst() ) {
+            if (!rs2.isBeforeFirst()) {
                 System.out.println("No data");
             } else {
-                while ( rs2.next() ) {
+                while (rs2.next()) {
                     result = rs2.getInt("AUTO_INCREMENT");
                 }
             }
@@ -137,5 +140,22 @@ public class NhaCungCapDAO implements DAOinterface<NhaCungCapDTO>{
             Logger.getLogger(NhaCungCapDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
+    }
+
+    public int getMaxMaNCC() {
+        int maxMaNCC = 0; // Giá trị mặc định nếu bảng trống
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT MAX(MNCC) AS maxMa FROM NHACUNGCAP";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                maxMaNCC = rs.getInt("maxMa");
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException ex) {
+            Logger.getLogger(NhaCungCapDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return maxMaNCC;
     }
 }

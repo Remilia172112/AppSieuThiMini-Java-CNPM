@@ -167,4 +167,8 @@ public class PhieuNhapBUS {
     public ArrayList<ChiTietPhieuNhapDTO> searchByMSP(int msp) {
         return ctPhieuNhapDAO.searchByMSP(msp);
     }
+    
+    public ArrayList<PhieuNhapDTO> selectPhieuNhapByMNCC(int mncc) {
+        return phieunhapDAO.selectPhieuNhapByMNCC(mncc);
+    }
 }

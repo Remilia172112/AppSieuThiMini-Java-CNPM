@@ -260,6 +260,8 @@ public class MenuTaskbar extends JPanel {
         listitem.get(9).addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
+                trangChu = new TrangChu();
+                main.setPanel(trangChu);
                 banHang = new BanHang(user, "create");
                 banHang.setVisible(true);
             }

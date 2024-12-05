@@ -39,8 +39,40 @@ public class NhaCungCapBUS {
 
     public boolean update(NhaCungCapDTO ncc) {
         boolean check = NccDAO.update(ncc) != 0;
+        System.out.println(check);
         if (check) {
             this.listNcc.set(getIndexByMaNCC(ncc.getMancc()), ncc);
+        }
+        return check;
+    }
+
+    public boolean isDuplicateEmail(String email, int maNCC) {
+        boolean check = false;
+        int size = listNcc.size();
+        for (int i = 0; i < size; i++) {
+            if (listNcc.get(i).getMancc() == maNCC) {
+                continue;
+            }
+            if (listNcc.get(i).getEmail().equals(email)) {
+                System.out.println(listNcc.get(i));
+                System.out.println(email);
+                check = true;
+                break;
+            }
+        }
+        return check;
+    }
+    
+    public boolean isDuplicateEmail(String email) {
+        boolean check = false;
+        int size = listNcc.size();
+        for (int i = 0; i < size; i++) {
+            if (listNcc.get(i).getEmail().equals(email)) {
+                System.out.println(listNcc.get(i));
+                System.out.println(email);
+                check = true;
+                break;
+            }
         }
         return check;
     }
@@ -132,5 +164,13 @@ public class NhaCungCapBUS {
             }
         }
         return p;
+    }
+
+    public int getMaxMaNCC() {
+        return NccDAO.getMaxMaNCC();
+    }
+    
+    public NhaCungCapDTO selectById(String t) {
+        return NccDAO.selectById(t);
     }
 }

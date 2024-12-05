@@ -56,7 +56,7 @@ public class DonViDAO implements DAOinterface<DonViDTO> {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "UPDATE `DONVI` SET `TT` = 0 WHERE MDV = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setString(1,t);
+            pst.setString(1, t);
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -84,7 +84,7 @@ public class DonViDAO implements DAOinterface<DonViDTO> {
         }
         return result;
     }
-    
+
     public ArrayList<DonViDTO> getAll() {
         ArrayList<DonViDTO> result = new ArrayList<>();
         try {
@@ -142,7 +142,7 @@ public class DonViDAO implements DAOinterface<DonViDTO> {
         }
         return result;
     }
-    
+
     @Override
     public int getAutoIncrement() {
         int result = -1;
@@ -164,4 +164,22 @@ public class DonViDAO implements DAOinterface<DonViDTO> {
         }
         return result;
     }
+
+    public int getMaxMaDonVi() {
+        int maxMaDonVi = 0;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT MAX(MDV) AS MaxMDV FROM DONVI";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                maxMaDonVi = rs.getInt("MaxMDV");
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException ex) {
+            Logger.getLogger(DonViDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return maxMaDonVi;
+    }
+
 }

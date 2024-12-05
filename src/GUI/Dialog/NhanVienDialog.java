@@ -19,8 +19,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractButton;
@@ -49,12 +52,15 @@ public class NhanVienDialog extends JDialog {
     private JRadioButton male;
     private JRadioButton female;
     private InputDate jcBd;
+    String[] danhSachChucVuArray;
+    List<String> danhSachChucVu;
     private NhanVienDTO nhanVien;
 
     public ChucVuBUS cvbus = new ChucVuBUS();
 
     public NhanVienDialog(NhanVienBUS nv, JFrame owner, boolean modal, String title, String type) {
         super(owner, title, modal);
+        
         this.nv = nv;
         init(title, type);
         this.setLocationRelativeTo(null);
@@ -63,13 +69,22 @@ public class NhanVienDialog extends JDialog {
 
     public NhanVienDialog(NhanVienBUS nv, JFrame owner, boolean modal, String title, String type, DTO.NhanVienDTO nhanVien) {
         super(owner, title, modal);
+        this.danhSachChucVuArray = cvbus.getArrTenCV();
+        danhSachChucVu=Arrays.asList(danhSachChucVuArray);
         this.nv = nv;
         this.nhanVien = nhanVien;
         init(title, type);
         name.setText(nhanVien.getHOTEN());
         sdt.setText(nhanVien.getSDT());
         email.setText(nhanVien.getEMAIL());
-        chucvu.setSelectedIndex(nhanVien.getMCV()-1);
+         String tenChucVu = cvbus.getTenChucVuByMCV(nhanVien.getMCV());
+        int index = danhSachChucVu.indexOf(tenChucVu);
+        if (index != -1) {
+            chucvu.setSelectedIndex(index);
+        } else {
+            JOptionPane.showMessageDialog(this, "Chức vụ không tồn tại trong danh sách.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+      
         if (nhanVien.getGIOITINH() == 1) {
             male.setSelected(true);
         } else {
@@ -94,7 +109,7 @@ public class NhanVienDialog extends JDialog {
         PlainDocument phonex = (PlainDocument) sdt.getTxtForm().getDocument();
         phonex.setDocumentFilter((new NumericDocumentFilter()));
         email = new InputForm("Email");
-        chucvu = new SelectForm("Chức vụ", cvbus.getArrTenCV());
+        chucvu = new SelectForm("Chức vụ",cvbus.getArrTenCV());
         male = new JRadioButton("Nam");
         female = new JRadioButton("Nữ");
         gender = new ButtonGroup();
@@ -157,7 +172,7 @@ public class NhanVienDialog extends JDialog {
                                 System.out.println("Nữ");
                                 txt_gender = 0;
                             }
-                            int manv = nv.getAll().size() + 1;
+                            int manv = nv.getTotalNhanVien()+1;
                             String txtName = name.getText();
                             String txtSdt = sdt.getText();
                             String txtEmail = email.getText();
@@ -179,7 +194,6 @@ public class NhanVienDialog extends JDialog {
                 }
             }
         });
-
         btnEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -221,20 +235,21 @@ public class NhanVienDialog extends JDialog {
                 bottom.add(btnAdd);
             case "update" ->
                 bottom.add(btnEdit);
-            case "detail" -> {
-                name.setDisable();
-                sdt.setDisable();
-                email.setDisable();
-                Enumeration<AbstractButton> enumeration = gender.getElements();
-                while (enumeration.hasMoreElements()) {
-                    enumeration.nextElement().setEnabled(false);
-                }
-                jcBd.setDisable();
+             case "detail" -> {
+            name.setDisable();
+            sdt.setDisable();
+            email.setDisable();
+            chucvu.setDisable(); 
+            Enumeration<AbstractButton> enumeration = gender.getElements();
+            while (enumeration.hasMoreElements()) {
+                enumeration.nextElement().setEnabled(false);
             }
+            jcBd.setDisable();
+            
+        }
             default ->
                 throw new AssertionError();
         }
-
         bottom.add(btnExit);
 
         this.add(titlePage, BorderLayout.NORTH);
@@ -243,30 +258,59 @@ public class NhanVienDialog extends JDialog {
 
     }
 
-    boolean ValidationInput() throws ParseException {
-        if (Validation.isEmpty(name.getText())) {
-            JOptionPane.showMessageDialog(this, "Tên nhân viên không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-            return false;
-        } else if(name.getText().length()<6){
-            JOptionPane.showMessageDialog(this, "Tên nhân viên ít nhất 6 kí tự!");
-            return false;
-        }else if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
-            JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        else if (Validation.isEmpty(sdt.getText()) && !Validation.isNumber(sdt.getText()) && sdt.getText().length() != 10) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải là 10 ký tự số", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-            return false;
-        } else if(jcBd.getDate()==null){
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày sinh!");
-            return false;
-        } else if(!male.isSelected() && !female.isSelected()){
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính!");
-            return false;
-        }
-        
-        return true;
+
+boolean ValidationInput() throws ParseException {
+    System.out.println(sdt.getText());
+
+    // Kiểm tra tên nhân viên
+    if (Validation.isEmpty(name.getText())) {
+        JOptionPane.showMessageDialog(this, "Tên nhân viên không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        return false;
+    } else if (name.getText().length() < 6) {
+        JOptionPane.showMessageDialog(this, "Tên nhân viên ít nhất 6 kí tự!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        return false;
     }
+
+    // Kiểm tra email
+    if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
+        JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+
+    // Kiểm tra số điện thoại
+    if (Validation.isEmpty(sdt.getText()) || !Validation.isNumber(sdt.getText()) || sdt.getText().length() != 10) {
+        JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng, phải là số và có 10 ký tự", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+
+    // Kiểm tra ngày sinh
+    if (jcBd.getDate() == null) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn ngày sinh!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        return false;
+    } else {
+        // Tính toán tuổi
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.setTime(jcBd.getDate());
+        Calendar today = Calendar.getInstance();
+        int age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+        if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+
+        if (age < 18 || age > 65) {
+            JOptionPane.showMessageDialog(this, "Tuổi nhân viên phải từ 18 đến 65!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+    }
+
+    // Kiểm tra giới tính
+    if (!male.isSelected() && !female.isSelected()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+
+    return true;
+}
     
     public boolean checkEmail(String email){
         if(!(NhanVienDAO.getInstance().selectByEmail(email)==null)){

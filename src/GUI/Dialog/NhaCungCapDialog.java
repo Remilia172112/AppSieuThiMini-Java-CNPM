@@ -56,7 +56,7 @@ public class NhaCungCapDialog extends JDialog implements ActionListener {
         diachi = new InputForm("Địa chỉ");
         email = new InputForm("Email");
         sodienthoai = new InputForm("Số điện thoại");
-        PlainDocument phonex = (PlainDocument)sodienthoai.getTxtForm().getDocument();
+        PlainDocument phonex = (PlainDocument) sodienthoai.getTxtForm().getDocument();
         phonex.setDocumentFilter((new NumericDocumentFilter()));
 
         pnmain.add(tenNcc);
@@ -112,40 +112,60 @@ public class NhaCungCapDialog extends JDialog implements ActionListener {
         sodienthoai.setEditable(false);
 
     }
-    public boolean Validation(){
-         if (Validation.isEmpty(tenNcc.getText())) {
+
+    public boolean Validation() {
+        if (Validation.isEmpty(tenNcc.getText())) {
             JOptionPane.showMessageDialog(this, "Tên nhà cung cấp không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
-         }
-         else  if (Validation.isEmpty(diachi.getText())) {
+        } else if (Validation.isEmpty(diachi.getText())) {
             JOptionPane.showMessageDialog(this, "Địa chỉ không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
-         }
-         else if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
+        } else if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
             JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng cú pháp", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
-         }
-         else if (Validation.isEmpty(sodienthoai.getText()) || !Validation.isNumber(sodienthoai.getText()) || sodienthoai.getText().length()!=10) {
+        } else if (Validation.isEmpty(sodienthoai.getText()) || !Validation.isNumber(sodienthoai.getText()) || sodienthoai.getText().length() != 10) {
             JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải là 10 ký tự số", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
-         }
-          return true;
+        }
+        return true;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnThem && Validation()) {
-            int mancc = jpNcc.nccBUS.getAll().size() + 1;  
-            jpNcc.nccBUS.add(new NhaCungCapDTO(mancc, tenNcc.getText(), diachi.getText(), email.getText(), sodienthoai.getText()));
-            jpNcc.loadDataTable(jpNcc.listncc);
-            dispose();
+            int mancc = jpNcc.nccBUS.getMaxMaNCC() + 1;
+            if (jpNcc.nccBUS.isDuplicateEmail(email.getText())) {
+                JOptionPane.showMessageDialog(this, "Tài khoản email này đã được sử dụng trong hệ thống!");
+                return;
+            }
+            boolean result = jpNcc.nccBUS.add(new NhaCungCapDTO(mancc, tenNcc.getText(), diachi.getText(), email.getText(), sodienthoai.getText()));
+            if (result) {
+                jpNcc.loadDataTable(jpNcc.listncc);
+                JOptionPane.showMessageDialog(this, "Thêm nhà cung cấp thành công!");
+                dispose();
+            } else {
+                jpNcc.loadDataTable(jpNcc.listncc);
+                JOptionPane.showMessageDialog(this, "Thêm nhà cung cấp thất bại, lỗi hệ thống!");
+                dispose();
+            }
 
         } else if (e.getSource() == btnHuyBo) {
             dispose();
         } else if (e.getSource() == btnCapNhat && Validation()) {
-            jpNcc.nccBUS.update(new NhaCungCapDTO(nccDTO.getMancc(), tenNcc.getText(), diachi.getText(), email.getText(), sodienthoai.getText()));
-            jpNcc.loadDataTable(jpNcc.listncc);
-            dispose();
+            if (jpNcc.nccBUS.isDuplicateEmail(email.getText(), nccDTO.getMancc())) {
+                JOptionPane.showMessageDialog(this, "Tài khoản email này đã được sử dụng trong hệ thống!");
+                return;
+            }
+            boolean result = jpNcc.nccBUS.update(new NhaCungCapDTO(nccDTO.getMancc(), tenNcc.getText(), diachi.getText(), email.getText(), sodienthoai.getText()));
+            if (result) {
+                JOptionPane.showMessageDialog(this, "Sửa nhà cung cấp thành công!");
+                jpNcc.loadDataTable(jpNcc.listncc);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Sửa nhà cung cấp thất bại, lỗi hệ thống!");
+                jpNcc.loadDataTable(jpNcc.listncc);
+                dispose();
+            }
         }
     }
 }
