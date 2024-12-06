@@ -657,7 +657,7 @@ public final class TaoHoaDon extends JPanel {
                         phieuXuatBUS.insert(phieuXuat, chitietphieu);
                         JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
                         dtl = khachHangBUS.selectById(maKhString).getDIEMTICHLUY();
-                        khachHangBUS.update(makh, dtl + (int) Math.ceil(sum / 1000.0) - Integer.parseInt(txtDTLG.getText()));
+                        khachHangBUS.update(makh, dtl + (int) Math.ceil(sum / 100.0) - Integer.parseInt(txtDTLG.getText()));
                         mainChinh.setPanel(new HoaDon(mainChinh, tk));
                     }
 
