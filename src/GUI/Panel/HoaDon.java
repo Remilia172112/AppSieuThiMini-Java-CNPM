@@ -119,7 +119,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
         tablePhieuXuat = new JTable();
         scrollTablePhieuXuat = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[]{"STT", "Mã phiếu xuất", "Khách hàng", "Nhân viên", "Thời gian", "Điểm tích lũy", "Tổng tiền", "Trạng thái"};
+        String[] header = new String[]{"STT", "Mã hóa đơn", "Khách hàng", "Nhân viên", "Thời gian", "Điểm tích lũy", "Tổng tiền", "Trạng thái"};
         tblModel.setColumnIdentifiers(header);
         tablePhieuXuat.setModel(tblModel);
         tablePhieuXuat.setFocusable(false);
