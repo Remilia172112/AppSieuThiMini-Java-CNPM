@@ -19,14 +19,16 @@ public class Validation {
         return false;
     }
 
-    public static Boolean isEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." + "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z" + "A-Z]{2,7}$";
-        Pattern pat = Pattern.compile(emailRegex); // dùng để biên dịch biểu thức chính quy
-        if (email == null) {
-            return false;
-        }
-        return pat.matcher(email).matches();
+   public static Boolean isEmail(String email) {
+    // Biểu thức chính quy kiểm tra email có định dạng đúng với tên miền cụ thể (ví dụ: gmail.com)
+    String emailRegex = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
+    Pattern pat = Pattern.compile(emailRegex);  // Biên dịch biểu thức chính quy
+    if (email == null) {
+        return false;
     }
+    return pat.matcher(email).matches();
+}
+
 
     public static boolean isNumber(String num) {
         boolean result = true;

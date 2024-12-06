@@ -127,4 +127,23 @@ public class NhomQuyenDAO implements DAOinterface<NhomQuyenDTO> {
         }
         return result;
     }
+    // Kiểm tra xem nhóm quyền có liên kết với tài khoản không
+public boolean isLinkedToAccount(int manhomquyen) {
+    boolean isLinked = false;
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "SELECT COUNT(*) FROM TAIKHOAN WHERE MNQ = ?";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setInt(1, manhomquyen);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            isLinked = rs.getInt(1) > 0; 
+        }
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(NhomQuyenDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return isLinked;
+}
+
 }

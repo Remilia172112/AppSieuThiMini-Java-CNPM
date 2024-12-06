@@ -111,18 +111,30 @@ public final class TaoPhieuNhap extends JPanel implements ItemListener, ActionLi
         tablePhieuNhap.setFocusable(false);
         scrollTablePhieuNhap.setViewportView(tablePhieuNhap);
 
-        tablePhieuNhap.addMouseListener((MouseListener) new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int index = tablePhieuNhap.getSelectedRow();
-                if (index != -1) {
-                    tableSanPham.setSelectionMode(index);
-                    setFormChiTietPhieu(chitietphieu.get(index));
-                    rowPhieuSelect = index;
-                    actionbtn("update");
-                }
-            }
-        });
+        tablePhieuNhap.addMouseListener(new MouseAdapter() {
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int index = tablePhieuNhap.getSelectedRow();  // Lấy chỉ số dòng được chọn trong tablePhieuNhap
+        if (index != -1) {
+            // Lấy thông tin chi tiết phiếu nhập từ list chitietphieu
+            ChiTietPhieuNhapDTO ctPhieu = chitietphieu.get(index);
+            SanPhamDTO sp = spBUS.getByMaSP(ctPhieu.getMSP());  // Lấy thông tin sản phẩm từ mã sản phẩm
+            
+            // Cập nhật thông tin sản phẩm vào form
+            setFormChiTietPhieu(ctPhieu);
+            
+            // Cập nhật mã vạch vào form
+            txtMaISBN.setText(sp.getMV());  // Cập nhật mã vạch vào input form
+
+            // Thực hiện thay đổi lựa chọn cho tableSanPham
+            tableSanPham.setRowSelectionInterval(index, index); 
+            
+            rowPhieuSelect = index;
+            actionbtn("update");  // Cập nhật trạng thái button
+        }
+    }
+});
+
 
         //Table san pham
         tableSanPham = new JTable();
@@ -212,14 +224,14 @@ public final class TaoPhieuNhap extends JPanel implements ItemListener, ActionLi
         txtMaISBN = new InputForm("Mã vạch");
         txtMaISBN.setEditable(false);
         // cái này dùng để nhập isbn dô khung txtMaISBN có thể search đc sp, nhưng disable ko dùng ròi
-        txtMaISBN.getTxtForm().addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                ArrayList<SanPhamDTO> rs = spBUS.search(txtMaISBN.getText(), "ISBN");
-                loadDataTalbeSanPham(rs);
-            //thêm load lại inputform
-            }
-        });
+//        txtMaISBN.getTxtForm().addKeyListener(new KeyAdapter() {
+//            @Override
+//            public void keyReleased(java.awt.event.KeyEvent evt) {
+//                ArrayList<SanPhamDTO> rs = spBUS.search(txtMaISBN.getText(), "ISBN");
+//                loadDataTalbeSanPham(rs);
+//            //thêm load lại inputform
+//            }
+//        });
 
         txtDongia = new InputForm("Giá nhập");
         PlainDocument dongia = (PlainDocument) txtDongia.getTxtForm().getDocument();
@@ -367,7 +379,6 @@ public final class TaoPhieuNhap extends JPanel implements ItemListener, ActionLi
 
     public void setFormChiTietPhieu(ChiTietPhieuNhapDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
         SanPhamDTO ctsp = spBUS.getByMaSP(phieu.getMSP());
-
         this.txtMaSp.setText(Integer.toString(ctsp.getMSP()));
         this.txtTenSp.setText(spBUS.getByMaSP(ctsp.getMSP()).getTEN());
         // this.cbxDanhMuc.setArr(getThongTinSach(pb.getDANHMUC()));
@@ -410,26 +421,50 @@ public final class TaoPhieuNhap extends JPanel implements ItemListener, ActionLi
     }
 
     public boolean validateNhap() {
-        int phuongthuc = 0;
-        if (Validation.isEmpty(txtMaSp.getText())) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm", "Chọn sản phẩm", JOptionPane.WARNING_MESSAGE);
-            return false;
-        } else if (Validation.isEmpty(txtDongia.getText())) {
-            JOptionPane.showMessageDialog(this, "Giá nhập không được để rỗng !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-            return false;
-        } else if (phuongthuc == 0) {
-            if (Validation.isEmpty(txtMaISBN.getText()) || !Validation.isNumber(txtMaISBN.getText()) || txtMaISBN.getText().length() != 13) {
-                JOptionPane.showMessageDialog(this, "Mã isbn bắt đầu không được để rỗng và phải là 13 ký tự số !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-            if (Validation.isEmpty(txtSoLuongSPnhap.getText()) || !Validation.isNumber(txtSoLuongSPnhap.getText())) {
-                JOptionPane.showMessageDialog(this, "Số lượng không được để rỗng và phải là số!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        } 
+    int phuongthuc = 0;
     
-        return true;
+    if (Validation.isEmpty(txtMaSp.getText())) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm", "Chọn sản phẩm", JOptionPane.WARNING_MESSAGE);
+        return false;
+    } 
+    
+    if (Validation.isEmpty(txtDongia.getText())) {
+        JOptionPane.showMessageDialog(this, "Giá nhập không được để rỗng!", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+        return false;
+    } 
+    
+    if (!Validation.isNumber(txtDongia.getText())) {
+        JOptionPane.showMessageDialog(this, "Giá nhập phải là số hợp lệ!", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+        return false;
     }
+    
+    double giaNhap = Double.parseDouble(txtDongia.getText());
+    if (giaNhap <= 0) {
+        JOptionPane.showMessageDialog(this, "Giá nhập phải lớn hơn 0!", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+    
+    if (phuongthuc == 0) {
+        if (Validation.isEmpty(txtMaISBN.getText()) || !Validation.isNumber(txtMaISBN.getText()) || txtMaISBN.getText().length() != 13) {
+            JOptionPane.showMessageDialog(this, "Mã ISBN không được để rỗng, phải là số, và có 13 ký tự!", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        if (Validation.isEmpty(txtSoLuongSPnhap.getText()) || !Validation.isNumber(txtSoLuongSPnhap.getText())) {
+            JOptionPane.showMessageDialog(this, "Số lượng không được để rỗng và phải là số!", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
+        int soLuongNhap = Integer.parseInt(txtSoLuongSPnhap.getText());
+        if (soLuongNhap <= 0) {
+            JOptionPane.showMessageDialog(this, "Số lượng nhập phải lớn hơn 0!", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+    }
+    
+    return true;
+}
+
 
 
     public void resetForm() {
@@ -484,10 +519,12 @@ public final class TaoPhieuNhap extends JPanel implements ItemListener, ActionLi
             actionbtn("add");
             loadDataTableChiTietPhieu(chitietphieu);
             resetForm();
-        } else if (source == btnEditSP) {
+        } else if (source == btnEditSP&&validateNhap()) {
             chitietphieu.get(rowPhieuSelect).setSL(Integer.parseInt(txtSoLuongSPnhap.getText()));
             chitietphieu.get(rowPhieuSelect).setTIEN(Integer.parseInt(txtDongia.getText()));
             loadDataTableChiTietPhieu(chitietphieu);
+               JOptionPane.showMessageDialog(this, "Sửa sản phẩm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            
         } else if (source == btnNhapHang) {
             eventBtnNhapHang();
         } 

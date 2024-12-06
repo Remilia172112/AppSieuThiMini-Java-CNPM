@@ -1,5 +1,6 @@
 package GUI;
 
+import BUS.TaiKhoanBUS;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -152,11 +153,19 @@ public class login_page extends JFrame implements KeyListener {
     }
 
     public void checkLogin() throws UnsupportedLookAndFeelException {
-        String usernameCheck = txtUsername.getText();
-        String passwordCheck = txtPassword.getPass();
-        if (usernameCheck.equals("") || passwordCheck.equals("")) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin đầy đủ", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+    String usernameCheck = txtUsername.getText();
+    String passwordCheck = txtPassword.getPass();
+    
+    if (usernameCheck.equals("") || passwordCheck.equals("")) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin đầy đủ", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+    } else {
+        // Use the KT method from TaiKhoanBUS to check if the account exists and is active
+        TaiKhoanBUS taiKhoanBUS = new TaiKhoanBUS();
+        boolean isAccountInactive = taiKhoanBUS.KT(usernameCheck);
+        if (isAccountInactive) {
+            JOptionPane.showMessageDialog(this, "Tài khoản của bạn không tồn tại trong hệ thống", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
         } else {
+            // Account exists, check password
             TaiKhoanDTO tk = TaiKhoanDAO.getInstance().selectByUser(usernameCheck);
             if (tk == null) {
                 JOptionPane.showMessageDialog(this, "Tài khoản của bạn không tồn tại trên hệ thống", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
@@ -179,6 +188,8 @@ public class login_page extends JFrame implements KeyListener {
             }
         }
     }
+}
+
 
     public void imgIntro() {
         JPanel bo = new JPanel();

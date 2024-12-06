@@ -14,7 +14,7 @@ public class JDBCUtil {
             //Cac thong so
             String url = "jdbc:mySQL://localhost:3306/quanlysieuthimini";
             String userName = "root";
-            String password = "1234";
+            String password = "";
             //Tao ket noi 
             result = DriverManager.getConnection(url, userName, password);
         } catch (Exception e) {

@@ -183,7 +183,7 @@ public class QuenMatKhau extends JDialog {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin các trường");
         } else {
             if (mk.equals(xnmk)) {
-                tkbus.doiMatKhauBangEmail(tk.getMNV(), mk);
+                tkbus.doiMatKhau(tk.getMNV(), mk);
                 JOptionPane.showMessageDialog(this, "Thay đổi mật khẩu thành công");
                 this.dispose(); // Đóng QuenMatKhau
                 loginFrame.setVisible(true); // Hiển thị lại login_page

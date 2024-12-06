@@ -278,10 +278,11 @@ boolean ValidationInput() throws ParseException {
     }
 
     // Kiểm tra số điện thoại
-    if (Validation.isEmpty(sdt.getText()) || !Validation.isNumber(sdt.getText()) || sdt.getText().length() != 10) {
-        JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng, phải là số và có 10 ký tự", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-        return false;
-    }
+    // Kiểm tra số điện thoại
+if (Validation.isEmpty(sdt.getText()) || !Validation.isNumber(sdt.getText()) || sdt.getText().length() != 10 || !sdt.getText().startsWith("0")) {
+    JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng, phải là số, có 10 ký tự và bắt đầu bằng số 0", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+    return false;
+}
 
     // Kiểm tra ngày sinh
     if (jcBd.getDate() == null) {

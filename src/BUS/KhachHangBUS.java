@@ -154,5 +154,14 @@ public class KhachHangBUS {
     public int total(){
         return khDAO.countAllRecords();
     }
+    public KhachHangDTO getKhachHangById(int makhachhang) {
+    for (KhachHangDTO kh : this.listKhachHang) {
+        if (kh.getMKH() == makhachhang) {
+            return kh;  // Trả về đối tượng khách hàng nếu tìm thấy
+        }
+    }
+    return null;  // Trả về null nếu không tìm thấy khách hàng
+}
+
 
 }

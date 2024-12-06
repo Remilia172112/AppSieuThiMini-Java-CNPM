@@ -78,7 +78,8 @@ public class TaiKhoanBUS {
         switch (type) {
             case "Tất cả" -> {
                 for (TaiKhoanDTO i : listTaiKhoan) {
-                    if (Integer.toString(i.getMNV()).contains(txt) || i.getTDN().contains(txt) ) {
+                    System.out.println(i.getTDN());
+                    if ((i.getMNV()+"").contains(txt)||i.getTDN().toLowerCase().contains(txt)) {
                         result.add(i);
                     }
                 }
@@ -90,7 +91,7 @@ public class TaiKhoanBUS {
                     }
                 }
             }
-            case "Username" -> {
+            case "Tên đăng nhập" -> {
                 for (TaiKhoanDTO i : listTaiKhoan) {
                     if (i.getTDN().toLowerCase().contains(txt)) {
                         result.add(i);
@@ -129,8 +130,22 @@ public class TaiKhoanBUS {
         }
         return result;
     }
-    public void doiMatKhauBangEmail(int id, String newPassword) {
+    public void doiMatKhau(int id, String newPassword) {
         TaiKhoanDAO.getInstance().updatePassByMNV(id, newPassword);
+    }
+    public TaiKhoanDTO findTaiKhoanByMaNhanVien(int maNhanVien) {
+    for (TaiKhoanDTO tk : getTaiKhoanAll()) {
+        if (tk.getMNV() == maNhanVien) {
+            return tk;
+        }
+    }
+    return null; 
+}
+    public ArrayList<TaiKhoanDTO> getTaiKhoanExcludingAdmin() {
+        return TaiKhoanDAO.getInstance().selectAllExcludingAdmin();
+    }
+    public boolean KT(String userName){
+        return TaiKhoanDAO.getInstance().isAccountInactive(userName);
     }
 
 }

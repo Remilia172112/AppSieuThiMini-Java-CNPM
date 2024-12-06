@@ -64,13 +64,49 @@ public class PhanQuyen extends JPanel implements ActionListener {
         functionBar.add(mainFunction);
 
         search = new IntegratedSearch(new String[]{"Tất cả"});
+        search.txtSearchForm.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+    @Override
+    public void insertUpdate(javax.swing.event.DocumentEvent e) {
+        updateTable();
+    }
+
+    @Override
+    public void removeUpdate(javax.swing.event.DocumentEvent e) {
+        updateTable();
+    }
+
+    @Override
+    public void changedUpdate(javax.swing.event.DocumentEvent e) {
+        updateTable();
+    }
+
+    private void updateTable() {
+        String searchText = search.txtSearchForm.getText().trim();
+        if (searchText.isEmpty()) {
+            // Nếu ô tìm kiếm rỗng, tải lại toàn bộ danh sách
+            loadDataTalbe(listnhomquyen);
+        } else {
+            // Tìm kiếm và tải danh sách kết quả
+            ArrayList<NhomQuyenDTO> rs = nhomquyenBUS.search(searchText);
+            loadDataTalbe(rs);
+        }
+    }
+});
+
         search.txtSearchForm.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                ArrayList<NhomQuyenDTO> rs = nhomquyenBUS.search(search.txtSearchForm.getText());
-                loadDataTalbe(rs);
-            }
-        });
+    @Override
+    public void keyReleased(java.awt.event.KeyEvent evt) {
+        String searchText = search.txtSearchForm.getText().trim();
+        if (searchText.isEmpty()) {
+            // Nếu ô tìm kiếm rỗng, tải lại toàn bộ danh sách
+            loadDataTalbe(listnhomquyen);
+        } else {
+            // Tìm kiếm và tải danh sách kết quả
+            ArrayList<NhomQuyenDTO> rs = nhomquyenBUS.search(searchText);
+            loadDataTalbe(rs);
+        }
+    }
+});
         functionBar.add(search);
 
         contentCenter.add(functionBar, BorderLayout.NORTH);
@@ -157,4 +193,5 @@ public class PhanQuyen extends JPanel implements ActionListener {
         }
         return index;
     }
+    
 }

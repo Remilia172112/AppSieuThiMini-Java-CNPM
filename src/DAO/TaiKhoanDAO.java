@@ -263,4 +263,49 @@ public class TaiKhoanDAO implements DAOinterface<TaiKhoanDTO>{
         }
         return result;
     }
+    public ArrayList<TaiKhoanDTO> selectAllExcludingAdmin() {
+    ArrayList<TaiKhoanDTO> result = new ArrayList<>();
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "SELECT * FROM TAIKHOAN WHERE (TT = '0' OR TT = '1' OR TT = '2') AND TDN != 'admin'";
+        PreparedStatement pst = con.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            int MNV = rs.getInt("MNV");
+            String TDN = rs.getString("TDN");
+            String MK = rs.getString("MK");
+            int MNQ = rs.getInt("MNQ");
+            int TT = rs.getInt("TT");
+            TaiKhoanDTO tk = new TaiKhoanDTO(MNV, TDN, MK, MNQ, TT);
+            result.add(tk);
+        }
+        JDBCUtil.closeConnection(con);
+    } catch (Exception e) {
+        Logger.getLogger(TaiKhoanDAO.class.getName()).log(Level.SEVERE, null, e);
+    }
+    return result;
+}
+    public boolean isAccountInactive(String username) {
+    boolean isInactive = false;
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "SELECT TT FROM TAIKHOAN WHERE TDN = ?";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setString(1, username);
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            int status = rs.getInt("TT");
+            if (status == -1) {
+                isInactive = true;
+            }
+        }
+
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(TaiKhoanDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return isInactive;
+}
+
 }

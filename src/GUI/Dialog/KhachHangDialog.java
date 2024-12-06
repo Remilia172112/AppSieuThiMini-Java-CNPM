@@ -152,10 +152,11 @@ public class KhachHangDialog extends JDialog implements MouseListener {
             JOptionPane.showMessageDialog(this, "Tên khách hàng không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
          }
-         else if (Validation.isEmpty(sdtKH.getText()) || !Validation.isNumber(sdtKH.getText()) && sdtKH.getText().length()!=10) {
-            JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải là 10 ký tự số", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-            return false;
-         }
+         else if (Validation.isEmpty(sdtKH.getText()) || !Validation.isNumber(sdtKH.getText()) || sdtKH.getText().length() != 10 || sdtKH.getText().charAt(0) != '0') {
+    JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng, phải là 10 ký tự số và bắt đầu bằng 0", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+    return false;
+}
+
         else  if (Validation.isEmpty(diachiKH.getText())) {
             JOptionPane.showMessageDialog(this, "Địa chỉ không được rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return false;
@@ -166,49 +167,44 @@ public class KhachHangDialog extends JDialog implements MouseListener {
          }
           return true;
     }
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if (e.getSource() == btnThem && Validation()) {
-                int id= jpKH.khachhangBUS.total()+1;
-                long now = System.currentTimeMillis();
-                Timestamp currenTime = new Timestamp(now);
-                boolean flag=jpKH.khachhangBUS.add(new DTO.KhachHangDTO(id, tenKH.getText(),sdtKH.getText(), diachiKH.getText(), emailKH.getText(), currenTime,0));
-                jpKH.loadDataTable(jpKH.khachhangBUS.getAll());
-                if(flag){
-                    JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                }else{
-                     JOptionPane.showMessageDialog(this, "Thêm khách hàng thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
-                }
-                dispose();
-        } else if (e.getSource() == btnHuyBo) {
-            dispose();
-        } else if (e.getSource() == btnCapNhat && Validation()) {
-           boolean flag= jpKH.khachhangBUS.update(new KhachHangDTO(kh.getMKH(), tenKH.getText(), sdtKH.getText(), diachiKH.getText(), emailKH.getText(), kh.getNGAYTHAMGIA(), kh.getDIEMTICHLUY()));
-            if(flag){
-                    JOptionPane.showMessageDialog(this, "Sửa khách hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                }else{
-                     JOptionPane.showMessageDialog(this, "Sửa khách hàng thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
-                }
-            jpKH.loadDataTable(jpKH.listkh);
-            dispose();
-        }
-    }
-
-    public static boolean isPhoneNumber(String str) {
-        // Loại bỏ khoảng trắng và dấu ngoặc đơn nếu có
-        str = str.replaceAll("\\s+", "").replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\-", "");
-
-        // Kiểm tra xem chuỗi có phải là một số điện thoại hợp lệ hay không
-        if (str.matches("\\d{10}")) { // Kiểm tra số điện thoại 10 chữ số
-            return true;
-        } else if (str.matches("\\d{3}-\\d{3}-\\d{4}")) { // Kiểm tra số điện thoại có dấu gạch ngang
-            return true;
-        } else if (str.matches("\\(\\d{3}\\)\\d{3}-\\d{4}")) { // Kiểm tra số điện thoại có dấu ngoặc đơn
-            return true;
+   @Override
+public void mousePressed(MouseEvent e) {
+    if (e.getSource() == btnThem && Validation()) {
+        // Thêm khách hàng mới
+        int id = jpKH.khachhangBUS.total() + 1;
+        long now = System.currentTimeMillis();
+        Timestamp currenTime = new Timestamp(now);
+        boolean flag = jpKH.khachhangBUS.add(new DTO.KhachHangDTO(id, tenKH.getText(), sdtKH.getText(), diachiKH.getText(), emailKH.getText(), currenTime, 0));
+        jpKH.loadDataTable(jpKH.khachhangBUS.getAll());
+        if (flag) {
+            JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            return false; // Trả về false nếu chuỗi không phải là số điện thoại hợp lệ
+            JOptionPane.showMessageDialog(this, "Thêm khách hàng thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
         }
+        dispose();
+    } else if (e.getSource() == btnHuyBo) {
+        // Hủy bỏ
+        dispose();
+    } else if (e.getSource() == btnCapNhat && Validation()) {
+        // Kiểm tra email trước khi cập nhật thông tin khách hàng
+        if (Validation.isEmpty(emailKH.getText()) || !Validation.isEmail(emailKH.getText())) {
+            JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng định dạng!", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Cập nhật thông tin khách hàng
+        boolean flag = jpKH.khachhangBUS.update(new KhachHangDTO(kh.getMKH(), tenKH.getText(), sdtKH.getText(), diachiKH.getText(), emailKH.getText(), kh.getNGAYTHAMGIA(), kh.getDIEMTICHLUY()));
+        if (flag) {
+            JOptionPane.showMessageDialog(this, "Sửa khách hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Sửa khách hàng thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+        }
+
+        jpKH.loadDataTable(jpKH.khachhangBUS.getAll());
+        dispose();
     }
+}
+
 
     @Override
     public void mouseReleased(MouseEvent e) {

@@ -51,7 +51,7 @@ public class TaiKhoan extends JPanel implements ActionListener, ItemListener {
     Color BackgroundColor = new Color(193 ,237 ,220);
     DefaultTableModel tblModel;
     public TaiKhoanBUS taiKhoanBus = new TaiKhoanBUS();
-    ArrayList<TaiKhoanDTO> listTk = taiKhoanBus.getTaiKhoanAll();
+    ArrayList<TaiKhoanDTO> listTk = taiKhoanBus.getTaiKhoanExcludingAdmin();
 
     private Main m;
 
@@ -157,9 +157,6 @@ public class TaiKhoan extends JPanel implements ActionListener, ItemListener {
                 case 0 -> {
                     trangthaiString = "Ngưng hoạt động";
                 }
-                case 2 -> {
-                    trangthaiString = "Chờ xử lý";
-                }
             }
             tblModel.addRow(new Object[]{
                 taiKhoanDTO.getMNV(), taiKhoanDTO.getTDN(), taiKhoanBus.getNhomQuyenDTO(taiKhoanDTO.getMNQ()).getTennhomquyen(), trangthaiString
@@ -177,48 +174,65 @@ public class TaiKhoan extends JPanel implements ActionListener, ItemListener {
     }
 
     public int getRowSelected() {
-        int index = tableTaiKhoan.getSelectedRow();
-        if (index == -1) {
+        int selectedRow = tableTaiKhoan.getSelectedRow();
+        int maNhanVien = (int) tableTaiKhoan.getValueAt(selectedRow, 0);
+        if (maNhanVien == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản");
         }
-        return index;
+        return maNhanVien;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == mainFunction.btn.get("create")) {
-            new ListNhanVien(this, owner, "Chọn tài khoản", true);
-        } else if (e.getSource() == mainFunction.btn.get("update")) {
-            int index = getRowSelected();
-            if (index != -1) {
-                new TaiKhoanDialog(this, owner, "Cập nhật tài khoản", true, "update", listTk.get(index));
-            }
-        } else if (e.getSource() == mainFunction.btn.get("delete")) {
-            int index = getRowSelected();
-            if (index != -1) {
-                int input = JOptionPane.showConfirmDialog(null,
-                        "Bạn có chắc chắn muốn xóa tài khoản :)!", "Xóa xóa tài khoản",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-                if (input == 0) {
-                    TaiKhoanDAO.getInstance().delete(listTk.get(index).getMNV() + "");
-                    loadTable(taiKhoanBus.getTaiKhoanAll());
-                }
-            }
-        } else if (e.getSource() == mainFunction.btn.get("detail")) {
-            int index = getRowSelected();
-            if (index != -1) {
-                new TaiKhoanDialog(this, owner, "Thêm tài khoản", true, "view", listTk.get(index));
-            }
-        } else if (e.getSource() == mainFunction.btn.get("export")) {
-            try {
-                JTableExporter.exportJTableToExcel(tableTaiKhoan);
-            } catch (IOException ex) {
-                Logger.getLogger(TaiKhoan.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (e.getSource() == mainFunction.btn.get("import")) {
-            importExcel();
-        }
+   @Override
+public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == mainFunction.btn.get("create")) {
+        // Mở dialog để thêm tài khoản mới mà không cần chọn dòng
+        new ListNhanVien(this, owner, "Chọn tài khoản", true);
+        return; // Thoát khỏi phương thức sau khi xử lý nút "Thêm"
     }
+
+    int selectedRow = tableTaiKhoan.getSelectedRow();
+    
+    if (selectedRow == -1) {
+        String action = "";
+        if (e.getSource() == mainFunction.btn.get("update")) {
+            action = "cập nhật";
+        } else if (e.getSource() == mainFunction.btn.get("delete")) {
+            action = "xóa";
+        } else if (e.getSource() == mainFunction.btn.get("detail")) {
+            action = "xem chi tiết";
+        }
+        
+        if (!action.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng trước khi " + action + " tài khoản.");
+        }
+        return; // Thoát khỏi phương thức nếu không có dòng nào được chọn
+    }
+    
+    if (e.getSource() == mainFunction.btn.get("update")) {
+        int index = (int) tableTaiKhoan.getValueAt(selectedRow, 0);
+        new TaiKhoanDialog(this, owner, "Cập nhật tài khoản", true, "update", taiKhoanBus.findTaiKhoanByMaNhanVien(index));
+    } else if (e.getSource() == mainFunction.btn.get("delete")) {
+        int index = (int) tableTaiKhoan.getValueAt(selectedRow, 0);
+        int input = JOptionPane.showConfirmDialog(null,
+                "Bạn có chắc chắn muốn xóa tài khoản :)!", "Xóa tài khoản",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+        if (input == 0) {
+            TaiKhoanDAO.getInstance().delete(index + "");
+            loadTable(taiKhoanBus.getTaiKhoanExcludingAdmin());
+        }
+    } else if (e.getSource() == mainFunction.btn.get("detail")) {
+        int index = (int) tableTaiKhoan.getValueAt(selectedRow, 0);
+        new TaiKhoanDialog(this, owner, "Thêm tài khoản", true, "view", taiKhoanBus.findTaiKhoanByMaNhanVien(index));
+    } else if (e.getSource() == mainFunction.btn.get("export")) {
+        try {
+            JTableExporter.exportJTableToExcel(tableTaiKhoan);
+        } catch (IOException ex) {
+            Logger.getLogger(TaiKhoan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    } else if (e.getSource() == mainFunction.btn.get("import")) {
+        importExcel();
+    }
+}
 
     public void importExcel() {
         File excelFile;
@@ -305,6 +319,7 @@ public class TaiKhoan extends JPanel implements ActionListener, ItemListener {
 
         loadTable(listTk);
     }
+    
 
     @Override
     public void itemStateChanged(ItemEvent e) {

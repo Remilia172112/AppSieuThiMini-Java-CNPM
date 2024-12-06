@@ -171,4 +171,47 @@ public class PhieuNhapBUS {
     public ArrayList<PhieuNhapDTO> selectPhieuNhapByMNCC(int mncc) {
         return phieunhapDAO.selectPhieuNhapByMNCC(mncc);
     }
+    public ArrayList<PhieuNhapDTO> search(String searchText, String searchType) {
+    ArrayList<PhieuNhapDTO> result = new ArrayList<>();
+    searchText = searchText.toLowerCase();  
+    switch (searchType) {  
+        case "Tất cả" -> {
+            for (PhieuNhapDTO phieuNhap : getAllList()) {
+                // Kiểm tra nếu Mã phiếu nhập, Tên nhà cung cấp hoặc Tên nhân viên chứa searchText
+                if ((Integer.toString(phieuNhap.getMP()).contains(searchText)) ||
+                    nccBUS.getTenNhaCungCap(phieuNhap.getMNCC()).toLowerCase().contains(searchText) ||
+                    nvBUS.getNameById(phieuNhap.getMNV()).toLowerCase().contains(searchText)) {
+                    result.add(phieuNhap);
+                }
+            }
+        }
+        case "Mã phiếu nhập" -> {
+            for (PhieuNhapDTO phieuNhap : getAllList()) {
+                // Kiểm tra nếu Mã phiếu nhập chứa searchText
+                if (Integer.toString(phieuNhap.getMP()).contains(searchText)) {
+                    result.add(phieuNhap);
+                }
+            }
+        }
+        case "Nhà cung cấp" -> {
+            for (PhieuNhapDTO phieuNhap : getAllList()) {
+                // Kiểm tra nếu Tên nhà cung cấp chứa searchText
+                if (nccBUS.getTenNhaCungCap(phieuNhap.getMNCC()).toLowerCase().contains(searchText)) {
+                    result.add(phieuNhap);
+                }
+            }
+        }
+        case "Nhân viên nhập" -> {
+            for (PhieuNhapDTO phieuNhap : getAllList()) {
+                // Kiểm tra nếu Tên nhân viên chứa searchText
+                if (nvBUS.getNameById(phieuNhap.getMNV()).toLowerCase().contains(searchText)) {
+                    result.add(phieuNhap);
+                }
+            }
+        }
+    }
+    return result;
+}
+
+
 }

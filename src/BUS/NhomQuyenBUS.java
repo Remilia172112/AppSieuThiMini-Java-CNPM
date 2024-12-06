@@ -5,6 +5,7 @@ import DAO.NhomQuyenDAO;
 import DTO.ChiTietQuyenDTO;
 import DTO.NhomQuyenDTO;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 public class NhomQuyenBUS {
 
@@ -44,13 +45,30 @@ public class NhomQuyenBUS {
         return check;
     }
 
-    public boolean delete(NhomQuyenDTO nqdto) {
-        boolean check = nhomquyenDAO.delete(Integer.toString(nqdto.getManhomquyen())) != 0;
-        if (check) {
-            this.listNhomQuyen.remove(nqdto);
-        }
-        return check;
+//    public boolean delete(NhomQuyenDTO nqdto) {
+//        boolean check = nhomquyenDAO.delete(Integer.toString(nqdto.getManhomquyen())) != 0;
+//        if (check) {
+//            this.listNhomQuyen.remove(nqdto);
+//        }
+//        return check;
+//    }
+    public boolean delete(NhomQuyenDTO nq) {
+    // Kiểm tra xem nhóm quyền có liên kết với tài khoản không
+    boolean isLinked = nhomquyenDAO.isLinkedToAccount(nq.getManhomquyen());
+    if (isLinked) {
+        // Nếu có tài khoản liên kết, không cho phép xóa
+        JOptionPane.showMessageDialog(null, "Không thể xóa nhóm quyền này vì nó đang được liên kết với một tài khoản.");
+        return false;
     }
+    
+    // Nếu không có tài khoản liên kết, thực hiện xóa
+    boolean check = nhomquyenDAO.delete(Integer.toString(nq.getManhomquyen())) != 0;
+    if (check) {
+        this.listNhomQuyen.remove(nq); // Xóa nhóm quyền khỏi danh sách trong bộ nhớ
+    }
+    return check;
+}
+
 
     public ArrayList<ChiTietQuyenDTO> getChiTietQuyen(String manhomquyen) {
         return chitietquyenDAO.selectAll(manhomquyen);
@@ -89,4 +107,13 @@ public class NhomQuyenBUS {
         }
         return result;
     }
+    public boolean isDuplicateName(String tennhomquyen) {
+    for (NhomQuyenDTO nhom : this.listNhomQuyen) {
+        if (nhom.getTennhomquyen().equalsIgnoreCase(tennhomquyen)) {
+            return true;
+        }
+    }
+    return false; 
+}
+
 }

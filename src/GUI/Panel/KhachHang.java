@@ -170,13 +170,15 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
     }
     }
 
-    public int getRowSelected() {
-        int index = tableKhachHang.getSelectedRow();
-        if (index == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng");
-        }
-        return index;
+    public int getSelectedCustomerId() {
+    int row = tableKhachHang.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng");
+        return -1;  // Trả về -1 nếu không có dòng nào được chọn
     }
+    return (int) tblModel.getValueAt(row, 0);  // Giả sử cột 0 là mã khách hàng
+}
+
 
    public void importExcel() {
     File excelFile;
@@ -264,41 +266,67 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == mainFunction.btn.get("create")) {
-            new KhachHangDialog(this, owner, "Thêm khách hàng", true, "create");
-        } else if (e.getSource() == mainFunction.btn.get("update")) {
-            int index = getRowSelected();
-            if (index != -1) {
-                new KhachHangDialog(this, owner, "Chỉnh sửa khách hàng", true, "update", listkh.get(index));
-            }
-        } else if (e.getSource() == mainFunction.btn.get("delete")) {
-            int index = getRowSelected();
-            if (index != -1) {
-                int input = JOptionPane.showConfirmDialog(null,
-                        "Bạn có chắc chắn muốn xóa khách hàng ?", "Xóa khách hàng",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-                if (input == 0) {
-                    khachhangBUS.delete(listkh.get(index));
-                    loadDataTable(listkh);
-                }
-            }
-        } else if (e.getSource() == mainFunction.btn.get("detail")) {
-            int index = getRowSelected();
-            if (index != -1) {
-                new KhachHangDialog(this, owner, "Xem khách hàng", true, "view", listkh.get(index));
-            }
-        } else if (e.getSource() == mainFunction.btn.get("import")) {
-            importExcel();
-        } else if (e.getSource() == mainFunction.btn.get("export")) {
-            try {
-                JTableExporter.exportJTableToExcel(tableKhachHang);
-            } catch (IOException ex) {
-                Logger.getLogger(KhachHang.class.getName()).log(Level.SEVERE, null, ex);
+ 
+@Override
+public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == mainFunction.btn.get("create")) {
+        new KhachHangDialog(this, owner, "Thêm khách hàng", true, "create");
+    } else if (e.getSource() == mainFunction.btn.get("update")) {
+        int makhachhang = getSelectedCustomerId();  // Sử dụng phương thức getSelectedCustomerId()
+        if (makhachhang != -1) {
+            // Dùng phương thức từ KhachHangBUS để lấy đối tượng khách hàng
+            KhachHangDTO khachHang = khachhangBUS.getKhachHangById(makhachhang);
+            if (khachHang != null) {
+                new KhachHangDialog(this, owner, "Chỉnh sửa khách hàng", true, "update", khachHang);
             }
         }
+    } else if (e.getSource() == mainFunction.btn.get("delete")) {
+        int makhachhang = getSelectedCustomerId();  // Sử dụng phương thức getSelectedCustomerId()
+        if (makhachhang != -1) {
+            int input = JOptionPane.showConfirmDialog(null,
+                    "Bạn có chắc chắn muốn xóa khách hàng?", "Xóa khách hàng",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (input == 0) {
+                // Dùng phương thức từ KhachHangBUS để lấy đối tượng khách hàng
+                KhachHangDTO khachHang = khachhangBUS.getKhachHangById(makhachhang);
+                if (khachHang != null) {
+                    // Thực hiện xóa khách hàng
+                    boolean deleteSuccess = khachhangBUS.delete(khachHang);
+                    
+                    if (deleteSuccess) {
+                        // Nếu xóa thành công, cập nhật lại bảng
+                        JOptionPane.showMessageDialog(this, "Xóa khách hàng thành công.");
+                        listkh = khachhangBUS.getAll();  // Tải lại danh sách khách hàng
+                        loadDataTable(listkh);
+                    } else {
+                        // Nếu xóa thất bại, thông báo lỗi
+                        JOptionPane.showMessageDialog(this, "Xóa khách hàng thất bại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        }
+    } else if (e.getSource() == mainFunction.btn.get("detail")) {
+        int makhachhang = getSelectedCustomerId();  // Sử dụng phương thức getSelectedCustomerId()
+        if (makhachhang != -1) {
+            // Dùng phương thức từ KhachHangBUS để lấy đối tượng khách hàng
+            KhachHangDTO khachHang = khachhangBUS.getKhachHangById(makhachhang);
+            if (khachHang != null) {
+                new KhachHangDialog(this, owner, "Xem khách hàng", true, "view", khachHang);
+            }
+        }
+    } else if (e.getSource() == mainFunction.btn.get("import")) {
+        importExcel();
+    } else if (e.getSource() == mainFunction.btn.get("export")) {
+        try {
+            JTableExporter.exportJTableToExcel(tableKhachHang);
+        } catch (IOException ex) {
+            Logger.getLogger(KhachHang.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+}
+
+
+
 
     @Override
     public void itemStateChanged(ItemEvent e) {

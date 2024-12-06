@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
@@ -150,7 +151,15 @@ public final class PhieuNhap extends JPanel implements ActionListener, KeyListen
         String[] objToSearch = {"Tất cả", "Mã phiếu nhập", "Nhà cung cấp", "Nhân viên nhập"};
         search = new IntegratedSearch(objToSearch);
         search.cbxChoose.addItemListener(this);
-        search.txtSearchForm.addKeyListener(this);
+        search.txtSearchForm.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String type = (String) search.cbxChoose.getSelectedItem();
+                String txt = search.txtSearchForm.getText();
+                listPhieu = phieunhapBUS.search(txt, type);
+                loadDataTalbe(listPhieu);
+            }
+        });
         search.btnReset.addActionListener(this);
         functionBar.add(search);
 
