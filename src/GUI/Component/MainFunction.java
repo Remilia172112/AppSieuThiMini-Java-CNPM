@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public final class MainFunction extends JToolBar {
 
-    public ButtonToolBar btnAdd, btnDelete, btnEdit, btnDetail, btnNhapExcel, btnXuatExcel, btnHuyPhieu;
+    public ButtonToolBar btnAdd, btnDelete, btnEdit, btnDetail, /* btnNhapExcel, */ btnXuatExcel, btnHuyPhieu;
     public JSeparator separator1;
     public HashMap<String, ButtonToolBar> btn = new HashMap<>();
     private final NhomQuyenBUS nhomquyenBus = new NhomQuyenBUS();
@@ -23,7 +23,7 @@ public final class MainFunction extends JToolBar {
         btn.put("update", new ButtonToolBar("SỬA", "edit.svg", "update"));
         btn.put("cancel", new ButtonToolBar("HUỶ PHIẾU", "cancel.svg", "delete"));
         btn.put("detail", new ButtonToolBar("CHI TIẾT", "detail.svg", "view"));
-        btn.put("import", new ButtonToolBar("NHẬP EXCEL", "import_excel.svg", "create"));
+        // btn.put("import", new ButtonToolBar("NHẬP EXCEL", "import_excel.svg", "create"));
         btn.put("export", new ButtonToolBar("XUẤT EXCEL", "export_excel.svg", "view"));
     }
 

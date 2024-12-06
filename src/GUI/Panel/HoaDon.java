@@ -93,7 +93,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
         functionBar.setLayout(new GridLayout(1, 2, 50, 0));
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        String[] action = {"create", "detail", "cancel", "export"};
+        String[] action = {"create", "detail", /* "cancel", */ "export"};
         mainFunction = new MainFunction(m.user.getMNQ(), "hoadon", action);
         functionBar.add(mainFunction);
 
@@ -102,7 +102,7 @@ public final class HoaDon extends JPanel implements ActionListener, KeyListener,
             mainFunction.btn.get(ac).addActionListener(this);
         }
 
-        search = new IntegratedSearch(new String[]{"Tất cả", "Mã phiếu", "Khách hàng", "Nhân viên xuất"});
+        search = new IntegratedSearch(new String[]{/* "Tất cả", */ "Mã phiếu" /*, "Khách hàng", "Nhân viên xuất" */});
         search.cbxChoose.addItemListener(this);
         search.txtSearchForm.addKeyListener(this);
         search.btnReset.addActionListener(this);

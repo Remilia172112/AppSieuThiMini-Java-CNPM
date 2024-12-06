@@ -93,11 +93,14 @@ public class DonViDialog extends JDialog implements MouseListener {
         String[] header = new String[]{"Mã đơn vị", "Tên đơn vị"};
         tblModel.setColumnIdentifiers(header);
         table.setModel(tblModel);
+        table.setDefaultEditor(Object.class, null);
         scrollTable.setViewportView(table);
         scrollTable.setPreferredSize(new Dimension(420, 250));
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         TableColumnModel columnModel = table.getColumnModel();
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setFocusable(false);
         columnModel.getColumn(0).setCellRenderer(centerRenderer);
         columnModel.getColumn(1).setCellRenderer(centerRenderer);
         main.add(ms);

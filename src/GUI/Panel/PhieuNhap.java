@@ -138,7 +138,7 @@ public final class PhieuNhap extends JPanel implements ActionListener, KeyListen
         functionBar.setLayout(new GridLayout(1, 2, 50, 0));
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        String[] action = {"create", "detail", "cancel", "export"};
+        String[] action = {"create", "detail", /* "cancel", */ "export"};
         mainFunction = new MainFunction(m.user.getMNQ(), "nhaphang", action);
 
         //Add Event MouseListener
@@ -148,7 +148,7 @@ public final class PhieuNhap extends JPanel implements ActionListener, KeyListen
 
         functionBar.add(mainFunction);
 
-        String[] objToSearch = {"Tất cả", "Mã phiếu nhập", "Nhà cung cấp", "Nhân viên nhập"};
+        String[] objToSearch = {/* "Tất cả", */ "Mã phiếu nhập"/* , "Nhà cung cấp", "Nhân viên nhập" */};
         search = new IntegratedSearch(objToSearch);
         search.cbxChoose.addItemListener(this);
         search.txtSearchForm.addKeyListener(new KeyAdapter() {

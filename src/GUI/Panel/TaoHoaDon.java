@@ -632,11 +632,8 @@ public final class TaoHoaDon extends JPanel {
 
     public void eventBtnNhapHang() {
         String maKhString = String.valueOf(makh);
-        dtl = khachHangBUS.selectById(maKhString).getDIEMTICHLUY();
         if (chitietphieu.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
-        } else if (makh == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else if (Integer.parseInt(txtDTLG.getText()) > dtl || Integer.parseInt(txtDTLG.getText()) > sum) {
             JOptionPane.showMessageDialog(null, "Điểm tích lũy không lớn hơn điểm đang có và giá đang bán!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -645,15 +642,25 @@ public final class TaoHoaDon extends JPanel {
                 if (!phieuXuatBUS.checkSLPx(chitietphieu)) {
                     JOptionPane.showMessageDialog(null, "Không đủ số lượng để tạo phiếu!");
                 } else {
-                    long now = System.currentTimeMillis();
-                    Timestamp currenTime = new Timestamp(now);
-                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum - Integer.parseInt(txtDTLG.getText()), 1, Integer.parseInt(txtDTLG.getText()));
-                    phieuXuatBUS.insert(phieuXuat, chitietphieu); //update số lượng trong kho
-                    /// gọi BUS, BUS gọi DAO, DAO chỉnh trong sql 
-                    // SanPhamBUS.updateXuat(chitietsanpham); 
-                    JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
-                    khachHangBUS.update(makh, dtl + (int)Math.ceil(sum / 1000.0) - Integer.parseInt(txtDTLG.getText()));
-                    mainChinh.setPanel(new HoaDon(mainChinh, tk));
+                    if (makh == -1 || makh == 1) {
+                        long now = System.currentTimeMillis();
+                        Timestamp currenTime = new Timestamp(now);
+                        makh = 0;
+                        HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum - Integer.parseInt(txtDTLG.getText()), 1, Integer.parseInt(txtDTLG.getText()));
+                        phieuXuatBUS.insert(phieuXuat, chitietphieu);
+                        JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
+                        mainChinh.setPanel(new HoaDon(mainChinh, tk));
+                    } else {
+                        long now = System.currentTimeMillis();
+                        Timestamp currenTime = new Timestamp(now);
+                        HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum - Integer.parseInt(txtDTLG.getText()), 1, Integer.parseInt(txtDTLG.getText()));
+                        phieuXuatBUS.insert(phieuXuat, chitietphieu);
+                        JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
+                        dtl = khachHangBUS.selectById(maKhString).getDIEMTICHLUY();
+                        khachHangBUS.update(makh, dtl + (int) Math.ceil(sum / 1000.0) - Integer.parseInt(txtDTLG.getText()));
+                        mainChinh.setPanel(new HoaDon(mainChinh, tk));
+                    }
+
                 }
             }
         }

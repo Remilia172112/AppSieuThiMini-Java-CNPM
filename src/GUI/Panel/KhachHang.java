@@ -109,7 +109,7 @@ public class KhachHang extends JPanel implements ActionListener, ItemListener {
         functionBar.setLayout(new GridLayout(1, 2, 50, 0));
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        String[] action = {"create", "update", "delete", "detail", "import", "export"};
+        String[] action = {"create", "update", "delete", "detail", /* "import", */ "export"};
         mainFunction = new MainFunction(m.user.getMNQ(), "khachhang", action);
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(this);
