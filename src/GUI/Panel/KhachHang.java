@@ -35,7 +35,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.util.List;
-import java.util.ArrayList;
 
 public class KhachHang extends JPanel implements ActionListener, ItemListener {
 

@@ -43,9 +43,8 @@ import GUI.Component.NumericDocumentFilter;
 import GUI.Component.PanelBorderRadius;
 import helper.Validation;
 
-
 public final class TaoMaKhuyenMai extends JPanel implements ItemListener, ActionListener {
-    
+
     PanelBorderRadius left, right;
     JTable tableMKM, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
@@ -57,7 +56,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
     JTextField txtTimKiem;
 
     Main m;
-    Color BackgroundColor = new Color(193 ,237 ,220);
+    Color BackgroundColor = new Color(193, 237, 220);
 
     SanPhamBUS spBUS = new SanPhamBUS();
     NhaCungCapBUS nccBus = new NhaCungCapBUS();
@@ -65,11 +64,11 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
     NhanVienDTO nvDto;
 
     ArrayList<SanPhamDTO> listSP = spBUS.getAll(); // list ben kho 
-    ArrayList<SanPhamDTO> listSP_tmp = new ArrayList<>(); 
+    ArrayList<SanPhamDTO> listSP_tmp = new ArrayList<>();
     ArrayList<ChiTietMaKhuyenMaiDTO> chitietMKM;
     int rowPhieuSelect = -1;
 
-    public TaoMaKhuyenMai(NhanVienDTO nv, String type, Main m ){
+    public TaoMaKhuyenMai(NhanVienDTO nv, String type, Main m) {
         this.nvDto = nv;
         this.m = m;
         chitietMKM = new ArrayList<>();
@@ -77,12 +76,11 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         loadDataTalbeSanPham(listSP);
     }
 
-
-    public void initComponent(String type){
+    public void initComponent(String type) {
         this.setBackground(BackgroundColor);
         this.setLayout(new BorderLayout(0, 0));
         this.setOpaque(true);
-        
+
         //Phieu Nhap
         tableMKM = new JTable();
         tableMKM.setBackground(new Color(0xA1D6E2));
@@ -137,8 +135,10 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
             public void mousePressed(MouseEvent e) {
                 int index = tableSanPham.getSelectedRow();
                 if (index != -1) {
+                    String maSanPham = String.valueOf(tableSanPham.getValueAt(index, 0));
+                    int maSanPhamInteger = Integer.parseInt(maSanPham);
                     resetForm();
-                    setInfoSanPham(listSP.get(index));
+                    setInfoSanPham(spBUS.getByMaSP(maSanPhamInteger));
                     ChiTietMaKhuyenMaiDTO ctp = checkTonTai();
                     if (ctp == null) {
                         actionbtn("add");
@@ -149,7 +149,6 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
                 }
             }
         });
-
 
         left = new PanelBorderRadius();
         left.setLayout(new BorderLayout(0, 5));
@@ -209,7 +208,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 ArrayList<SanPhamDTO> rs = spBUS.search(txtMaISBN.getText(), "ISBN");
                 loadDataTalbeSanPham(rs);
-            //thêm load lại inputform
+                //thêm load lại inputform
             }
         });
         txtPTG = new InputForm("Phần trăm giảm");
@@ -243,15 +242,15 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         btnAddSp = new ButtonCustom("Thêm sản phẩm", "success", 14);
         btnEditSP = new ButtonCustom("Sửa sản phẩm", "warning", 14);
         btnDelete = new ButtonCustom("Xoá sản phẩm", "danger", 14);
-            // btnImport = new ButtonCustom("Nhập Excel", "excel", 14);
+        // btnImport = new ButtonCustom("Nhập Excel", "excel", 14);
         btnAddSp.addActionListener(this);
         btnEditSP.addActionListener(this);
         btnDelete.addActionListener(this);
-            // btnImport.addActionListener(this);
+        // btnImport.addActionListener(this);
         btnEditSP.setEnabled(false);
         btnDelete.setEnabled(false);
         content_btn.add(btnAddSp);
-            // content_btn.add(btnImport);
+        // content_btn.add(btnImport);
         content_btn.add(btnEditSP);
         content_btn.add(btnDelete);
         left_top.add(content_btn, BorderLayout.SOUTH);
@@ -326,9 +325,10 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         SanPhamDTO ctsp = spBUS.getByMaSP(phieu.getMSP());
         this.txtMaSp.setText(Integer.toString(ctsp.getMSP()));
         this.txtTenSp.setText(spBUS.getByMaSP(ctsp.getMSP()).getTEN());
+        this.txtMaISBN.setText(ctsp.getMV());
         this.txtPTG.setText(Integer.toString(phieu.getPTG()));
     }
-    
+
     public ChiTietMaKhuyenMaiDTO getInfoChiTietPhieu() {
         int masp = Integer.parseInt(txtMaSp.getText());
         int PTG = Integer.parseInt(txtPTG.getText());
@@ -336,7 +336,6 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         ChiTietMaKhuyenMaiDTO ctmkm = new ChiTietMaKhuyenMaiDTO(mkm, masp, PTG);
         return ctmkm;
     }
-
 
     public void loadDataTalbeSanPham(ArrayList<SanPhamDTO> result) {
         tblModelSP.setRowCount(0);
@@ -351,7 +350,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         for (int i = 0; i < size; i++) {
             SanPhamDTO pb = spBUS.getByMaSP(ctMKM.get(i).getMSP());
             tblModel.addRow(new Object[]{
-                i + 1, pb.getMSP(), spBUS.getByMaSP(pb.getMSP()).getTEN(), 
+                i + 1, pb.getMSP(), spBUS.getByMaSP(pb.getMSP()).getTEN(),
                 ctMKM.get(i).getPTG() + "%"
             });
         }
@@ -361,17 +360,15 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         if (Validation.isEmpty(txtMaSp.getText())) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm", "Chọn sản phẩm", JOptionPane.WARNING_MESSAGE);
             return false;
-        } else if (Validation.isEmpty(txtPTG.getText()) || Integer.parseInt(txtPTG.getText()) > 100 || Integer.parseInt(txtPTG.getText()) < 0) {
-                JOptionPane.showMessageDialog(this, "Phần trăm giảm không được để rỗng và phải lốn hơn 0%, nhỏ hơn 100%!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
-        else if (Validation.isEmpty(txtMaKM.getText())) {
-                JOptionPane.showMessageDialog(this, "Mã khuyến mãi không được để rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
-                return false;
-            }
+        } else if (Validation.isEmpty(txtPTG.getText()) || Integer.parseInt(txtPTG.getText()) > 100 || Integer.parseInt(txtPTG.getText()) <= 0) {
+            JOptionPane.showMessageDialog(this, "Phần trăm giảm không được để rỗng và phải lốn hơn 0%, nhỏ hơn 100%!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            return false;
+        } else if (Validation.isEmpty(txtMaKM.getText())) {
+            JOptionPane.showMessageDialog(this, "Mã khuyến mãi không được để rỗng", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         return true;
     }
-
 
     public void resetForm() {
         this.txtMaSp.setText("");
@@ -381,7 +378,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
     }
 
     public ChiTietMaKhuyenMaiDTO checkTonTai() {
-        ChiTietMaKhuyenMaiDTO p = MaKhuyenMaiBus.findCT(chitietMKM, Integer.parseInt(txtMaSp.getText())); 
+        ChiTietMaKhuyenMaiDTO p = MaKhuyenMaiBus.findCT(chitietMKM, Integer.parseInt(txtMaSp.getText()));
         return p;
     }
 
@@ -415,7 +412,7 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
         Object source = e.getSource();
         if (source == btnAddSp && validateNhap()) {
             addCtMKM();
-            
+
         } else if (source == btnDelete) {
             int index = tableMKM.getSelectedRow();
             chitietMKM.remove(index);
@@ -423,17 +420,22 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
             loadDataTableChiTietMKM(chitietMKM);
             resetForm();
         } else if (source == btnEditSP) {
-            chitietMKM.get(rowPhieuSelect).setPTG(Integer.parseInt(txtPTG.getText()));
-            loadDataTableChiTietMKM(chitietMKM);
+            if (Integer.parseInt(txtPTG.getText()) <= 0 || Integer.parseInt(txtPTG.getText()) > 100 || txtPTG.getText() == "") {
+                JOptionPane.showMessageDialog(this, "Phần trăm giảm không được để trống và phải lớn hơn 0%, nhỏ hơn 100%");
+            } else {
+                chitietMKM.get(rowPhieuSelect).setPTG(Integer.parseInt(txtPTG.getText()));
+                JOptionPane.showMessageDialog(this, "Sửa sản phẩm thành công!");
+                loadDataTableChiTietMKM(chitietMKM);
+            }
         } else if (source == btnNhapMKM) {
             try {
                 eventBtnTao();
             } catch (ParseException ex) {
                 Logger.getLogger(PhieuNhap.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } 
+        }
     }
-    
+
     public boolean validateSelectDate() throws ParseException {
         Date time_start = dateStart.getDate();
         Date time_end = dateEnd.getDate();
@@ -450,37 +452,50 @@ public final class TaoMaKhuyenMai extends JPanel implements ItemListener, Action
             dateEnd.getDateChooser().setCalendar(null);
             return false;
         }
+        if (time_end != null && time_end.before(current_date)) {
+            JOptionPane.showMessageDialog(this, "Ngày kết thúc không được bé hơn ngày hiện tại", "Lỗi !", JOptionPane.ERROR_MESSAGE);
+            dateEnd.getDateChooser().setCalendar(null);
+            return false;
+        }
         return true;
     }
+
     public void eventBtnTao() throws ParseException {
         if (chitietMKM.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong mã !", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else if (Validation.isEmpty(txtMaKM.getText())) {
             JOptionPane.showMessageDialog(this, "Mã khuyến mãi không được để rỗng!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
-        }
-        else if(!MaKhuyenMaiBus.checkTT(txtMaKM.getText())) JOptionPane.showMessageDialog(this, "Mã khuyến mãi đã tồn tại!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
-        else {
+        } else if (!MaKhuyenMaiBus.checkTT(txtMaKM.getText())) {
+            JOptionPane.showMessageDialog(this, "Mã khuyến mãi đã tồn tại!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+        } else if (dateStart.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Không được để trống ngày từ, ngày đến!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+        } else if (dateEnd.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Không được để trống ngày từ, ngày đến!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+        } else {
+            System.out.println(dateStart);
+            System.out.println(dateEnd);
             int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn tạo mã khuyến mãi!", "Xác nhận tạo phiếu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-            if (input == 0) if(validateSelectDate()) {
-                Date time_start_tmp = dateStart.getDate() != null ? dateStart.getDate() : new Date(System.currentTimeMillis());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(time_start_tmp);
-                calendar.add(Calendar.DAY_OF_MONTH, 10);
-                Date time_end_tmp = dateEnd.getDate() != null ? dateEnd.getDate() : calendar.getTime();
-                Timestamp time_start = new Timestamp(time_start_tmp.getTime());
-                Timestamp time_end = new Timestamp(time_end_tmp.getTime());
-                MaKhuyenMaiDTO MKM = new MaKhuyenMaiDTO(txtMaKM.getText(), time_start, time_end);
-                boolean result = MaKhuyenMaiBus.add(MKM, chitietMKM);
-                if (result) {
-                    JOptionPane.showMessageDialog(this, "Tạo mã thành công !");
-                    MaKhuyenMai pnlMKM = new MaKhuyenMai(m, nvDto);
-                    m.setPanel(pnlMKM);
-                } else {
-                    JOptionPane.showMessageDialog(this, "Tạo mã không thành công !", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+            if (input == 0) {
+                if (validateSelectDate()) {
+                    Date time_start_tmp = dateStart.getDate();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(time_start_tmp);
+                    calendar.add(Calendar.DAY_OF_MONTH, 10);
+                    Date time_end_tmp = dateEnd.getDate();
+                    Timestamp time_start = new Timestamp(time_start_tmp.getTime());
+                    Timestamp time_end = new Timestamp(time_end_tmp.getTime());
+                    MaKhuyenMaiDTO MKM = new MaKhuyenMaiDTO(txtMaKM.getText(), time_start, time_end);
+                    boolean result = MaKhuyenMaiBus.add(MKM, chitietMKM);
+                    if (result) {
+                        JOptionPane.showMessageDialog(this, "Tạo mã thành công !");
+                        MaKhuyenMai pnlMKM = new MaKhuyenMai(m, nvDto);
+                        m.setPanel(pnlMKM);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Tạo mã không thành công !", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         }
     }
 
-    
 }

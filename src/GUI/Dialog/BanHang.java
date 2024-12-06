@@ -30,32 +30,25 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.fonts.roboto.FlatRobotoFont;
 
 import BUS.KhachHangBUS;
-import BUS.LoaiBUS;
 import BUS.MaKhuyenMaiBUS;
 import BUS.DonViBUS;
 import BUS.HoaDonBUS;
 import BUS.SanPhamBUS;
-import DAO.NhanVienDAO;
 import DTO.ChiTietHoaDonDTO;
 import DTO.ChiTietMaKhuyenMaiDTO;
 import DTO.DonViDTO;
 import DTO.KhachHangDTO;
-import DTO.LoaiDTO;
 import DTO.MaKhuyenMaiDTO;
-import DTO.NhanVienDTO;
 import DTO.HoaDonDTO;
 import DTO.SanPhamDTO;
 import DTO.TaiKhoanDTO;
-import GUI.Main;
 import GUI.Component.ButtonCustom;
 import GUI.Component.InputForm;
 import GUI.Component.Notification;
 import GUI.Component.NumericDocumentFilter;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.SelectForm;
-import GUI.Panel.HoaDon;
 import helper.Formater;
-import helper.writePDF;
 
 public final class BanHang extends JFrame {
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
