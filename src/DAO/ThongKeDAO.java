@@ -356,18 +356,18 @@ public class ThongKeDAO {
             Connection con = JDBCUtil.getConnection();
             String sql = """
                             WITH RECURSIVE dates(date) AS (
-                            SELECT DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                            UNION ALL
-                            SELECT DATE_ADD(date, INTERVAL 1 DAY)
-                            FROM dates
-                            WHERE date < CURDATE()
+                                SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 7 DAY), '%Y-%m-%d') -- Ngày bắt đầu
+                                UNION ALL
+                                SELECT DATE_FORMAT(DATE_ADD(date, INTERVAL 1 DAY), '%Y-%m-%d') -- Thêm từng ngày
+                                FROM dates
+                                WHERE date < DATE_FORMAT(CURDATE(), '%Y-%m-%d') -- Ngày kết thúc
                             )
                             SELECT 
-                            dates.date AS ngay,
-                            COALESCE(SUM(CTHOADON.TIENXUAT), 0) AS doanhthu,
-                            COALESCE(SUM(CTPHIEUNHAP.TIENNHAP), 0) AS chiphi
+                                dates.date AS ngay,
+                                COALESCE(SUM(CTHOADON.TIENXUAT), 0) AS doanhthu,
+                                COALESCE(SUM(CTPHIEUNHAP.TIENNHAP), 0) AS chiphi
                             FROM dates
-                            LEFT JOIN HOADON ON DATE(HOADON.TG) = dates.date
+                            LEFT JOIN HOADON ON DATE_FORMAT(HOADON.TG, '%Y-%m-%d') = dates.date -- So sánh định dạng ngày
                             LEFT JOIN CTHOADON ON HOADON.MHD = CTHOADON.MHD
                             LEFT JOIN SANPHAM ON SANPHAM.MSP = CTHOADON.MSP
                             LEFT JOIN CTPHIEUNHAP ON SANPHAM.MSP = CTPHIEUNHAP.MSP

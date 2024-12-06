@@ -261,7 +261,7 @@ public class MenuTaskbar extends JPanel {
             @Override
             public void mousePressed(MouseEvent evt) {
 //                trangChu = new TrangChu();
-               banHang = new BanHang(user, "create");
+                banHang = new BanHang(user, "create");
                 main.setPanel(banHang);
             }
         });

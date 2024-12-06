@@ -233,10 +233,10 @@ VALUES
         (1, 'hoadon', 'view'),
         (1, 'banhang', 'create'),
         (1, 'banhang', 'view'),
-        (1, 'kiemke', 'create'),
-        (1, 'kiemke', 'delete'),
-        (1, 'kiemke', 'update'),
-        (1, 'kiemke', 'view'),
+--         (1, 'kiemke', 'create'),
+--         (1, 'kiemke', 'delete'),
+--         (1, 'kiemke', 'update'),
+--         (1, 'kiemke', 'view'),
         (1, 'nhomquyen', 'create'),
         (1, 'nhomquyen', 'delete'),
         (1, 'nhomquyen', 'update'),
@@ -304,36 +304,40 @@ VALUES
         (2, 'NV2', '$2a$12$6GSkiQ05XjTRvCW9MB6MNuf7hOJEbbeQx11Eb8oELil1OrCq6uBXm', 2, 1, 'null'),
         (3, 'NV3', '$2a$12$6GSkiQ05XjTRvCW9MB6MNuf7hOJEbbeQx11Eb8oELil1OrCq6uBXm', 3, 1, 'null');
 
-INSERT INTO `KHACHHANG` (`HOTEN`, `DIACHI`, `SDT`, `TT`, `NGAYTHAMGIA`)
+INSERT INTO `KHACHHANG` (`HOTEN`, `DIACHI`, `SDT`, `TT`, `NGAYTHAMGIA`, `DIEMTICHLUY`)
 VALUES
-        ('Mặc định', '', '', 1, '2024-04-15 09:52:29'),
-        ('Nguyễn Văn A', 'Gia Đức, Ân Đức, Hoài Ân, Bình Định', '0387913347', 1, '2024-04-15 09:52:29'),
-        ('Trần Nhất Nhất', '205 Trần Hưng Đạo, Phường 10, Quận 5, Thành phố Hồ Chí Minh', '0123456789', 1, '2024-04-15 09:52:29'),
-        ('Hoàng Gia Bo', 'Khoa Trường, Hoài Ân, Bình Định', '0987654321', 1, '2024-04-15 09:52:29'),
-        ('Hồ Minh Hưng', 'Khoa Trường, Hoài Ân, Bình Định', '0867987456', 1, '2024-04-15 09:52:29'),
-        ('Nguyễn Thị Minh Anh', '123 Phố Huế, Quận Hai Bà Trưng, Hà Nội', '0935123456', 1, '2024-04-16 17:59:57'),
-        ('Trần Đức Minh', '789 Đường Lê Hồng Phong, Thành phố Đà Nẵng', '0983456789', 1, '2024-04-16 18:08:12'),
-        ('Lê Hải Yến', '456 Tôn Thất Thuyết, Quận 4, Thành phố Hồ Chí Minh', '0977234567', 1, '2024-04-16 18:08:47'),
-        ('Phạm Thanh Hằng', '102 Lê Duẩn, Thành phố Hải Phòng', '0965876543', 1, '2024-04-16 18:12:59'),
-        ('Hoàng Đức Anh', '321 Lý Thường Kiệt, Thành phố Cần Thơ', '0946789012', 1, '2024-04-16 18:13:47'),
-        ('Ngô Thanh Tùng', '987 Trần Hưng Đạo, Quận 1, Thành phố Hồ Chí Minh', '0912345678', 1, '2024-04-16 18:14:12'),
-        ('Võ Thị Kim Ngân', '555 Nguyễn Văn Linh, Quận Nam Từ Liêm, Hà Nội', '0916789123', 1, '2024-04-16 18:15:11'),
-        ('Đỗ Văn Tú', '777 Hùng Vương, Thành phố Huế', '0982345678', 1, '2024-04-30 18:15:56'),
-        ('Lý Thanh Trúc', '888 Nguyễn Thái Học, Quận Ba Đình, Hà Nội', '0982123456', 1, '2024-04-16 18:16:22'),
-        ('Bùi Văn Hoàng', '222 Đường 2/4, Thành phố Nha Trang', '0933789012', 1, '2024-04-16 18:16:53'),
-        ('Lê Văn Thành', '23 Đường 3 Tháng 2, Quận 10, TP. Hồ Chí Minh', '0933456789', 1, '2024-04-16 18:17:46'),
-        ('Nguyễn Thị Lan Anh', '456 Lê Lợi, Quận 1, TP. Hà Nội', '0965123456', 1, '2024-04-16 18:18:10'),
-        ('Phạm Thị Mai', '234 Lê Hồng Phong, Quận 5, TP. Hồ Chí Minh', '0946789013', 1, '2024-04-17 18:18:34'),
-        ('Hoàng Văn Nam', ' 567 Phố Huế, Quận Hai Bà Trưng, Hà Nội', '0912345679', 1, '2024-04-17 18:19:16');
+        ('Mặc định', '', '', 1, '2024-04-15 09:52:29',0),
+        ('Nguyễn Văn A', 'Gia Đức, Ân Đức, Hoài Ân, Bình Định', '0387913347', 1, '2024-04-15 09:52:29',300),
+        ('Trần Nhất Nhất', '205 Trần Hưng Đạo, Phường 10, Quận 5, Thành phố Hồ Chí Minh', '0123456789', 1, '2024-04-15 09:52:29',300),
+        ('Hoàng Gia Bo', 'Khoa Trường, Hoài Ân, Bình Định', '0987654321', 1, '2024-04-15 09:52:29',0),
+        ('Hồ Minh Hưng', 'Khoa Trường, Hoài Ân, Bình Định', '0867987456', 1, '2024-04-15 09:52:29',0),
+        ('Nguyễn Thị Minh Anh', '123 Phố Huế, Quận Hai Bà Trưng, Hà Nội', '0935123456', 1, '2024-04-16 17:59:57',0),
+        ('Trần Đức Minh', '789 Đường Lê Hồng Phong, Thành phố Đà Nẵng', '0983456789', 1, '2024-04-16 18:08:12',0),
+        ('Lê Hải Yến', '456 Tôn Thất Thuyết, Quận 4, Thành phố Hồ Chí Minh', '0977234567', 1, '2024-04-16 18:08:47',0),
+        ('Phạm Thanh Hằng', '102 Lê Duẩn, Thành phố Hải Phòng', '0965876543', 1, '2024-04-16 18:12:59',0),
+        ('Hoàng Đức Anh', '321 Lý Thường Kiệt, Thành phố Cần Thơ', '0946789012', 1, '2024-04-16 18:13:47',0),
+        ('Ngô Thanh Tùng', '987 Trần Hưng Đạo, Quận 1, Thành phố Hồ Chí Minh', '0912345678', 1, '2024-04-16 18:14:12',0),
+        ('Võ Thị Kim Ngân', '555 Nguyễn Văn Linh, Quận Nam Từ Liêm, Hà Nội', '0916789123', 1, '2024-04-16 18:15:11',0),
+        ('Đỗ Văn Tú', '777 Hùng Vương, Thành phố Huế', '0982345678', 1, '2024-04-30 18:15:56',0),
+        ('Lý Thanh Trúc', '888 Nguyễn Thái Học, Quận Ba Đình, Hà Nội', '0982123456', 1, '2024-04-16 18:16:22',0),
+        ('Bùi Văn Hoàng', '222 Đường 2/4, Thành phố Nha Trang', '0933789012', 1, '2024-04-16 18:16:53',0),
+        ('Lê Văn Thành', '23 Đường 3 Tháng 2, Quận 10, TP. Hồ Chí Minh', '0933456789', 1, '2024-04-16 18:17:46',0),
+        ('Nguyễn Thị Lan Anh', '456 Lê Lợi, Quận 1, TP. Hà Nội', '0965123456', 1, '2024-04-16 18:18:10',0),
+        ('Phạm Thị Mai', '234 Lê Hồng Phong, Quận 5, TP. Hồ Chí Minh', '0946789013', 1, '2024-04-17 18:18:34',0),
+        ('Hoàng Văn Nam', ' 567 Phố Huế, Quận Hai Bà Trưng, Hà Nội', '0912345679', 1, '2024-04-17 18:19:16',0);
 
 
 INSERT INTO `HOADON` (`MNV`, `MKH`, `TIEN`, `TG`, `TT`)
 VALUES
-        (1, 1, 200000, '2024-04-18 17:34:12', 1);
+        (1, 2, 300000, '2024-12-05 17:34:12', 1),
+        (1, 3, 300000, '2024-12-06 17:34:12', 1);
 
 INSERT INTO `CTHOADON` (`MHD`, `MSP`, `SL`,  `TIENXUAT`)
 VALUES
-        (1, 1, 2, 100000);
+        (1, 1, 10, 15000),
+        (1, 2, 10, 15000),
+        (2, 19, 10, 15000),
+        (2, 20, 10, 15000);
 
 INSERT INTO `NHACUNGCAP` (`TEN`, `DIACHI`, `SDT`, `EMAIL`, `TT`)
 VALUES
@@ -347,11 +351,47 @@ VALUES
 
 INSERT INTO `PHIEUNHAP` (`MNV`, `MNCC`, `TIEN`, `TG`, `TT`)
 VALUES
-        (1, 1, 200000, '2024-04-01 01:09:27', 1);
+        (1, 1, 2000000, '2024-12-01 01:09:27', 1),
+        (1, 2, 2000000, '2024-12-10 01:09:27', 1),
+        (1, 3, 2000000, '2024-11-20 01:09:27', 1),
+        (1, 4, 800000, '2024-11-30 01:09:27', 1);
 
 INSERT INTO `CTPHIEUNHAP` (`MPN`, `MSP`, `SL`, `TIENNHAP`, `HINHTHUC`)
 VALUES
-        (1, 1, 2, 20000, 0);
+        (1, 1, 20, 2000, 0),
+        (1, 2, 20, 2000, 0),
+        (1, 3, 10, 2000, 0),
+        (1, 4, 10, 2000, 0),
+        (1, 5, 10, 2000, 0),
+        (1, 6, 10, 2000, 0),
+        (1, 7, 10, 2000, 0),
+        (1, 8, 10, 2000, 0),
+        (1, 9, 10, 2000, 0),
+        (2, 10, 10, 2000, 0),
+        (2, 11, 10, 2000, 0),
+        (2, 12, 10, 2000, 0),
+        (2, 13, 10, 2000, 0),
+        (2, 14, 10, 2000, 0),
+        (2, 15, 10, 2000, 0),
+        (2, 16, 10, 2000, 0),
+        (2, 17, 10, 2000, 0),
+        (2, 18, 10, 2000, 0),
+        (2, 19, 20, 2000, 0),
+        (2, 20, 20, 2000, 0),
+        (3, 21, 10, 2000, 0),
+        (3, 22, 10, 2000, 0),
+        (3, 23, 10, 2000, 0),
+        (3, 24, 10, 2000, 0),
+        (3, 25, 10, 2000, 0),
+        (3, 26, 10, 2000, 0),
+        (3, 27, 10, 2000, 0),
+        (3, 28, 10, 2000, 0),
+        (3, 29, 10, 2000, 0),
+        (3, 30, 10, 2000, 0),
+        (4, 31, 10, 2000, 0),
+        (4, 32, 10, 2000, 0),
+        (4, 33, 10, 2000, 0),
+        (4, 34, 10, 2000, 0);
 
 INSERT INTO `PHIEUKIEMKE` (`MNV` , `TG` , `TT`) 
 VALUES
@@ -363,17 +403,17 @@ VALUES
 
 INSERT INTO `MAKHUYENMAI` (`MKM`,`TGBD`,`TGKT`,`TT`)
 VALUES
-        ('GT2024', '2024-04-01 00:00:00', '2024-05-01 00:00:00', 1);
---         ('MINGEY2024', '2024-05-01 00:00:00', '2024-05-20 00:00:00', 1);
+        ('GT2024', '2024-04-01 00:00:00', '2024-06-01 00:00:00', 1),
+        ('MINGEY2024', '2024-12-01 00:00:00', '2024-12-20 00:00:00', 1);
 
 INSERT INTO `CTMAKHUYENMAI` (`MKM`, `MSP`,`PTG`)
 VALUES
-        ('GT2024', 1, 20);
---         ('GT2024', 2, 20),
---         ('GT2024', 3, 20),
---         ('MINGEY2024', 4, 80),
---         ('MINGEY2024', 5, 50),
---         ('MINGEY2024', 6, 60);
+        ('GT2024', 1, 20),
+        ('GT2024', 2, 20),
+        ('GT2024', 3, 20),
+        ('MINGEY2024', 4, 80),
+        ('MINGEY2024', 5, 50),
+        ('MINGEY2024', 6, 60);
 
 INSERT INTO `SANPHAM` (`TEN`, `HINHANH`, `ML`, `TIENX`, `SL`, `MDV`, `MV`, `TT`)
 VALUES
@@ -424,7 +464,7 @@ VALUES
         ('Nước giải khát'),
         ('Bánh kẹo'),
         ('Sữa'),
-        ('Nước giặt');
+        ('Mì');
         
 /*Tạo quan hệ*/
 
