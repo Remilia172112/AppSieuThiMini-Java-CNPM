@@ -645,7 +645,7 @@ public final class TaoHoaDon extends JPanel {
                     if (makh == -1 || makh == 1) {
                         long now = System.currentTimeMillis();
                         Timestamp currenTime = new Timestamp(now);
-                        makh = 0;
+                        makh = 1;
                         HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum - Integer.parseInt(txtDTLG.getText()), 1, Integer.parseInt(txtDTLG.getText()));
                         phieuXuatBUS.insert(phieuXuat, chitietphieu);
                         JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
