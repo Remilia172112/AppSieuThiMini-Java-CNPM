@@ -32,6 +32,7 @@ import BUS.HoaDonBUS;
 import BUS.SanPhamBUS;
 import DAO.NhanVienDAO;
 import DTO.ChiTietHoaDonDTO;
+import DTO.ChiTietMaKhuyenMaiDTO;
 import DTO.KhachHangDTO;
 import DTO.MaKhuyenMaiDTO;
 import DTO.NhanVienDTO;
@@ -49,19 +50,20 @@ import GUI.Dialog.ListKhachHang;
 import helper.Formater;
 
 public final class TaoHoaDon extends JPanel {
+
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this); //gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
     // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của listkhachhang
     PanelBorderRadius right, left;
-    JPanel  contentCenter, left_top, content_btn, left_bottom; //là cái main cữ
+    JPanel contentCenter, left_top, content_btn, left_bottom; //là cái main cữ
     JTable tablePhieuXuat, tableSanPham;
     JScrollPane scrollTablePhieuNhap, scrollTableSanPham;
     DefaultTableModel tblModel, tblModelSP; //table co san 
     ButtonCustom btnTaoSp, btnAddSp, btnEditSP, btnDelete, btnNhapHang;
     InputForm txtMaphieu, txtNhanVien, txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtDTL, txtDTLG, txtMaGiamGia, txtGiaGiam;
-    SelectForm cbxMaKM; 
+    SelectForm cbxMaKM;
     JTextField txtTimKiem;
-    Color BackgroundColor = new Color(193 ,237 ,220);
-    
+    Color BackgroundColor = new Color(193, 237, 220);
+
     int sum; //do ctpxuất ko có sẵn tính tiền 
     int maphieu;
     int masp;
@@ -224,6 +226,7 @@ public final class TaoHoaDon extends JPanel {
         txtMaISBN = new InputForm("Mã vạch");
         txtMaISBN.setEditable(false);
         txtGiaXuat = new InputForm("Giá xuất");
+        txtGiaXuat.setEditable(false);
         PlainDocument dongia = (PlainDocument) txtGiaXuat.getTxtForm().getDocument();
         dongia.setDocumentFilter((new NumericDocumentFilter()));   //chỉ cho nhập số
         txtSoLuongSPxuat = new InputForm("Số lượng");
@@ -239,15 +242,17 @@ public final class TaoHoaDon extends JPanel {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 int index = cbxMaKM.cbb.getSelectedIndex();
-                if(index != 0)
-                {
+                String maKhuyenMaiString = String.valueOf(cbxMaKM.cbb.getSelectedItem());
+                if (index != 0) {
+                    MaKhuyenMaiDTO mkm = mkmBUS.selectById(maKhuyenMaiString);
+                    ChiTietMaKhuyenMaiDTO ctmkm = mkmBUS.selectByMKMAndMSP(mkm.getMKM(), Integer.parseInt(txtMaSp.getText()));
                     double giaxuat = Integer.parseInt(txtGiaXuat.getText());
-                    double phantramgiam = (double) listctMKM.get(index - 1).getPTG();
-                    int giagiam = (int) (giaxuat * (1 - phantramgiam/100));
+                    double phantramgiam = (double) ctmkm.getPTG();
+                    int giagiam = (int) (giaxuat * (1 - phantramgiam / 100));
                     txtGiaGiam.setText(Integer.toString(giagiam));
                 }
             }
-            
+
         });
         // txtMaGiamGia.getTxtForm().addKeyListener(new KeyAdapter() {
         //         @Override
@@ -257,13 +262,12 @@ public final class TaoHoaDon extends JPanel {
         //         }
         //     });
 
-            
         JPanel merge1 = new JPanel(new BorderLayout());
         merge1.setPreferredSize(new Dimension(100, 50));
         merge1.add(txtMaSp, BorderLayout.WEST);
         merge1.add(txtMaISBN, BorderLayout.CENTER);
 
-        JPanel merge2 = new JPanel(new GridLayout(2,2));
+        JPanel merge2 = new JPanel(new GridLayout(2, 2));
         merge2.setPreferredSize(new Dimension(100, 160));
         merge2.add(txtGiaXuat);
         merge2.add(txtSoLuongSPxuat);
@@ -296,14 +300,14 @@ public final class TaoHoaDon extends JPanel {
                 if (checkInfo()) {
                     addCtPhieu();
                     //thông báo dạng popup dùng của Notification trong Compoment của Gui
-                    Notification thongbaoNoi = new Notification(mainChinh,  Notification.Type.SUCCESS, Notification.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
+                    Notification thongbaoNoi = new Notification(mainChinh, Notification.Type.SUCCESS, Notification.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
                     thongbaoNoi.showNotification();
                     loadDataTableChiTietPhieu(chitietphieu);
                     actionbtn("update");
                 }
 
             }
-            
+
         });
 
         btnEditSP.addActionListener(new ActionListener() {
@@ -312,14 +316,15 @@ public final class TaoHoaDon extends JPanel {
                 int index = tablePhieuXuat.getSelectedRow();
                 if (index < 0) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm cần chỉnh");
-                } else if(checkInfoEdit()) {
+                } else if (checkInfoEdit()) {
                     chitietphieu.get(index).setSL(Integer.parseInt(txtSoLuongSPxuat.getText()));
-                    if(!txtGiaGiam.getText().equals(" ")) 
+                    if (!txtGiaGiam.getText().equals(" ")) {
                         chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaGiam.getText()));
-                    else
-                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaXuat.getText()));       
-                    Notification thongbaoNoi = new Notification(mainChinh,  Notification.Type.SUCCESS, Notification.Location.TOP_CENTER, "Sửa sản phẩm thành công!");
-                    thongbaoNoi.showNotification();             
+                    } else {
+                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaXuat.getText()));
+                    }
+                    Notification thongbaoNoi = new Notification(mainChinh, Notification.Type.SUCCESS, Notification.Location.TOP_CENTER, "Sửa sản phẩm thành công!");
+                    thongbaoNoi.showNotification();
                     loadDataTableChiTietPhieu(chitietphieu);
                 }
             }
@@ -402,7 +407,7 @@ public final class TaoHoaDon extends JPanel {
         txtDTLG = new InputForm("Điểm tích lũy giảm");
         txtDTLG.setText("0");
         txtDTLG.setEditable(false);
-        PlainDocument dtgpd = (PlainDocument)txtDTLG.getTxtForm().getDocument();
+        PlainDocument dtgpd = (PlainDocument) txtDTLG.getTxtForm().getDocument();
         dtgpd.setDocumentFilter((new NumericDocumentFilter()));
         khachJPanel.add(kJPanelLeft, BorderLayout.EAST);
         khachJPanel.add(txtKh, BorderLayout.CENTER);
@@ -459,6 +464,7 @@ public final class TaoHoaDon extends JPanel {
         content_btn.revalidate();
         content_btn.repaint();
     }
+
     public void resetForm() {
         this.txtTenSp.setText("");
         this.txtMaSp.setText("");
@@ -474,10 +480,14 @@ public final class TaoHoaDon extends JPanel {
         int size = listctMKM.size();
         ArrayList<String> arr = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            if(!validateSelectDate(listctMKM.get(i))) arr.add(listctMKM.get(i).getMKM());
+            if (!validateSelectDate(listctMKM.get(i))) {
+                arr.add(listctMKM.get(i).getMKM());
+            }
         }
         String[] tmp = new String[arr.size()];
-        for (int i = 0; i < tmp.length; i++) tmp[i] = arr.get(i);
+        for (int i = 0; i < tmp.length; i++) {
+            tmp[i] = arr.get(i);
+        }
         tmp = Stream.concat(Stream.of("Chọn"), Arrays.stream(tmp)).toArray(String[]::new);
         return tmp;
     }
@@ -506,10 +516,8 @@ public final class TaoHoaDon extends JPanel {
         this.txtMaISBN.setText(sp.getMV());
         this.txtGiaXuat.setText(Integer.toString(sp.getTIENX()));
         cbxMaKM.setArr(getMaGiamGiaTable(sp.getMSP()));
-        
-    }
 
-    
+    }
 
     public void setFormChiTietPhieu(ChiTietHoaDonDTO phieu) { //set info vào inputform khi nhan ben tablephieunhap
         SanPhamDTO ctsp = spBUS.getByMaSP(phieu.getMSP());
@@ -536,19 +544,17 @@ public final class TaoHoaDon extends JPanel {
             SanPhamDTO phienban = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
             sum += ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL();
             tblModel.addRow(new Object[]{
-                i + 1, phienban.getMSP(), spBUS.getByMaSP(phienban.getMSP()).getTEN(), 
+                i + 1, phienban.getMSP(), spBUS.getByMaSP(phienban.getMSP()).getTEN(),
                 Formater.FormatVND(ctPhieu.get(i).getTIEN()), ctPhieu.get(i).getSL()
             });
         }
         lbltongtien.setText(Formater.FormatVND(sum));
     }
 
-    
-
     public boolean checkTonTai() {
-        ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText())); 
-            //kiểm tra coi masp này có trong chitietphieu này chưa 
-        
+        ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText()));
+        //kiểm tra coi masp này có trong chitietphieu này chưa 
+
         return p != null;
     }
 
@@ -556,7 +562,7 @@ public final class TaoHoaDon extends JPanel {
         boolean check = true;
         int index = tableSanPham.getSelectedRow();
         if (txtMaSp.getText().equals("")) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm","Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
         } else if (txtGiaXuat.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Giá nhập không được để rỗng !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
@@ -564,11 +570,10 @@ public final class TaoHoaDon extends JPanel {
         } else if (txtSoLuongSPxuat.getText().equals("") || Integer.parseInt(txtSoLuongSPxuat.getText()) > listSP.get(index).getSL()) {
             JOptionPane.showMessageDialog(null, "Số lượng không được để rỗng và không lớn hơn đang có!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
-        } 
-        else if (Integer.parseInt(txtSoLuongSPxuat.getText()) == 0) {
+        } else if (Integer.parseInt(txtSoLuongSPxuat.getText()) == 0) {
             JOptionPane.showMessageDialog(null, "Số lượng không được bằng 0!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
-        } 
+        }
         return check;
     }
 
@@ -576,9 +581,13 @@ public final class TaoHoaDon extends JPanel {
         boolean check = true;
         int index = tablePhieuXuat.getSelectedRow();
         int sl = 0;
-        for(SanPhamDTO i : listSP) if(i.getMSP() == chitietphieu.get(index).getMSP()) sl = i.getSL();
+        for (SanPhamDTO i : listSP) {
+            if (i.getMSP() == chitietphieu.get(index).getMSP()) {
+                sl = i.getSL();
+            }
+        }
         if (txtMaSp.getText().equals("")) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm","Cảnh báo !", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn sản phẩm", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
         } else if (txtGiaXuat.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Giá nhập không được để rỗng !", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
@@ -586,11 +595,10 @@ public final class TaoHoaDon extends JPanel {
         } else if (txtSoLuongSPxuat.getText().equals("") || Integer.parseInt(txtSoLuongSPxuat.getText()) > sl) {
             JOptionPane.showMessageDialog(null, "Số lượng không được để rỗng và không lớn hơn đang có!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
-        } 
-        else if (Integer.parseInt(txtSoLuongSPxuat.getText()) == 0) {
+        } else if (Integer.parseInt(txtSoLuongSPxuat.getText()) == 0) {
             JOptionPane.showMessageDialog(null, "Số lượng không được bằng 0!", "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             check = false;
-        } 
+        }
         return check;
     }
 
@@ -599,12 +607,14 @@ public final class TaoHoaDon extends JPanel {
         int giaxuat;
         String mkm = null;
         int index = cbxMaKM.cbb.getSelectedIndex();
-        if(index != 0) mkm = listctMKM.get(index - 1).getMKM();
-        if(!txtGiaGiam.getText().equals(" ")) {
-            giaxuat = Integer.parseInt(txtGiaGiam.getText());
+        if (index != 0) {
+            mkm = listctMKM.get(index - 1).getMKM();
         }
-        else
+        if (!txtGiaGiam.getText().equals(" ")) {
+            giaxuat = Integer.parseInt(txtGiaGiam.getText());
+        } else {
             giaxuat = Integer.parseInt(txtGiaXuat.getText());
+        }
         int soluong = Integer.parseInt(txtSoLuongSPxuat.getText());
         ChiTietHoaDonDTO ctphieu = new ChiTietHoaDonDTO(maphieu, masp, soluong, giaxuat, mkm);
         ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, ctphieu.getMSP());
@@ -621,11 +631,13 @@ public final class TaoHoaDon extends JPanel {
     }
 
     public void eventBtnNhapHang() {
+        String maKhString = String.valueOf(makh);
+        dtl = khachHangBUS.selectById(maKhString).getDIEMTICHLUY();
         if (chitietphieu.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa có sản phẩm nào trong phiếu!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else if (makh == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn khách hàng!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
-        } else if(Integer.parseInt(txtDTLG.getText()) > dtl || Integer.parseInt(txtDTLG.getText()) > sum ) {
+        } else if (Integer.parseInt(txtDTLG.getText()) > dtl || Integer.parseInt(txtDTLG.getText()) > sum) {
             JOptionPane.showMessageDialog(null, "Điểm tích lũy không lớn hơn điểm đang có và giá đang bán!", "Cảnh báo !", JOptionPane.ERROR_MESSAGE);
         } else {
             int input = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn tạo phiếu xuất !", "Xác nhận tạo phiếu", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
@@ -635,12 +647,12 @@ public final class TaoHoaDon extends JPanel {
                 } else {
                     long now = System.currentTimeMillis();
                     Timestamp currenTime = new Timestamp(now);
-                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum-dtl, 1, dtl);
+                    HoaDonDTO phieuXuat = new HoaDonDTO(makh, maphieu, tk.getMNV(), currenTime, sum - Integer.parseInt(txtDTLG.getText()), 1, Integer.parseInt(txtDTLG.getText()));
                     phieuXuatBUS.insert(phieuXuat, chitietphieu); //update số lượng trong kho
                     /// gọi BUS, BUS gọi DAO, DAO chỉnh trong sql 
                     // SanPhamBUS.updateXuat(chitietsanpham); 
                     JOptionPane.showMessageDialog(null, "Xuất hàng thành công !");
-                    khachHangBUS.update(makh, sum/1000);
+                    khachHangBUS.update(makh, dtl + (int)Math.ceil(sum / 1000.0) - Integer.parseInt(txtDTLG.getText()));
                     mainChinh.setPanel(new HoaDon(mainChinh, tk));
                 }
             }
@@ -651,13 +663,12 @@ public final class TaoHoaDon extends JPanel {
         makh = index;
         KhachHangDTO khachhang = khachHangBUS.selectKh(makh);
         txtKh.setText(khachhang.getHOTEN());
-        if(index != 1) {
+        if (index != 1) {
             dtl = 0;
             txtDTLG.setEditable(true);
-            txtDTL.setText(khachhang.getDIEMTICHLUY()+"");
+            txtDTL.setText(khachhang.getDIEMTICHLUY() + "");
             txtDTLG.setText("0");
-        }
-        else {
+        } else {
             dtl = 0;
             txtDTLG.setEditable(false);
             txtDTLG.setText("0");

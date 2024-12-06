@@ -164,4 +164,7 @@ public class KhachHangBUS {
 }
 
 
+    public KhachHangDTO selectById(String t) {
+        return khDAO.selectById(t);
+    }
 }
