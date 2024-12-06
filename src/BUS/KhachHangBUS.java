@@ -155,4 +155,7 @@ public class KhachHangBUS {
         return khDAO.countAllRecords();
     }
 
+    public KhachHangDTO selectById(String t) {
+        return khDAO.selectById(t);
+    }
 }

@@ -199,4 +199,37 @@ public class ChiTietMaKhuyenMaiDAO implements DAOinterface<ChiTietMaKhuyenMaiDTO
         return result;
     }
 
+    public ChiTietMaKhuyenMaiDTO selectByMKMAndMSP(String mkm, int msp) {
+        ChiTietMaKhuyenMaiDTO result = null;
+        try {
+            // Kết nối với cơ sở dữ liệu
+            Connection con = JDBCUtil.getConnection();
+
+            // Câu lệnh SQL
+            String sql = "SELECT * FROM CTMAKHUYENMAI WHERE MKM = ? AND MSP = ?";
+
+            // Chuẩn bị truy vấn
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, mkm); // Thiết lập giá trị MKM
+            pst.setInt(2, msp);    // Thiết lập giá trị MSP
+
+            // Thực thi truy vấn
+            ResultSet rs = pst.executeQuery();
+
+            // Kiểm tra kết quả và gán vào DTO
+            if (rs.next()) {
+                String MKM = rs.getString("MKM");
+                int MSP = rs.getInt("MSP");
+                int PTG = rs.getInt("PTG");
+                result = new ChiTietMaKhuyenMaiDTO(MKM, MSP, PTG);
+            }
+
+            // Đóng kết nối
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+
 }

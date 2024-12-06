@@ -145,4 +145,12 @@ public class MaKhuyenMaiBUS {
     public ArrayList<ChiTietMaKhuyenMaiDTO> searchByMSP(int msp) {
         return ctmkmDAO.searchByMSP(msp);
     }
+    
+    public MaKhuyenMaiDTO selectById(String t) {
+        return mkmDAO.selectById(t);
+    }
+    
+    public ChiTietMaKhuyenMaiDTO selectByMKMAndMSP(String mkm, int msp) {
+        return ctmkmDAO.selectByMKMAndMSP(mkm, msp);
+    }
 }
