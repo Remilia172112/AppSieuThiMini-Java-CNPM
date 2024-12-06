@@ -180,21 +180,6 @@ public class TaiKhoanDialog extends JDialog {
     }
 });
 
-public boolean validateInputEDT() {
-    if (username.getText().length() == 0) {
-        JOptionPane.showMessageDialog(this, "Vui lòng không để trống tên đăng nhập");
-        return false;
-    } else if (username.getText().length() < 6) {
-        JOptionPane.showMessageDialog(this, "Tên đăng nhập ít nhất 6 kí tự");
-        return false;
-    } else if (password.getPass().length() > 0 && password.getPass().length() < 6) {
-        // Chỉ kiểm tra mật khẩu khi có mật khẩu mới
-        JOptionPane.showMessageDialog(this, "Mật khẩu ít nhất 6 ký tự");
-        return false;
-    }
-    return true;
-}
-
 
         btnHuyBo.addActionListener(new ActionListener() {
             @Override
@@ -249,5 +234,19 @@ public boolean validateInputEDT() {
         }
         return true;
     }
+    public boolean validateInputEDT() {
+    if (username.getText().length() == 0) {
+        JOptionPane.showMessageDialog(this, "Vui lòng không để trống tên đăng nhập");
+        return false;
+    } else if (username.getText().length() < 6) {
+        JOptionPane.showMessageDialog(this, "Tên đăng nhập ít nhất 6 kí tự");
+        return false;
+    } else if (password.getPass().length() > 0 && password.getPass().length() < 6) {
+        // Chỉ kiểm tra mật khẩu khi có mật khẩu mới
+        JOptionPane.showMessageDialog(this, "Mật khẩu ít nhất 6 ký tự");
+        return false;
+    }
+    return true;
+}
 
 }

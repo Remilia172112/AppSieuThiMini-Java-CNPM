@@ -245,4 +245,18 @@ public class NhanVienDAO implements DAOinterface<NhanVienDTO>{
     }
     return count;
 }
+    public int deactivateAccountByMNV(int mnv) {
+    int result = 0;
+    try {
+        Connection con = JDBCUtil.getConnection();
+        String sql = "UPDATE TAIKHOAN SET TT = -1 WHERE MNV = ?";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setInt(1, mnv);
+        result = pst.executeUpdate();
+        JDBCUtil.closeConnection(con);
+    } catch (SQLException ex) {
+        Logger.getLogger(TaiKhoanDAO.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return result;
+}
 }

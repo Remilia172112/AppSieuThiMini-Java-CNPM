@@ -95,52 +95,79 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
         return result;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String btn = e.getActionCommand();
-        switch (btn) {
-            case "THÊM" -> {
+   @Override
+public void actionPerformed(ActionEvent e) {
+    String btn = e.getActionCommand();
+    switch (btn) {
+        case "THÊM" -> {
+            try {
                 new NhanVienDialog(this, nv.owner, true, "Thêm nhân viên", "create");
+                JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi thêm nhân viên: " + ex.getMessage());
             }
-            case "SỬA" -> {
+        }
+        case "SỬA" -> {
+            try {
                 int index = nv.getRow();
                 if (index < 0) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần sửa");
                 } else {
                     new NhanVienDialog(this, nv.owner, true, "Sửa nhân viên", "update", nv.getNhanVien());
+                    JOptionPane.showMessageDialog(null, "Sửa thông tin nhân viên thành công!");
                 }
-            }
-            case "XÓA" -> {
-            if (nv.getRow() < 0) {
-                JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xóa");
-            } else {
-                int confirm = JOptionPane.showConfirmDialog(null, 
-                        "Bạn có chắc chắn muốn xóa nhân viên này không?", 
-                        "Xác nhận xóa", 
-                        JOptionPane.YES_NO_OPTION);
-                
-                if (confirm == JOptionPane.YES_OPTION) {
-                    deleteNv(nv.getNhanVien());
-                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi sửa thông tin nhân viên: " + ex.getMessage());
             }
         }
-            case "CHI TIẾT" -> {
+        case "XÓA" -> {
+            try {
                 if (nv.getRow() < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần sửa");
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xóa");
+                } else {
+                    int confirm = JOptionPane.showConfirmDialog(null, 
+                            "Bạn có chắc chắn muốn xóa nhân viên này không?", 
+                            "Xác nhận xóa", 
+                            JOptionPane.YES_NO_OPTION);
+                    
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        deleteNv(nv.getNhanVien());
+                        JOptionPane.showMessageDialog(null, "Xóa nhân viên thành công!");
+                    }
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi xóa nhân viên: " + ex.getMessage());
+            }
+        }
+        case "CHI TIẾT" -> {
+            try {
+                if (nv.getRow() < 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần xem");
                 } else {
                     new NhanVienDialog(this, nv.owner, true, "Xem nhân viên", "detail", nv.getNhanVien());
                 }
-            }
-            case "NHẬP EXCEL" -> {
-                importExcel();
-            }
-            case "XUẤT EXCEL" -> {
-                String[] header = new String[]{"MãNV", "Tên nhân viên", "Email nhân viên", "Số điên thoại", "Giới tính", "Ngày sinh"};
-                exportExcel(listNv, header);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi xem thông tin nhân viên: " + ex.getMessage());
             }
         }
-        nv.loadDataTalbe(listNv);
+        case "NHẬP EXCEL" -> {
+            try {
+                importExcel();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi nhập dữ liệu từ Excel: " + ex.getMessage());
+            }
+        }
+        case "XUẤT EXCEL" -> {
+            try {
+                String[] header = new String[]{"MãNV", "Tên nhân viên", "Email nhân viên", "Số điên thoại", "Giới tính", "Ngày sinh"};
+                exportExcel(listNv, header);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi xuất dữ liệu: " + ex.getMessage());
+            }
+        }
     }
+    nv.loadDataTalbe(listNv);
+}
 
     @Override
     public void insertUpdate(DocumentEvent e) {
@@ -427,4 +454,7 @@ public class NhanVienBUS implements ActionListener, DocumentListener {
     public int getTotalNhanVien() {
     return nhanVienDAO.countAll();
 }
+    public int deactivateAccountByMNV(int mnv){
+        return nhanVienDAO.deactivateAccountByMNV(mnv);
+    }
 }

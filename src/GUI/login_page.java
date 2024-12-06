@@ -47,7 +47,6 @@ public class login_page extends JFrame implements KeyListener {
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(0, 0));
         JFrame jf = this;
-
         imgIntro();
 
         login_nhap = new JPanel();
