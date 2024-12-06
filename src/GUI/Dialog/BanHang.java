@@ -174,7 +174,7 @@ public final class BanHang extends JFrame {
         tableSanPham.setGridColor(Color.BLACK);
         tableSanPham.setBackground(new Color(0xA1D6E2));
         tblModelSP = new DefaultTableModel();
-        String[] headerSP = new String[] { "Ảnh SP", "Tên sản phẩm", "Số lượng" };
+        String[] headerSP = new String[] { "Ảnh SP", "Tên SP", "SL","Mã sp"};
         tblModelSP.setColumnIdentifiers(headerSP);
         tableSanPham.setModel(tblModelSP);
         tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer());
@@ -607,18 +607,28 @@ public final class BanHang extends JFrame {
     // }
     // }
     public void loadDataTalbeSanPham(ArrayList<DTO.SanPhamDTO> result) {
-        tblModelSP.setRowCount(0);
-        MultiLineData dataString;
-        ImageIcon dataImage;
-        for (SanPhamDTO sp : result) {
-            dataImage = new ImageIcon("./src/img_product/" + sp.getHINHANH());
-            dataString = new MultiLineData(sp.getTEN(), " ", sp.getTIENX() + "VND");
-            // dataString.setLine1(sp.getTEN());
-            // dataString.setLine2(" ");
-            // dataString.setLine3(sp.getTIENX() + "VND");
-            tblModelSP.addRow(new Object[] { dataImage, dataString, sp.getSL() });
-        }
+    tblModelSP.setRowCount(0);  // Xóa các dòng hiện có trong bảng
+
+    MultiLineData dataString;
+    ImageIcon dataImage;
+    for (SanPhamDTO sp : result) {
+        dataImage = new ImageIcon("./src/img_product/" + sp.getHINHANH());
+        dataString = new MultiLineData(sp.getTEN(), " ", sp.getTIENX() + "VND");
+
+        // Lưu mã sản phẩm vào một cột ẩn (ví dụ: sp.getMSP())
+        Object[] rowData = new Object[] {dataImage, dataString, sp.getSL(),sp.getMV()};  // Mã sản phẩm ở cột đầu tiên
+
+        // Thêm dòng vào bảng
+        tblModelSP.addRow(rowData);
     }
+
+    // Ẩn cột mã sản phẩm (vẫn lưu trong TableModel)
+    tableSanPham.getColumnModel().getColumn(3).setMinWidth(0);
+    tableSanPham.getColumnModel().getColumn(3).setMaxWidth(0);
+    tableSanPham.getColumnModel().getColumn(3).setPreferredWidth(0);
+}
+
+
 
    public void loadDataTableChiTietPhieu(ArrayList<ChiTietHoaDonDTO> ctPhieu) {
     tblModel.setRowCount(0);
@@ -659,12 +669,24 @@ public final class BanHang extends JFrame {
 
 
 
-    public boolean checkTonTai() {
-        ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText()));
-        // kiểm tra coi masp này có trong chitietphieu này chưa
-
-        return p != null;
+   public boolean checkTonTai() {
+    int maSP = -1;
+    try {
+        maSP = Integer.parseInt(txtMaSp.getText()); // Lấy mã sản phẩm từ txtMaSp
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Mã sản phẩm không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return false;  // Trả về false nếu mã sản phẩm không hợp lệ
     }
+
+    for (ChiTietHoaDonDTO p : chitietphieu) {
+        if (p.getMSP()== maSP) { // Sử dụng phương thức đúng
+            return true; 
+        }
+    }
+
+    return false; // Nếu không tìm thấy sản phẩm trong danh sách, trả về false
+}
+
 
     public boolean checkInfo() {
         boolean check = true;
@@ -856,9 +878,19 @@ public final class BanHang extends JFrame {
         });
     }
     private void handleMousePressed(MouseEvent e) {
+    SanPhamBUS spb=new SanPhamBUS();
     int index = tableSanPham.getSelectedRow();
     if (index != -1) {
-        setInfoSanPham(listSP.get(index));
+        String mavach = tableSanPham.getValueAt(index, 3).toString();
+        System.out.println(mavach);
+        SanPhamDTO selectedProduct = null;
+        for (SanPhamDTO sp : spb.getAll()) {
+            if (sp.getMV().equals(mavach)) {  // So sánh mã sản phẩm trong listSP với mã vạch từ bảng
+                selectedProduct = sp;
+                break; // Dừng vòng lặp khi tìm thấy sản phẩm
+            }
+        }
+        setInfoSanPham(selectedProduct);
         if (!checkTonTai()) {
             actionbtn("add");
         } else {
@@ -873,31 +905,56 @@ public final class BanHang extends JFrame {
 
 private void handleAddProduct() {
     if (checkInfo()) {
-        // Lưu giá gốc vào HashMap chỉ khi mã giảm giá chưa được áp dụng
-        double giaXuat = Double.parseDouble(txtGiaXuat.getText());
-        
-        // Kiểm tra xem sản phẩm này có được thêm vào giaGocMap chưa
-        if (!giaGocMap.containsKey(listMaKM.size())) {
-            giaGocMap.put(listMaKM.size(), giaXuat);  // Lưu giá gốc với key là chỉ số sản phẩm trong danh sách
+        try {
+            // Lấy số lượng người dùng nhập vào
+            String soLuongText = txtSoLuongSPxuat.getText().trim();
+            if (soLuongText.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Số lượng không được để trống");
+                return; // Dừng thực hiện nếu số lượng không hợp lệ
+            }
+            int soLuong = Integer.parseInt(soLuongText); // Chuyển đổi số lượng
+
+            // Lấy mã sản phẩm từ chi tiết sản phẩm
+            int maSP = Integer.parseInt(txtMaSp.getText());  // Giả sử mã sản phẩm được nhập vào trong một trường txtMaSP
+
+            // Kiểm tra số lượng tồn kho của sản phẩm
+            int soLuongTonKho = getSoLuongTonKho(maSP);  // Hàm lấy số lượng tồn kho của sản phẩm
+
+            // Kiểm tra số lượng nhập vào có vượt quá số lượng tồn kho không
+            if (soLuong > soLuongTonKho) {
+                JOptionPane.showMessageDialog(null, "Số lượng sản phẩm trong kho không đủ!");
+                return; // Dừng thực hiện nếu số lượng vượt quá
+            }
+
+            // Lưu giá gốc vào HashMap chỉ khi mã giảm giá chưa được áp dụng
+            double giaXuat = Double.parseDouble(txtGiaXuat.getText());
+
+            // Kiểm tra xem sản phẩm này có được thêm vào giaGocMap chưa
+            if (!giaGocMap.containsKey(listMaKM.size())) {
+                giaGocMap.put(listMaKM.size(), giaXuat);  // Lưu giá gốc với key là chỉ số sản phẩm trong danh sách
+            }
+
+            // Tiến hành thêm sản phẩm vào bảng chi tiết phiếu
+            listMaKM.add(cbxMaKM.getSelectedItem().toString());
+            addCtPhieu(listMaKM.size() - 1);
+
+            // Cập nhật lại bảng dữ liệu
+            loadDataTableChiTietPhieu(chitietphieu);
+
+            // Thông báo thêm sản phẩm thành công
+            Notification thongbaoNoi = new Notification(mainChinh, Notification.Type.SUCCESS,
+                    Notification.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
+            thongbaoNoi.showNotification();
+
+            // Reset form và combo box
+            cbxMaKM.setSelectedItem("Chọn");
+            resetForm();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ. Vui lòng kiểm tra lại.");
         }
-
-        // Tiến hành thêm sản phẩm vào bảng chi tiết phiếu
-        listMaKM.add(cbxMaKM.getSelectedItem().toString());
-        addCtPhieu(listMaKM.size() - 1);
-
-        // Cập nhật lại bảng dữ liệu
-        loadDataTableChiTietPhieu(chitietphieu);
-
-        // Thông báo thêm sản phẩm thành công
-        Notification thongbaoNoi = new Notification(mainChinh, Notification.Type.SUCCESS,
-                Notification.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
-        thongbaoNoi.showNotification();
-
-        // Reset form và combo box
-        cbxMaKM.setSelectedItem("Chọn");
-        resetForm();
     }
 }
+
 
 
 
@@ -915,7 +972,19 @@ private void handleEditProduct() {
             }
             int newQuantity = Integer.parseInt(soLuongText); // Chuyển đổi số lượng
 
-            chitietphieu.get(index).setSL(newQuantity);
+            // Lấy mã sản phẩm từ chi tiết hóa đơn
+            int maSP = chitietphieu.get(index).getMSP();
+
+            // Kiểm tra số lượng tồn kho
+            int soLuongTonKho = getSoLuongTonKho(maSP);  // Hàm lấy số lượng tồn kho của sản phẩm
+
+            // Kiểm tra số lượng yêu cầu có vượt quá số lượng tồn kho không
+            if (newQuantity > soLuongTonKho) {
+                JOptionPane.showMessageDialog(null, "Số lượng sản phẩm trong kho không đủ!");
+                return; // Dừng nếu số lượng vượt quá
+            }
+
+            chitietphieu.get(index).setSL(newQuantity); // Cập nhật số lượng
 
             // Kiểm tra mã khuyến mãi cũ và mới
             String selectedMaKM = cbxMaKM.getSelectedItem().toString();
@@ -969,6 +1038,18 @@ private void handleEditProduct() {
     }
     resetForm();  // Reset form sau khi sửa xong
 }
+
+// Hàm lấy số lượng tồn kho của sản phẩm
+private int getSoLuongTonKho(int maSP) {
+    SanPhamBUS spb=new SanPhamBUS();
+    // Giả sử bạn có một phương thức trong BUS hoặc DAO để lấy số lượng tồn kho
+    SanPhamDTO sp = spb.getByMaSP(maSP);
+    if (sp != null) {
+        return sp.getSL(); // Giả sử có trường này trong DTO của sản phẩm
+    }
+    return 0; // Nếu không tìm thấy sản phẩm, trả về 0
+}
+
 
 
 
