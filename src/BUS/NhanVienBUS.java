@@ -102,7 +102,7 @@ public void actionPerformed(ActionEvent e) {
         case "THÊM" -> {
             try {
                 new NhanVienDialog(this, nv.owner, true, "Thêm nhân viên", "create");
-                JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");
+                
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi thêm nhân viên: " + ex.getMessage());
             }
@@ -114,7 +114,7 @@ public void actionPerformed(ActionEvent e) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên cần sửa");
                 } else {
                     new NhanVienDialog(this, nv.owner, true, "Sửa nhân viên", "update", nv.getNhanVien());
-                    JOptionPane.showMessageDialog(null, "Sửa thông tin nhân viên thành công!");
+                    
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Có lỗi xảy ra khi sửa thông tin nhân viên: " + ex.getMessage());
