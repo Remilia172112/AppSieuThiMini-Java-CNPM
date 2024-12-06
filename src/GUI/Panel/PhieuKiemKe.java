@@ -124,7 +124,7 @@ public class PhieuKiemKe extends JPanel implements ActionListener, PropertyChang
             mainFunction.btn.get(ac).addActionListener(this);
         }
 
-        String[] objToSearch = {"Tất cả", "Mã phiếu kiểm kê", "Nhân viên kiểm kê"};
+        String[] objToSearch = {/* "Tất cả", */ "Mã phiếu kiểm kê"/* , "Nhân viên kiểm kê" */};
         search = new IntegratedSearch(objToSearch);
         search.cbxChoose.addItemListener(this);
         search.txtSearchForm.addKeyListener(this);

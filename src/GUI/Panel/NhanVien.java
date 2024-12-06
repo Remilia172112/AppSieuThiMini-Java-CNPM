@@ -70,7 +70,7 @@ public final class NhanVien extends JPanel {
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
-        String[] action = {"create", "update", "delete", "detail", "import", "export"};
+        String[] action = {"create", "update", "delete", "detail"/* , "import" */, "export"};
         mainFunction = new MainFunction(m.user.getMNQ(), "nhanvien", action);
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(nvBus);
