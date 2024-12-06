@@ -204,11 +204,11 @@ public final class TaoPhieuKiemKe extends JPanel implements ItemListener, Action
         txtTenSp.setEditable(false);
 
         txtTrangThai = new InputForm("Trạng thái");
-        txtTrangThai.setEditable(false);
+//        txtTrangThai.setEditable(false);
         JPanel content_right_top_cbx = new JPanel(new BorderLayout());
         content_right_top_cbx.setPreferredSize(new Dimension(100, 90));
         txtSoLuong = new InputForm("Số lượng hiện tại");
-        txtSoLuong.setEditable(false);
+//        txtSoLuong.setEditable(false);
         txtSoLuong.setPreferredSize(new Dimension(50, 80));
         JPanel jPanelGhiChu = new JPanel(new BorderLayout());
         jPanelGhiChu.setBackground(Color.WHITE);
