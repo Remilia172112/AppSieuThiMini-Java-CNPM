@@ -50,7 +50,7 @@ import GUI.Component.PanelBorderRadius;
 import GUI.Component.SelectForm;
 import helper.Formater;
 
-public final class BanHang extends JFrame {
+public final class BanHang extends JPanel {
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     // gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
     // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của
@@ -111,8 +111,8 @@ public final class BanHang extends JFrame {
         this.setLayout(new BorderLayout(0, 0));
         this.setBackground(BackgroundColor);
         // this.setVisible(true);
-        this.setLocationRelativeTo(null);
-        this.setTitle("POS");
+//        this.setLocationRelativeTo(null);
+//        this.setTitle("POS");
 
         // Phiếu xuất
         tablePhieuXuat = new JTable();
@@ -810,7 +810,9 @@ public final class BanHang extends JFrame {
                     resetForm();
                     resetFormRight();
                     maphieu = phieuXuatBUS.getMPMAX() + 1;
-                    new ChiTietPhieuDialog(this, "Thông tin phiếu xuất", true, phieuXuat);
+                    JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                    new ChiTietPhieuDialog(parentFrame, "Thông tin phiếu xuất", true, phieuXuat);
+
                     // this.setPanel(new HoaDon(this, tk));
                     // this.dispose();
                 }
@@ -878,5 +880,21 @@ public final class BanHang extends JFrame {
         txtDTL.setText("");
         txtKh.setText("Chọn khách hàng");
 
+    }
+    public static void main(String[] args) {
+        // Tạo một đối tượng TaiKhoanDTO giả để kiểm tra (có thể thay bằng đối tượng thực tế của bạn)
+        TaiKhoanDTO taiKhoan = new TaiKhoanDTO();
+        // Giả sử bạn có một phương thức để khởi tạo TaiKhoanDTO, bạn cần thay đổi theo cách bạn khởi tạo
+        // taiKhoan.set... (các thuộc tính cần thiết của tài khoản)
+
+        // Loại cửa sổ (ví dụ: "create", "update" hoặc "view", bạn có thể tùy chỉnh)
+        String type = "create";
+
+        // Tạo đối tượng BanHang và hiển thị
+        SwingUtilities.invokeLater(() -> {
+            BanHang banHang = new BanHang(taiKhoan, type);
+//            banHang.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            banHang.setVisible(true); // Hiển thị cửa sổ
+        });
     }
 }
