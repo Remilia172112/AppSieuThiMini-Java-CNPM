@@ -62,7 +62,6 @@ public class login_page extends JFrame implements KeyListener {
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         login_nhap.add(lb1);
-
         JPanel paneldn = new JPanel();
         paneldn.setBackground(Color.BLACK);
         paneldn.setPreferredSize(new Dimension(300, 200));

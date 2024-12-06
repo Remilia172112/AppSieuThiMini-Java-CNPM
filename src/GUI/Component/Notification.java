@@ -86,45 +86,52 @@ public class Notification extends JComponent {
             }
 
             @Override
-            public void begin() {
-                if (!showing) {
-                    dialog.setOpacity(0f);
-                    int margin = 10;
-                    int y = 0;
-                    if (location == Location.TOP_CENTER) {
-                        x = fram.getX() + ((fram.getWidth() - dialog.getWidth()) / 2);
-                        y = fram.getY();
-                        top_to_bot = true;
-                    } else if (location == Location.TOP_RIGHT) {
-                        x = fram.getX() + fram.getWidth() - dialog.getWidth() - margin;
-                        y = fram.getY();
-                        top_to_bot = true;
-                    } else if (location == Location.TOP_LEFT) {
-                        x = fram.getX() + margin;
-                        y = fram.getY();
-                        top_to_bot = true;
-                    } else if (location == Location.BOTTOM_CENTER) {
-                        x = fram.getX() + ((fram.getWidth() - dialog.getWidth()) / 2);
-                        y = fram.getY() + fram.getHeight() - dialog.getHeight();
-                        top_to_bot = false;
-                    } else if (location == Location.BOTTOM_RIGHT) {
-                        x = fram.getX() + fram.getWidth() - dialog.getWidth() - margin;
-                        y = fram.getY() + fram.getHeight() - dialog.getHeight();
-                        top_to_bot = false;
-                    } else if (location == Location.BOTTOM_LEFT) {
-                        x = fram.getX() + margin;
-                        y = fram.getY() + fram.getHeight() - dialog.getHeight();
-                        top_to_bot = false;
-                    } else {
-                        x = fram.getX() + ((fram.getWidth() - dialog.getWidth()) / 2);
-                        y = fram.getY() + ((fram.getHeight() - dialog.getHeight()) / 2);
-                        top_to_bot = true;
-                    }
-                    top = y;
-                    dialog.setLocation(x, y);
-                    dialog.setVisible(true);
-                }
-            }
+public void begin() {
+    if (!showing) {
+        // Kiểm tra xem fram có phải là null không
+        if (fram == null) {
+            
+            return;  // Dừng phương thức để tránh NullPointerException
+        }
+
+        dialog.setOpacity(0f);
+        int margin = 10;
+        int y = 0;
+        if (location == Location.TOP_CENTER) {
+            x = fram.getX() + ((fram.getWidth() - dialog.getWidth()) / 2);
+            y = fram.getY();
+            top_to_bot = true;
+        } else if (location == Location.TOP_RIGHT) {
+            x = fram.getX() + fram.getWidth() - dialog.getWidth() - margin;
+            y = fram.getY();
+            top_to_bot = true;
+        } else if (location == Location.TOP_LEFT) {
+            x = fram.getX() + margin;
+            y = fram.getY();
+            top_to_bot = true;
+        } else if (location == Location.BOTTOM_CENTER) {
+            x = fram.getX() + ((fram.getWidth() - dialog.getWidth()) / 2);
+            y = fram.getY() + fram.getHeight() - dialog.getHeight();
+            top_to_bot = false;
+        } else if (location == Location.BOTTOM_RIGHT) {
+            x = fram.getX() + fram.getWidth() - dialog.getWidth() - margin;
+            y = fram.getY() + fram.getHeight() - dialog.getHeight();
+            top_to_bot = false;
+        } else if (location == Location.BOTTOM_LEFT) {
+            x = fram.getX() + margin;
+            y = fram.getY() + fram.getHeight() - dialog.getHeight();
+            top_to_bot = false;
+        } else {
+            x = fram.getX() + ((fram.getWidth() - dialog.getWidth()) / 2);
+            y = fram.getY() + ((fram.getHeight() - dialog.getHeight()) / 2);
+            top_to_bot = true;
+        }
+        top = y;
+        dialog.setLocation(x, y);
+        dialog.setVisible(true);
+    }
+}
+
 
             @Override
             public void end() {

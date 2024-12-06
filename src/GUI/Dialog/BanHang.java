@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.stream.Stream;
 import java.awt.*;
+import java.util.Map;
+import java.util.HashMap;
 import java.awt.event.MouseListener;
 import java.sql.Timestamp;
 import java.awt.event.MouseAdapter;
@@ -49,8 +51,10 @@ import GUI.Component.NumericDocumentFilter;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.SelectForm;
 import helper.Formater;
+import java.util.HashMap;
 
-public final class BanHang extends JPanel {
+public final class BanHang extends JFrame {
+    
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     // gọi phương thức compoment tổ tiên có kiểu window của compoment hiện tại
     // kiểu như cái listKhachHang thì cho owner dô sẽ gọi đc cái jframe của
@@ -62,7 +66,7 @@ public final class BanHang extends JPanel {
     DefaultTableModel tblModel, tblModelSP; // table co san
     ButtonCustom btnTaoSp, btnAddSp, btnEditSP, btnDelete, btnRefresh, btnThanhToan;
     InputForm txtTenSp, txtMaSp, txtMaISBN, txtSoLuongSPxuat, txtMaGiamGia, txtGiaGiam;
-
+    private Map<Integer, Double> giaGocMap = new HashMap<>();
     SelectForm cbxMaKM;
     JTextField txtTimKiem;
     Color BackgroundColor = new Color(193, 237, 220);
@@ -118,11 +122,11 @@ public final class BanHang extends JPanel {
         tablePhieuXuat = new JTable();
         scrollTablePhieuNhap = new JScrollPane();
         tblModel = new DefaultTableModel();
-        String[] header = new String[] { "Mã SP", "Tên sản phẩm", "Đơn giá", "Số lượng", "Đơn vị", "Giảm", "Số tiền",
+        String[] header = new String[] {"Mã SP", "Tên SP", "Đơn giá", "SL", "Đơn vị","Giảm","Số tiền",
                 "Xóa" };
         tblModel.setColumnIdentifiers(header);
         tablePhieuXuat.setModel(tblModel);
-        int[] columnWidths = { 120, 400, 80, 70, 70, 50, 150, 30 }; // Mảng chứa kích thước các cột
+        int[] columnWidths = { 140,360,30, 70, 70, 50, 150,50 }; // Mảng chứa kích thước các cột
         for (int i = 0; i < tablePhieuXuat.getColumnCount(); i++) {
             TableColumn column = tablePhieuXuat.getColumnModel().getColumn(i);
             column.setPreferredWidth(columnWidths[i]);
@@ -140,7 +144,6 @@ public final class BanHang extends JPanel {
         tablePhieuXuat.setFocusable(false);
         tablePhieuXuat.setDefaultEditor(Object.class, null);
         scrollTablePhieuNhap.setViewportView(tablePhieuXuat);
-
         tablePhieuXuat.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -166,13 +169,12 @@ public final class BanHang extends JPanel {
                 }
             }
         });
-
         // Table sản phẩm
         tableSanPham = new JTable();
         tableSanPham.setGridColor(Color.BLACK);
         tableSanPham.setBackground(new Color(0xA1D6E2));
         tblModelSP = new DefaultTableModel();
-        String[] headerSP = new String[] { "Ảnh SP", "Tên sản phẩm", "Số lượng tồn" };
+        String[] headerSP = new String[] { "Ảnh SP", "Tên sản phẩm", "Số lượng" };
         tblModelSP.setColumnIdentifiers(headerSP);
         tableSanPham.setModel(tblModelSP);
         tableSanPham.setDefaultRenderer(Object.class, new CombinedCellRenderer());
@@ -184,42 +186,29 @@ public final class BanHang extends JPanel {
         tableSanPham.setFocusable(false);
         tableSanPham.setDefaultEditor(Object.class, null);
         scrollTableSanPham = new JScrollPane();
-
         JScrollBar verticalScrollBar = scrollTableSanPham.getVerticalScrollBar();
         verticalScrollBar.setUnitIncrement(16); // Giảm tốc độ cuộn xuống còn 16 pixel mỗi lần nhấn
-
         scrollTableSanPham.setViewportView(tableSanPham);
-        tableSanPham.addMouseListener((MouseListener) new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int index = tableSanPham.getSelectedRow();
-                if (index != -1) {
-                    // resetForm();
-                    setInfoSanPham(listSP.get(index));
-                    if (!checkTonTai()) {
-                        actionbtn("add");
-                    } else {
-                        actionbtn("update");
-                    }
-                }
-            }
-        });
-
+        tableSanPham.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            handleMousePressed(e);
+        }
+    });
         ///// content_CENTER (chứa hết tất cả left+right)
         contentCenter = new JPanel();
         contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(BackgroundColor);
-        contentCenter.setLayout(new BorderLayout(5, 5));
+        contentCenter.setLayout(new BorderLayout(10, 10));
         // this.add(contentCenter, BorderLayout.CENTER); //MainChinh thì để vào center
         this.add(contentCenter);
 
         ///// LEFT
         left = new PanelBorderRadius();
-        left.setLayout(new BorderLayout(0, 5));
+        left.setLayout(new BorderLayout(4, 4));
         left.setBackground(Color.white);
-
         txtTimKiem = new JTextField();
-        txtTimKiem.setPreferredSize(new Dimension(100, 40));
+        txtTimKiem.setPreferredSize(new Dimension(60, 40));
         txtTimKiem.putClientProperty("JTextField.placeholderText", "Tên sản phẩm, mã sản phẩm, ...");
         txtTimKiem.putClientProperty("JTextField.showClearButton", true);
         txtTimKiem.putClientProperty("JTextField.leadingIcon", new FlatSVGIcon("./icon/search.svg"));
@@ -231,14 +220,14 @@ public final class BanHang extends JPanel {
             }
         });
 
-        left.add(txtTimKiem, BorderLayout.NORTH);
-        left.add(scrollTableSanPham, BorderLayout.CENTER);
+        left.add(txtTimKiem,BorderLayout.NORTH);
+        left.add(scrollTableSanPham,BorderLayout.CENTER);
 
         ///// RIGHT
         right = new PanelBorderRadius();
         right.setPreferredSize(new Dimension(400, 0));
-        right.setBorder(new EmptyBorder(5, 5, 5, 5));
-        right.setLayout(new BorderLayout());
+        right.setBorder(new EmptyBorder(10,10,10, 10));
+        right.setLayout(new BorderLayout(5,5));
 
         JPanel right_top, right_bottom; // right_bottom=content_left+content_right;
 
@@ -286,80 +275,35 @@ public final class BanHang extends JPanel {
         txtGiaGiam = new InputForm("Giá giảm");
         txtGiaGiam.setText(" ");
         txtGiaGiam.setEditable(false);
-        cbxMaKM.cbb.addItemListener((ItemListener) new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                int index = cbxMaKM.cbb.getSelectedIndex();
-                if (index != 0) {
-                    double giaxuat = Integer.parseInt(txtGiaXuat.getText());
-                    double phantramgiam = (double) listctMKM.get(index - 1).getPTG();
-                    int giagiam = (int) (giaxuat * (1 - phantramgiam / 100));
-                    txtGiaGiam.setText(Integer.toString(giagiam));
-                }
-            }
-
-        });
-
+        cbxMaKM.cbb.addItemListener(new ItemListener() {
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        handleMaKMSelectionChanged(e);
+    }
+});
         // btnTaoSp = new ButtonCustom("Tạo sản phẩm", "success", 14);
         btnAddSp = new ButtonCustom("Thêm sản phẩm", "success", 14);
         btnEditSP = new ButtonCustom("Sửa sản phẩm", "warning", 14);
         btnDelete = new ButtonCustom("Xoá sản phẩm", "danger", 14);
         btnAddSp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (checkInfo()) {
-                    listMaKM.add(cbxMaKM.getSelectedItem().toString());
-                    addCtPhieu(listMaKM.size() - 1);
-                    // thông báo dạng popup dùng của Notification trong Compoment của Gui
-                    Notification thongbaoNoi = new Notification(mainChinh, Notification.Type.SUCCESS,
-                            Notification.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
-                    thongbaoNoi.showNotification();
-                    loadDataTableChiTietPhieu(chitietphieu);
-                    cbxMaKM.setSelectedItem("Chọn");
-                    resetForm();
-                    // actionbtn("update");
-                }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        handleAddProduct();
+    }
+});
 
-            }
-
-        });
-
-        btnEditSP.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = tablePhieuXuat.getSelectedRow();
-                if (index < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần chỉnh");
-                } else {
-                    chitietphieu.get(index).setSL(Integer.parseInt(txtSoLuongSPxuat.getText()));
-                    if (!txtGiaGiam.getText().equals(" ")) {
-                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaGiam.getText()));
-                        chitietphieu.get(index).setMKM(cbxMaKM.getSelectedItem().toString());
-                    } else
-                        chitietphieu.get(index).setTIEN(Integer.parseInt(txtGiaXuat.getText()));
-                    actionbtn("add");
-                    loadDataTableChiTietPhieu(chitietphieu);
-                    cbxMaKM.setSelectedItem(chitietphieu.get(index).getMKM());
-                }
-                resetForm();
-
-            }
-        });
-
+       btnEditSP.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        handleEditProduct();
+    }
+});
         btnDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = tablePhieuXuat.getSelectedRow();
-                if (index < 0) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần xóa");
-                } else {
-                    chitietphieu.remove(index);
-                    actionbtn("add");
-                    loadDataTableChiTietPhieu(chitietphieu);
-                    resetForm();
-                }
-            }
-        });
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        handleDeleteProduct();
+    }
+});
 
         btnEditSP.setEnabled(false);
         btnDelete.setEnabled(false);
@@ -375,7 +319,6 @@ public final class BanHang extends JPanel {
         cbxMaKM.setOpaque(false);
         merge2.add(txtSoLuongSPxuat);
         merge2.add(cbxMaKM);
-
         JPanel khachJPanel = new JPanel(new BorderLayout());
         khachJPanel.setPreferredSize(new Dimension(0, 60));
         khachJPanel.setBorder(new EmptyBorder(0, 0, 10, 0));
@@ -677,29 +620,44 @@ public final class BanHang extends JPanel {
         }
     }
 
-    public void loadDataTableChiTietPhieu(ArrayList<ChiTietHoaDonDTO> ctPhieu) {
-        tblModel.setRowCount(0);
-        int size = ctPhieu.size();
-        sum = 0;
-        giagiam = 0;
-        ArrayList<DonViDTO> listdv = dvbus.getAll();
-        for (int i = 0; i < size; i++) {
-            int percentCounpoint = getPcCp(ctPhieu.get(i).getMSP(), listMaKM.get(i));
-            SanPhamDTO sp = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
-            sum += ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL();
-            tblModel.addRow(new Object[] {
-                    sp.getMV(), spBUS.getByMaSP(sp.getMSP()).getTEN(),
-                    Formater.FormatVND(ctPhieu.get(i).getTIEN()), ctPhieu.get(i).getSL(),
-                    listdv.get(sp.getMDV() - 1).getTENDV(), percentCounpoint,
-                    Formater.FormatVND(ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL()), "X"
+   public void loadDataTableChiTietPhieu(ArrayList<ChiTietHoaDonDTO> ctPhieu) {
+    tblModel.setRowCount(0);
+    int size = ctPhieu.size();
+    sum = 0;
+    giagiam = 0;
+    ArrayList<DonViDTO> listdv = dvbus.getAll();
 
-            });
-        }
-        lbltongtien.setText(Formater.FormatVND(sum));
-        lblgiamgia.setText(Formater.FormatVND(giagiam));
-        loadDataMenuRight();
+    for (int i = 0; i < size; i++) {
+        // Lấy phần trăm giảm từ mã khuyến mãi
+        int percentCounpoint = getPcCp(ctPhieu.get(i).getMSP(), listMaKM.get(i));
+        
+        // Lấy thông tin sản phẩm
+        SanPhamDTO sp = spBUS.getByMaSP(ctPhieu.get(i).getMSP());
 
+        // Cộng dồn tổng tiền
+        sum += ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL();
+
+        // Thêm dòng vào bảng
+        tblModel.addRow(new Object[] {
+            sp.getMV(),
+            spBUS.getByMaSP(sp.getMSP()).getTEN(), // Lấy tên sản phẩm
+            Formater.FormatVND(giaGocMap.get(i)),  // Lấy giá gốc từ HashMap
+            ctPhieu.get(i).getSL(),
+            listdv.get(sp.getMDV() - 1).getTENDV(),
+            percentCounpoint,  // Phần trăm giảm giá
+            Formater.FormatVND(ctPhieu.get(i).getTIEN() * ctPhieu.get(i).getSL()),  // Tổng tiền sản phẩm
+            "X"  // Cột xóa
+        });
     }
+
+    lbltongtien.setText(Formater.FormatVND(sum));
+    lblgiamgia.setText(Formater.FormatVND(giagiam));
+
+    loadDataMenuRight();
+}
+
+
+
 
     public boolean checkTonTai() {
         ChiTietHoaDonDTO p = phieuXuatBUS.findCT(chitietphieu, Integer.parseInt(txtMaSp.getText()));
@@ -897,4 +855,155 @@ public final class BanHang extends JPanel {
             banHang.setVisible(true); // Hiển thị cửa sổ
         });
     }
+    private void handleMousePressed(MouseEvent e) {
+    int index = tableSanPham.getSelectedRow();
+    if (index != -1) {
+        setInfoSanPham(listSP.get(index));
+        if (!checkTonTai()) {
+            actionbtn("add");
+        } else {
+            actionbtn("update");
+        }
+    }
+    
+}
+   
+
+  
+
+private void handleAddProduct() {
+    if (checkInfo()) {
+        // Lưu giá gốc vào HashMap chỉ khi mã giảm giá chưa được áp dụng
+        double giaXuat = Double.parseDouble(txtGiaXuat.getText());
+        
+        // Kiểm tra xem sản phẩm này có được thêm vào giaGocMap chưa
+        if (!giaGocMap.containsKey(listMaKM.size())) {
+            giaGocMap.put(listMaKM.size(), giaXuat);  // Lưu giá gốc với key là chỉ số sản phẩm trong danh sách
+        }
+
+        // Tiến hành thêm sản phẩm vào bảng chi tiết phiếu
+        listMaKM.add(cbxMaKM.getSelectedItem().toString());
+        addCtPhieu(listMaKM.size() - 1);
+
+        // Cập nhật lại bảng dữ liệu
+        loadDataTableChiTietPhieu(chitietphieu);
+
+        // Thông báo thêm sản phẩm thành công
+        Notification thongbaoNoi = new Notification(mainChinh, Notification.Type.SUCCESS,
+                Notification.Location.TOP_CENTER, "Thêm sản phẩm thành công!");
+        thongbaoNoi.showNotification();
+
+        // Reset form và combo box
+        cbxMaKM.setSelectedItem("Chọn");
+        resetForm();
+    }
+}
+
+
+
+private void handleEditProduct() {
+    int index = tablePhieuXuat.getSelectedRow();
+    if (index < 0) {
+        JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần chỉnh");
+    } else {
+        try {
+            // Kiểm tra xem txtSoLuongSPxuat có rỗng hay không trước khi chuyển đổi
+            String soLuongText = txtSoLuongSPxuat.getText().trim();
+            if (soLuongText.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Số lượng không được để trống");
+                return; // Dừng thực hiện nếu số lượng không hợp lệ
+            }
+            int newQuantity = Integer.parseInt(soLuongText); // Chuyển đổi số lượng
+
+            chitietphieu.get(index).setSL(newQuantity);
+
+            // Kiểm tra mã khuyến mãi cũ và mới
+            String selectedMaKM = cbxMaKM.getSelectedItem().toString();
+            String oldMaKM = chitietphieu.get(index).getMKM();
+
+            // Nếu mã khuyến mãi không thay đổi, chỉ cần cập nhật số lượng và giữ nguyên số tiền
+            if (selectedMaKM.equals(oldMaKM)) {
+                chitietphieu.get(index).setSL(newQuantity);
+                // Không thay đổi số tiền khi mã giảm giá không thay đổi
+            } else {
+                // Nếu mã khuyến mãi thay đổi, cập nhật lại số tiền và mã giảm giá
+                chitietphieu.get(index).setMKM(selectedMaKM); // Cập nhật mã khuyến mãi
+                
+                // Kiểm tra lại giá giảm sau khi mã khuyến mãi thay đổi
+                String giaGiamText = txtGiaGiam.getText().trim();
+                if (!giaGiamText.isEmpty()) {
+                    try {
+                        int newDiscountPrice = Integer.parseInt(giaGiamText);
+                        chitietphieu.get(index).setTIEN(newDiscountPrice);  // Cập nhật tiền sau giảm
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "Giá giảm không hợp lệ");
+                        return; // Dừng thực hiện nếu giá giảm không hợp lệ
+                    }
+                } else {
+                    // Nếu không có giá giảm (mã khuyến mãi không giảm giá), giữ nguyên giá gốc
+                    Double giaGoc = giaGocMap.get(index);  // Lấy giá gốc từ HashMap
+                    if (giaGoc != null) {
+                        chitietphieu.get(index).setTIEN(giaGoc.intValue());  // Cập nhật lại giá gốc nếu không có giảm giá
+                    } else {
+                        // Nếu không có giá gốc (do chưa lưu), lấy giá xuất ban đầu
+                        String giaXuatText = txtGiaXuat.getText().trim();
+                        if (!giaXuatText.isEmpty()) {
+                            try {
+                                chitietphieu.get(index).setTIEN(Integer.parseInt(giaXuatText));
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(null, "Giá xuất không hợp lệ");
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            actionbtn("add");  // Cập nhật lại giao diện nếu cần
+            loadDataTableChiTietPhieu(chitietphieu);  // Cập nhật lại bảng chi tiết
+            cbxMaKM.setSelectedItem(chitietphieu.get(index).getMKM()); // Chọn lại mã khuyến mãi trong combo box
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Thông tin không hợp lệ. Vui lòng kiểm tra lại.");
+        }
+    }
+    resetForm();  // Reset form sau khi sửa xong
+}
+
+
+
+
+
+
+private void handleMaKMSelectionChanged(ItemEvent e) {
+    System.out.println("KIỂM TRA GIÁ XUẤT");
+    int index = cbxMaKM.cbb.getSelectedIndex();
+    if (index != 0 && !txtGiaXuat.getText().isEmpty()) {
+        try {
+            // Chuyển đổi giá trị từ txtGiaXuat sang double
+            double giaxuat = Double.parseDouble(txtGiaXuat.getText());
+            double phantramgiam = (double) listctMKM.get(index - 1).getPTG();
+            int giagiam = (int) (giaxuat * (1 - phantramgiam / 100));
+            txtGiaGiam.setText(Integer.toString(giagiam));
+        } catch (NumberFormatException ex) {
+            // Xử lý ngoại lệ nếu giá xuất không hợp lệ
+        }
+    } else {
+        txtGiaGiam.setText("");  // Nếu không có giá xuất, xóa giá giảm
+    }
+}
+
+
+
+    private void handleDeleteProduct() {
+    int index = tablePhieuXuat.getSelectedRow();
+    if (index < 0) {
+        JOptionPane.showMessageDialog(null, "Vui lòng chọn cấu hình cần xóa");
+    } else {
+        chitietphieu.remove(index); // Xóa sản phẩm khỏi danh sách
+        actionbtn("add"); // Thực hiện hành động sau khi xóa
+        loadDataTableChiTietPhieu(chitietphieu); // Tải lại dữ liệu bảng
+        resetForm(); // Reset các trường nhập liệu
+    }
+}
 }
