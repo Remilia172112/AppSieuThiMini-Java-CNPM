@@ -93,10 +93,13 @@ public class LoaiDialog extends JDialog implements MouseListener {
         String[] header = new String[]{"Mã loại", "Tên loại"};
         tblModel.setColumnIdentifiers(header);
         table.setModel(tblModel);
+        table.setDefaultEditor(Object.class, null);
         scrollTable.setViewportView(table);
         scrollTable.setPreferredSize(new Dimension(420, 250));
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+        table.setFocusable(false);
         TableColumnModel columnModel = table.getColumnModel();
         columnModel.getColumn(0).setCellRenderer(centerRenderer);
         columnModel.getColumn(1).setCellRenderer(centerRenderer);
